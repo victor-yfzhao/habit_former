@@ -1,4 +1,4 @@
-package org.laorui_out.habit_former.service;
+package org.laorui_out.habit_former.user.service;
 
 import jakarta.annotation.Resource;
 import org.junit.jupiter.api.AfterEach;
@@ -6,6 +6,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.laorui_out.habit_former.bean.UserBean;
 import org.laorui_out.habit_former.mapper.UserMapper;
+import org.laorui_out.habit_former.user.service.RegisterService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 

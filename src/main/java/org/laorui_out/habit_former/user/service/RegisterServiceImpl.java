@@ -1,4 +1,4 @@
-package org.laorui_out.habit_former.service;
+package org.laorui_out.habit_former.user.service;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.laorui_out.habit_former.bean.UserBean;

@@ -1,14 +1,14 @@
-package org.laorui_out.habit_former.service;
+package org.laorui_out.habit_former.poster.service;
 
 import org.laorui_out.habit_former.mapper.PosterMapper;
 import org.springframework.stereotype.Service;
 
 @Service
-//对帖子进行评论
-public class CommentService {
+//搜索栏搜索查看帖子
+public class SearchPosterService {
     private PosterMapper posterMapper;
 
-    CommentService(PosterMapper posterMapper) {
+    SearchPosterService(PosterMapper posterMapper) {
         this.posterMapper = posterMapper;
     }
 }

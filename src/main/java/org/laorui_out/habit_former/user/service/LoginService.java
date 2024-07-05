@@ -1,4 +1,4 @@
-package org.laorui_out.habit_former.service;
+package org.laorui_out.habit_former.user.service;
 
 import org.springframework.stereotype.Service;
 

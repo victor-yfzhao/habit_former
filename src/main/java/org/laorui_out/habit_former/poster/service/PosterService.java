@@ -1,4 +1,4 @@
-package org.laorui_out.habit_former.service;
+package org.laorui_out.habit_former.poster.service;
 
 import org.apache.catalina.User;
 import org.laorui_out.habit_former.bean.PosterBean;

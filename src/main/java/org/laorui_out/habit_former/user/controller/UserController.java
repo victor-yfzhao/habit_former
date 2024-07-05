@@ -1,7 +1,7 @@
-package org.laorui_out.habit_former.controller;
+package org.laorui_out.habit_former.user.controller;
 
 import jakarta.annotation.Resource;
-import org.laorui_out.habit_former.service.RegisterService;
+import org.laorui_out.habit_former.user.service.RegisterService;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 

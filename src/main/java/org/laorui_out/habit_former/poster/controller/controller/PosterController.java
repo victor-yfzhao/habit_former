@@ -1,11 +1,11 @@
-package org.laorui_out.habit_former.controller;
+package org.laorui_out.habit_former.poster.controller.controller;
 
 import org.laorui_out.habit_former.bean.PosterAndUserBean;
 import org.laorui_out.habit_former.bean.PosterBean;
 import org.laorui_out.habit_former.bean.UserBean;
-import org.laorui_out.habit_former.service.CommentService;
+import org.laorui_out.habit_former.poster.service.CommentService;
 import org.laorui_out.habit_former.service.PosterService;
-import org.laorui_out.habit_former.service.SearchPosterService;
+import org.laorui_out.habit_former.poster.service.SearchPosterService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;

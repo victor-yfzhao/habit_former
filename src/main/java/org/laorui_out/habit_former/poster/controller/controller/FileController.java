@@ -1,4 +1,4 @@
-package org.laorui_out.habit_former.controller;
+package org.laorui_out.habit_former.poster.controller.controller;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
