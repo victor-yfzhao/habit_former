@@ -1,4 +1,4 @@
-package com.example.postarrangement.bean;
+package org.laorui_out.habit_former.bean;
 
 import lombok.Data;
 

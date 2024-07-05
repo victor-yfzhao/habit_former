@@ -1,4 +1,4 @@
-package com.example.postarrangement.controller;
+package org.laorui_out.habit_former.controller;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
