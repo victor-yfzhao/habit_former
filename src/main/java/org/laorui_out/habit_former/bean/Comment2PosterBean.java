@@ -8,6 +8,7 @@ public class Comment2PosterBean {
     private int commentID;
     private int userID;
 
+
     @Override
     public String toString() {
         return "Comment2PosterBean{" +
