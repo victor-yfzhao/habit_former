@@ -2,7 +2,6 @@ package org.laorui_out.habit_former.bean;
 
 import lombok.Data;
 
-import java.awt.*;
 @Data
 public class UserBean {
     private int userID;

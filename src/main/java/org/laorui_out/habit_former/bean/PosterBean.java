@@ -5,7 +5,7 @@ import lombok.Data;
 import java.util.Arrays;
 import java.util.List;
 
-@Data   //采用lombok的@Data注解后不用再get和set
+@Data
 public class PosterBean {
 
     private int posterID;
