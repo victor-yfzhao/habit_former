@@ -1,4 +1,4 @@
-package com.example.postarrangement.mapper;
+package org.laorui_out.habit_former.mapper;
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;

@@ -1,9 +1,9 @@
-package com.example.postarrangement.controller;
+package org.laorui_out.habit_former.controller;
 
-import com.example.postarrangement.service.CommentService;
-import com.example.postarrangement.service.PosterService;
-import com.example.postarrangement.service.SearchPosterService;
-import com.example.postarrangement.service.UserPosterManageService;
+import org.laorui_out.habit_former.service.CommentService;
+import org.laorui_out.habit_former.service.PosterService;
+import org.laorui_out.habit_former.service.SearchPosterService;
+import org.laorui_out.habit_former.service.UserPosterManageService;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController

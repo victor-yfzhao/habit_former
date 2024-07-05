@@ -1,6 +1,6 @@
-package com.example.postarrangement.service;
+package org.laorui_out.habit_former.service;
 
-import com.example.postarrangement.mapper.PosterMapper;
+import org.laorui_out.habit_former.mapper.PosterMapper;
 import org.springframework.stereotype.Service;
 
 @Service
