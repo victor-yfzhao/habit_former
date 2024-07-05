@@ -1,17 +1,22 @@
-package org.laorui_out.habit_former.bean;
+package com.example.postarrangement.bean;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
+import java.awt.*;
 @Data
-@TableName("user")
 public class UserBean {
-    @TableId(type = IdType.INPUT)
+    private int userID;
     private String username;
-
-    @TableField("password")
     private String password;
+    private String userIcon; //考虑它的类型是什么？,用url去存
+
+    @Override
+    public String toString() {
+        return "UserBean{" +
+                "userID=" + userID +
+                ", username='" + username + '\'' +
+                ", password='" + password + '\'' +
+                ", userIcon='" + userIcon + '\'' +
+                '}';
+    }
 }
