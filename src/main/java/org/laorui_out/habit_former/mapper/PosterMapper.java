@@ -8,6 +8,7 @@ import java.util.List;
 @Mapper
 public interface PosterMapper {
 
+
     //根据帖子ID删除poster
     @Delete("delete from poster where posterID = #{posterID}")
     public boolean deletePosterByPosterId(@Param("posterID") int posterID);
