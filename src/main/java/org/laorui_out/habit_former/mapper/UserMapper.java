@@ -11,18 +11,22 @@ public interface UserMapper extends BaseMapper<UserBean> {
             "where username = #{username}")
     UserBean selectByUsername(String username);
 
+
     @Insert("insert into User (username, password, userIcon) " +
-            "values (#{username}, #{password}, null)")
+            "values (#{username}, #{password}, 'default_icon')")
     int insertUser(String username, String password);
+
 
     @Delete("delete from User " +
             "where userID = #{userID}")
     int deleteUser(int userID);
 
+
     @Update("update User " +
             "set username = #{username}, password = #{password}, userIcon = #{userIcon} " +
             "where userID = #{userID}")
     int updateUser(UserBean userBean);
+
 
     @Select("select *" +
             "from User")
@@ -33,4 +37,15 @@ public interface UserMapper extends BaseMapper<UserBean> {
             @Result(property = "userIcon", column = "userIcon")
     })
     UserBean[] selectAllUsers();
+
+
+    @Select("select userID, username, userIcon " +
+            "from User " +
+            "where userID = #{userID}")
+    UserBean getUserProfile(int userID);
+
+    @Select("select userID, username, userIcon " +
+            "from User " +
+            "where username = #{username}")
+    UserBean getUserProfile(String username);
 }
