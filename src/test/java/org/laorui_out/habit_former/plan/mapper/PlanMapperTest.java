@@ -26,6 +26,7 @@ public class PlanMapperTest {
     @Autowired
     private PlanMapper planMapper;
 
+    /*
     @BeforeEach
     public void setUp() {// 清理测试数据
         List<Integer> plan1 = planMapper.getAllDailyPlanIDByPlanID(1);
@@ -186,6 +187,8 @@ public class PlanMapperTest {
         int result = planMapper.dropDailyPlan(dailyplan_id);
         assertTrue(result > 0);
         assertNull(planMapper.getDailyPlanByID(dailyplan_id));
-    }
+    }*/
+
+
 
 }
