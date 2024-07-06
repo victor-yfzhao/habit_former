@@ -13,6 +13,7 @@ public class DailyPlanBean {
     private Date date;
     private String planDetail;
     private String status;
+    private String planID;
 
     @Override
     public String toString() {
@@ -21,6 +22,7 @@ public class DailyPlanBean {
                 ", date=" + date +
                 ", planDetail='" + planDetail + '\'' +
                 ", status='" + status + '\'' +
+                ", planID=" + planID +
                 '}';
     }
 }

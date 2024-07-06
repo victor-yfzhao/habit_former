@@ -11,6 +11,7 @@ import java.util.List;
 @Mapper
 public interface PlanMapper extends BaseMapper<PlanBean> {
     //查询
+    /*
     @Select("select planID from userplan where userID=#{userid}")
     List<Integer> getAllPlanIDByUserID(int userid);
 
@@ -22,7 +23,21 @@ public interface PlanMapper extends BaseMapper<PlanBean> {
 
     @Select("select * from dailyplan where dailyPlanID=#{dailyplanid}")
     DailyPlanBean getDailyPlanByID(int dailyplanid);
+     */
+    //查询v2.0
+    @Select("select * from plan where userID=#{userID}")
+    List<PlanBean> getAllPlanBeanByUserID(int userID);
 
+    @Select("select * from plan where planID=#{planID}")
+    PlanBean getPlanBeanByPlanID(int planID);
+
+    @Select("select * from dailyplan where planID=#{planid}")
+    List<DailyPlanBean> getAllDailyPlanIDByPlanID(int planid);
+
+    @Select("select * from dailyplan where dailyPlanID=#{dailyplanid}")
+    DailyPlanBean getDailyPlanByID(int dailyplanid);
+
+    /*
     //插入
     @Insert("insert into plan(planName,planInfo,status) values(#{planName},#{planInfo},'"+ Constants.NOT_CHECKED +"')")
     @Options(useGeneratedKeys = true, keyProperty = "planID")
@@ -38,6 +53,21 @@ public interface PlanMapper extends BaseMapper<PlanBean> {
     @Insert("insert into pd(planID,dailyPlanID) values(#{planID},#{dailyPlanID})")
     int addDailyPlan2Plan(int planID,int dailyPlanID);
 
+     */
+    //插入v2.0
+    @Insert("insert " +
+            "into plan(planName,planInfo,status,userID,planDate,planTime) " +
+            "values(#{planName},#{planInfo},'"+ Constants.NOT_CHECKED +"',#{userID},#{planDate},#{planTime})")
+    @Options(useGeneratedKeys = true, keyProperty = "planID")
+    int addPlanBean(PlanBean planBean);
+
+    @Insert("insert " +
+            "into dailyplan(date,planDetail,status,planID) " +
+            "values(#{date},#{planDetail},'"+ Constants.NOT_CHECKED +"',#{planID})")
+    @Options(useGeneratedKeys = true, keyProperty = "dailyPlanID")
+    int addDailyPlanBean(DailyPlanBean dailyPlanBean);
+
+    /*
     //更新
     @Update("UPDATE plan SET planName = #{planName} WHERE planID = #{planID}")
     int updatePlanName(PlanBean planBean);
@@ -53,7 +83,20 @@ public interface PlanMapper extends BaseMapper<PlanBean> {
 
     @Update("UPDATE dailyplan SET status = #{status} WHERE dailyPlanID = #{dailyPlanID}")
     int updateDailyPlanStatus(DailyPlanBean dailyPlanBean);
+     */
+    //更新v2.0
+    //date和time不允许更新
+    @Update("UPDATE plan " +
+            "SET planName = #{planName}, SET planDetail = #{planDetail}, status = #{status}" +
+            "WHERE planID = #{planID}")
+    int updatePlan(PlanBean planBean);
 
+    @Update("UPDATE dailyplan " +
+            "SET planDetail = #{planDetail}, status = #{status}" +
+            "WHERE dailyPlanID = #{dailyPlanID}")
+    int updateDailyPlan(DailyPlanBean dailyPlanBean);
+
+    /*
     //删除
     @Delete("Delete from pd where dailyPlanID=#{dailyPlanID}")
     int dropPDByDailyPlanID(int dailyPlanID);
@@ -74,4 +117,19 @@ public interface PlanMapper extends BaseMapper<PlanBean> {
 
     @Delete("Delete from plan where planID=#{planID}")
     int dropPlan(int PlanID);
+     */
+    //删除v2.0
+    @Delete("Delete from dailyplan where dailyPlanID=#{dailyPlanID}")
+    int deleteDailyPlanByID(int dailyPlanID);
+
+    @Delete("Delete from dailyplan where planID=#{planID}")
+    int deleteAllDailyPlanByPlanID(int planID);
+
+    @Delete("Delete from plan where planID=#{planID}")
+    int deletePlanByID(int planID);
+
+    @Delete("Delete from plan where userID=#{userID}")
+    int deleteAllPlanByUserID(int userID);
+
+
 }

@@ -4,6 +4,9 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.Data;
 
+import java.sql.Time;
+import java.util.Date;
+
 @Data
 public class PlanBean {
     @TableId(type = IdType.AUTO)
@@ -11,6 +14,9 @@ public class PlanBean {
     private String planName;
     private String planInfo;
     private String status;
+    private String userID;
+    private Date planDate;
+    private Time planTime;
 
     @Override
     public String toString() {
@@ -19,6 +25,9 @@ public class PlanBean {
                 ", planName='" + planName + '\'' +
                 ", planInfo='" + planInfo + '\'' +
                 ", status='" + status + '\'' +
+                ", userID=" + userID +
+                ", planDate='" + planDate + '\'' +
+                ", planTime='" + planTime + '\'' +
                 '}';
     }
 }
