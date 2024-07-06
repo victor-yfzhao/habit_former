@@ -6,7 +6,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.laorui_out.habit_former.bean.UserBean;
 import org.laorui_out.habit_former.mapper.UserMapper;
-import org.laorui_out.habit_former.user.service.RegisterService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -41,25 +40,25 @@ class RegisterServiceImplTest {
 
     @Test
     void register_correct_access() {
-        int result = registerService.register("test3", "12345678");
-        assertEquals(1, result);
+        RegisterResult result = registerService.register("test3", "12345678");
+        assertEquals(RegisterResult.SUCCESS, result);
     }
 
     @Test
     void register_null_username(){
-        int result = registerService.register("", "12345678");
-        assertEquals(-1, result);
+        RegisterResult result = registerService.register("", "12345678");
+        assertEquals(RegisterResult.INVALID_INPUT, result);
     }
 
     @Test
     void register_short_password(){
-        int result = registerService.register("test3", "123");
-        assertEquals(-1, result);
+        RegisterResult result = registerService.register("test3", "123");
+        assertEquals(RegisterResult.INVALID_INPUT, result);
     }
 
     @Test
     void register_exist_username(){
-        int result = registerService.register("test1", "12345678");
-        assertEquals(-2, result);
+        RegisterResult result = registerService.register("test1", "12345678");
+        assertEquals(RegisterResult.USERNAME_ALREADY_EXISTS, result);
     }
 }

@@ -1,8 +1,9 @@
 package org.laorui_out.habit_former.user.service;
 
-import org.springframework.stereotype.Service;
+import com.baomidou.mybatisplus.extension.service.IService;
+import org.laorui_out.habit_former.bean.UserBean;
 
-@Service
-public class LoginService{
-    //TODO: 登录
+
+public interface LoginService extends IService<UserBean> {
+    LoginResult login (String username, String password);
 }

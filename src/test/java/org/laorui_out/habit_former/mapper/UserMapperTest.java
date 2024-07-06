@@ -67,4 +67,13 @@ class UserMapperTest {
         UserBean[] users = mapper.selectAllUsers();
         assertEquals(1, users.length);
     }
+
+    @Test
+    void getUserProfile() {
+        UserBean expected = mapper.selectByUsername("test");
+        expected.setPassword(null);
+
+        UserBean user = mapper.getUserProfile(mapper.selectByUsername("test").getUserID());
+        assertEquals(expected, user);
+    }
 }
