@@ -7,15 +7,15 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class RegisterServiceImpl extends ServiceImpl<UserMapper, UserBean> implements RegisterService {
-    public int register(String username, String password) {
+    public RegisterResult register(String username, String password) {
         if (username.isEmpty() || password.length() < 8){
-            return -1;
+            return RegisterResult.INVALID_INPUT;
         }
         try{
             baseMapper.insertUser(username, password);
         }catch (Exception e){
-            return -2;
+            return RegisterResult.USERNAME_ALREADY_EXISTS;
         }
-        return 1;
+        return RegisterResult.SUCCESS;
     }
 }
