@@ -6,7 +6,7 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class ResponseMessage<T> {
-    private int code;
-    private String message;
-    private T data;
+    private int code;           // http status code (fake)
+    private String message;     // service feedback message
+    private T data;             // data used for browser
 }

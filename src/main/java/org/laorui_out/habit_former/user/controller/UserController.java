@@ -51,12 +51,12 @@ public class UserController {
         return new ResponseMessage<>(400, "failed to get profile", null);
     }
 
-//    @PostMapping("/user/updateIcon")
+//    @PostMapping("/user/update_icon")
 //    public ResponseMessage<UserBean> updateUserIcon(int userID, String icon) {
 //        // TODO : 上传图片的处理
 //    }
 
-    @PostMapping("user/updatePassword")
+    @PostMapping("/user/update_password")
     public ResponseMessage<Boolean> updateUserPassword(int userID, String password) {
         if(profileService.updatePassword(userID, password)) {
             return new ResponseMessage<>(200, "success update password", true);
@@ -64,7 +64,7 @@ public class UserController {
         return new ResponseMessage<>(400, "failed to update password", false);
     }
 
-    @PostMapping("user/updateUsername")
+    @PostMapping("/user/update_username")
     public ResponseMessage<UserBean> updateUserUsername(int userID, String username) {
         UserBean user = profileService.updateUsername(userID, username);
         if(user != null) {
