@@ -6,28 +6,30 @@ import org.laorui_out.habit_former.bean.UserBean;
 
 @Mapper
 public interface UserMapper extends BaseMapper<UserBean> {
+
+    // 根据用户名查找用户（仅供登录使用）
     @Select("select * " +
             "from User " +
             "where username = #{username}")
     UserBean selectByUsername(String username);
 
-
+    // 新建用户
     @Insert("insert into User (username, password, userIcon) " +
             "values (#{username}, #{password}, 'default_icon')")
     int insertUser(String username, String password);
 
-
+    // 删除用户
     @Delete("delete from User " +
             "where userID = #{userID}")
     int deleteUser(int userID);
 
-
+    // 更新用户
     @Update("update User " +
             "set username = #{username}, password = #{password}, userIcon = #{userIcon} " +
             "where userID = #{userID}")
     int updateUser(UserBean userBean);
 
-
+    // 返回所有用户（供admin使用）
     @Select("select *" +
             "from User")
     @Results({
@@ -38,12 +40,13 @@ public interface UserMapper extends BaseMapper<UserBean> {
     })
     UserBean[] selectAllUsers();
 
-
+    // 根据用户ID返回用户信息
     @Select("select userID, username, userIcon " +
             "from User " +
             "where userID = #{userID}")
     UserBean getUserProfile(int userID);
 
+    // 根据用户名返回用户信息
     @Select("select userID, username, userIcon " +
             "from User " +
             "where username = #{username}")
