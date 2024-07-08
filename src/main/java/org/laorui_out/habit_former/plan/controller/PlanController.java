@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -44,7 +45,7 @@ public class PlanController {
         ResponseMessage<List<DailyPlanBean>> res = new ResponseMessage<>(code,message,plans);
         return res;
     }
-    //3.GET点击计划列表，进入计划详情页面(单次需要传单个日期的任务项or一次性全部传)
+    //3.GET点击计划列表，进入计划详情页面(一次性全部传)
     @GetMapping("/detail/plan")
     public ResponseMessage<List<DailyPlanBean>> getPlanDetail(int planID){
         int code=0;String message = null;List<DailyPlanBean> plans = new ArrayList<DailyPlanBean>();
@@ -54,7 +55,19 @@ public class PlanController {
         ResponseMessage<List<DailyPlanBean>> res = new ResponseMessage<>(code,message,plans);
         return res;
     }
-    //4.POST修改子计划项内容dailyplan
+    //4.GET点击日历的某一天，将用户该天的所有子计划项全部传过来
+    //TODO:补一个mapper的方法
+    @GetMapping("/detail/cal")
+    public ResponseMessage<List<DailyPlanBean>> getPlanDetail(int userID, Date date){
+        int code=0;String message = null;List<DailyPlanBean> plans = new ArrayList<DailyPlanBean>();
+        /*
+        方法体
+         */
+        ResponseMessage<List<DailyPlanBean>> res = new ResponseMessage<>(code,message,plans);
+        return res;
+    }
+
+    //5.POST修改子计划项内容dailyplan
     @PostMapping("/edit/plan")
     public ResponseMessage<Boolean> editPlanDetail(String updatedDetail){
         int code=0;String message = null;Boolean flag = true;

@@ -10,11 +10,11 @@ import java.util.Date;
 @Data
 public class PlanBean {
     @TableId(type = IdType.AUTO)
-    private int planID;
+    private Integer planID;
     private String planName;
     private String planInfo;
     private String status;
-    private int userID;
+    private Integer userID;
     private Date planDate;
     private Time planTime;
 

@@ -22,6 +22,8 @@ public interface PlanMapper extends BaseMapper<PlanBean> {
 
     @Select("select * from dailyplan where dailyPlanID=#{dailyplanid}")
     DailyPlanBean getDailyPlanByID(int dailyplanid);
+    //add:查询 （关系模型修正后）
+
 
 
     //插入v2.0

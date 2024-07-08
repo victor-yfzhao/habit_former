@@ -9,11 +9,11 @@ import java.util.Date;
 @Data
 public class DailyPlanBean {
     @TableId(type = IdType.AUTO)
-    private int dailyPlanID;
+    private Integer dailyPlanID;
     private Date date;
     private String planDetail;
     private String status;
-    private int planID;
+    private Integer planID;
 
     @Override
     public String toString() {
