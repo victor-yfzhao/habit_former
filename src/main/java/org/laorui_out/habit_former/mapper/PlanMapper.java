@@ -87,12 +87,12 @@ public interface PlanMapper extends BaseMapper<PlanBean> {
     //更新v2.0
     //date和time不允许更新
     @Update("UPDATE plan " +
-            "SET planName = #{planName}, SET planDetail = #{planDetail}, status = #{status}" +
-            "WHERE planID = #{planID}")
+            "SET planName = #{planName}, planInfo = #{planInfo}, status = #{status} " +
+            "WHERE planID = #{planID} ")
     int updatePlan(PlanBean planBean);
 
     @Update("UPDATE dailyplan " +
-            "SET planDetail = #{planDetail}, status = #{status}" +
+            "SET planDetail = #{planDetail}, status = #{status} " +
             "WHERE dailyPlanID = #{dailyPlanID}")
     int updateDailyPlan(DailyPlanBean dailyPlanBean);
 

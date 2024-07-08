@@ -13,6 +13,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.Time;
 import java.util.Date;
 import java.util.List;
 
@@ -23,9 +24,6 @@ import static org.junit.jupiter.api.Assertions.*;
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @Transactional
 public class PlanMapperTest {
-    @Autowired
-    private PlanMapper planMapper;
-
     /*
     @BeforeEach
     public void setUp() {// 清理测试数据
@@ -188,7 +186,212 @@ public class PlanMapperTest {
         assertTrue(result > 0);
         assertNull(planMapper.getDailyPlanByID(dailyplan_id));
     }*/
+    @Autowired
+    private PlanMapper planMapper;
 
+    @BeforeEach
+    public void setUp() {
+        planMapper.deleteAllDailyPlanByPlanID(1);
+        planMapper.deleteAllPlanByUserID(1);
+    }
 
+    @Test
+    public void testGetAllPlanBeanByUserID() {
+        PlanBean planBean = new PlanBean();
+        planBean.setPlanName("Test Plan");
+        planBean.setPlanInfo("Test Info");
+        planBean.setStatus(Constants.NOT_CHECKED);
+        planBean.setUserID(1);
+        planBean.setPlanDate(new Date(System.currentTimeMillis()));
+        planBean.setPlanTime(new Time(System.currentTimeMillis()));
+        planMapper.addPlanBean(planBean);
+
+        List<PlanBean> plans = planMapper.getAllPlanBeanByUserID(1);
+        assertNotNull(plans);
+        assertFalse(plans.isEmpty());
+        assertEquals(1, plans.size());
+    }
+
+    @Test
+    public void testGetPlanBeanByPlanID() {
+        PlanBean planBean = new PlanBean();
+        planBean.setPlanName("Test Plan");
+        planBean.setPlanInfo("Test Info");
+        planBean.setStatus(Constants.NOT_CHECKED);
+        planBean.setUserID(1);
+        planBean.setPlanDate(new Date(System.currentTimeMillis()));
+        planBean.setPlanTime(new Time(System.currentTimeMillis()));
+        planMapper.addPlanBean(planBean);
+
+        PlanBean retrievedPlan = planMapper.getPlanBeanByPlanID(planBean.getPlanID());
+        assertNotNull(retrievedPlan);
+        assertEquals(planBean.getPlanName(), retrievedPlan.getPlanName());
+    }
+
+    @Test
+    public void testGetAllDailyPlanIDByPlanID() {
+        PlanBean planBean = new PlanBean();
+        planBean.setPlanName("Test Plan");
+        planBean.setPlanInfo("Test Info");
+        planBean.setStatus(Constants.NOT_CHECKED);
+        planBean.setUserID(1);
+        planBean.setPlanDate(new Date(System.currentTimeMillis()));
+        planBean.setPlanTime(new Time(System.currentTimeMillis()));
+        planMapper.addPlanBean(planBean);
+
+        DailyPlanBean dailyPlanBean = new DailyPlanBean();
+        dailyPlanBean.setDate(new Date(System.currentTimeMillis()));
+        dailyPlanBean.setPlanDetail("Test Daily Plan");
+        dailyPlanBean.setStatus(Constants.NOT_CHECKED);
+        dailyPlanBean.setPlanID(planBean.getPlanID());
+        planMapper.addDailyPlanBean(dailyPlanBean);
+
+        List<DailyPlanBean> dailyPlans = planMapper.getAllDailyPlanIDByPlanID(planBean.getPlanID());
+        assertNotNull(dailyPlans);
+        assertFalse(dailyPlans.isEmpty());
+        assertEquals(1, dailyPlans.size());
+    }
+
+    @Test
+    public void testGetDailyPlanByID() {
+        DailyPlanBean dailyPlanBean = new DailyPlanBean();
+        dailyPlanBean.setDate(new Date(System.currentTimeMillis()));
+        dailyPlanBean.setPlanDetail("Test Daily Plan");
+        dailyPlanBean.setStatus(Constants.NOT_CHECKED);
+        dailyPlanBean.setPlanID(1);
+        planMapper.addDailyPlanBean(dailyPlanBean);
+
+        DailyPlanBean retrievedDailyPlan = planMapper.getDailyPlanByID(dailyPlanBean.getDailyPlanID());
+        assertNotNull(retrievedDailyPlan);
+        assertEquals(dailyPlanBean.getPlanDetail(), retrievedDailyPlan.getPlanDetail());
+    }
+
+    @Test
+    public void testAddPlanBean() {
+        PlanBean planBean = new PlanBean();
+        planBean.setPlanName("Test Plan");
+        planBean.setPlanInfo("Test Info");
+        planBean.setStatus(Constants.NOT_CHECKED);
+        planBean.setUserID(1);
+        planBean.setPlanDate(new Date(System.currentTimeMillis()));
+        planBean.setPlanTime(new Time(System.currentTimeMillis()));
+
+        int result = planMapper.addPlanBean(planBean);
+        assertTrue(result > 0);
+        assertNotNull(planBean.getPlanID());
+    }
+
+    @Test
+    public void testAddDailyPlanBean() {
+        DailyPlanBean dailyPlanBean = new DailyPlanBean();
+        dailyPlanBean.setDate(new Date(System.currentTimeMillis()));
+        dailyPlanBean.setPlanDetail("Test Daily Plan");
+        dailyPlanBean.setStatus(Constants.NOT_CHECKED);
+        dailyPlanBean.setPlanID(1);
+
+        int result = planMapper.addDailyPlanBean(dailyPlanBean);
+        assertTrue(result > 0);
+        assertNotNull(dailyPlanBean.getDailyPlanID());
+    }
+
+    @Test
+    public void testUpdatePlan() {
+        PlanBean planBean = new PlanBean();
+        planBean.setPlanName("Test Plan");
+        planBean.setPlanInfo("Test Info");
+        planBean.setStatus(Constants.NOT_CHECKED);
+        planBean.setUserID(1);
+        planBean.setPlanDate(new Date(System.currentTimeMillis()));
+        planBean.setPlanTime(new Time(System.currentTimeMillis()));
+        planMapper.addPlanBean(planBean);
+
+        planBean.setPlanName("Updated Plan Name");
+        planBean.setPlanInfo("Updated Plan Info");
+        planBean.setStatus(Constants.CHECKED);
+
+        int result = planMapper.updatePlan(planBean);
+        assertTrue(result > 0);
+    }
+
+    @Test
+    public void testUpdateDailyPlan() {
+        DailyPlanBean dailyPlanBean = new DailyPlanBean();
+        dailyPlanBean.setDate(new Date(System.currentTimeMillis()));
+        dailyPlanBean.setPlanDetail("Test Daily Plan");
+        dailyPlanBean.setStatus(Constants.NOT_CHECKED);
+        dailyPlanBean.setPlanID(1);
+        planMapper.addDailyPlanBean(dailyPlanBean);
+
+        dailyPlanBean.setPlanDetail("Updated Daily Plan Detail");
+        dailyPlanBean.setStatus(Constants.CHECKED);
+
+        int result = planMapper.updateDailyPlan(dailyPlanBean);
+        assertTrue(result > 0);
+    }
+
+    @Test
+    public void testDeleteDailyPlanByID() {
+        DailyPlanBean dailyPlanBean = new DailyPlanBean();
+        dailyPlanBean.setDate(new Date(System.currentTimeMillis()));
+        dailyPlanBean.setPlanDetail("Test Daily Plan");
+        dailyPlanBean.setStatus(Constants.NOT_CHECKED);
+        dailyPlanBean.setPlanID(1);
+        planMapper.addDailyPlanBean(dailyPlanBean);
+
+        int result = planMapper.deleteDailyPlanByID(dailyPlanBean.getDailyPlanID());
+        assertTrue(result > 0);
+    }
+
+    @Test
+    public void testDeleteAllDailyPlanByPlanID() {
+        PlanBean planBean = new PlanBean();
+        planBean.setPlanName("Test Plan");
+        planBean.setPlanInfo("Test Info");
+        planBean.setStatus(Constants.NOT_CHECKED);
+        planBean.setUserID(1);
+        planBean.setPlanDate(new Date(System.currentTimeMillis()));
+        planBean.setPlanTime(new Time(System.currentTimeMillis()));
+        planMapper.addPlanBean(planBean);
+
+        DailyPlanBean dailyPlanBean = new DailyPlanBean();
+        dailyPlanBean.setDate(new Date(System.currentTimeMillis()));
+        dailyPlanBean.setPlanDetail("Test Daily Plan");
+        dailyPlanBean.setStatus(Constants.NOT_CHECKED);
+        dailyPlanBean.setPlanID(planBean.getPlanID());
+        planMapper.addDailyPlanBean(dailyPlanBean);
+
+        int result = planMapper.deleteAllDailyPlanByPlanID(planBean.getPlanID());
+        assertTrue(result > 0);
+    }
+
+    @Test
+    public void testDeletePlanByID() {
+        PlanBean planBean = new PlanBean();
+        planBean.setPlanName("Test Plan");
+        planBean.setPlanInfo("Test Info");
+        planBean.setStatus(Constants.NOT_CHECKED);
+        planBean.setUserID(1);
+        planBean.setPlanDate(new Date(System.currentTimeMillis()));
+        planBean.setPlanTime(new Time(System.currentTimeMillis()));
+        planMapper.addPlanBean(planBean);
+
+        int result = planMapper.deletePlanByID(planBean.getPlanID());
+        assertTrue(result > 0);
+    }
+
+    @Test
+    public void testDeleteAllPlanByUserID() {
+        PlanBean planBean = new PlanBean();
+        planBean.setPlanName("Test Plan");
+        planBean.setPlanInfo("Test Info");
+        planBean.setStatus(Constants.NOT_CHECKED);
+        planBean.setUserID(1);
+        planBean.setPlanDate(new Date(System.currentTimeMillis()));
+        planBean.setPlanTime(new Time(System.currentTimeMillis()));
+        planMapper.addPlanBean(planBean);
+
+        int result = planMapper.deleteAllPlanByUserID(1);
+        assertTrue(result > 0);
+    }
 
 }

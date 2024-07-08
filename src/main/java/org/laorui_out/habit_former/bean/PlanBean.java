@@ -14,7 +14,7 @@ public class PlanBean {
     private String planName;
     private String planInfo;
     private String status;
-    private String userID;
+    private int userID;
     private Date planDate;
     private Time planTime;
 

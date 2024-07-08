@@ -13,7 +13,7 @@ public class DailyPlanBean {
     private Date date;
     private String planDetail;
     private String status;
-    private String planID;
+    private int planID;
 
     @Override
     public String toString() {
