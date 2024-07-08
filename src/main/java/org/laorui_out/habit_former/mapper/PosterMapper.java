@@ -1,36 +1,24 @@
 package org.laorui_out.habit_former.mapper;
-import org.apache.ibatis.annotations.*;
-import org.laorui_out.habit_former.bean.PosterBean;
-
-import java.util.List;
+import org.apache.ibatis.annotations.Delete;
+import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
 
 
 @Mapper
 public interface PosterMapper {
 
+//注意下面的xxx改成表名！！！！
+//    @Delete("delete from xxx where posterid = #{posterid}")
+//    public boolean deletePosterByPosterId(@Param("posterid") int posterid);
 
-    //根据帖子ID删除poster
-    @Delete("delete from poster where posterID = #{posterID}")
-    public boolean deletePosterByPosterId(@Param("posterID") int posterID);
+    //@Insert(" ")
+    //public boolean InsertPoster(Poster poster)
 
-    //根据帖子ID返回poster
-    @Select("select posterID, posterHeadline, posterDetail from poster where posterID = #{posterID}")
-    PosterBean getPosterById(int posterID);
+    //@Update()
+    //
 
-    //根据帖子ID返回帖子所有图片
-    @Select("select posterPicture from posterpicture where posterID = #{posterID}")
-    List<String> getPosterPicturesByPosterId(int posterID); // 返回图片URL列表
-
-
-    @Select("select * from poster")
-    List<PosterBean> getAll();
-
-
-
-//    @Update()
-//
-//
-//    @Select()
-
+    //@Select()
+    //
 
 }
