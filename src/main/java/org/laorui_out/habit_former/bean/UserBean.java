@@ -9,6 +9,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.sql.Date;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -26,6 +28,10 @@ public class UserBean {
 
     @TableField("userIcon")
     private String userIcon;
+
+    @TableField("createDate")
+    @JsonIgnore
+    private Date createDate;
 
     @Override
     public String toString() {

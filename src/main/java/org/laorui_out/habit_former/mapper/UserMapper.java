@@ -4,6 +4,8 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.*;
 import org.laorui_out.habit_former.bean.UserBean;
 
+import java.sql.Date;
+
 @Mapper
 public interface UserMapper extends BaseMapper<UserBean> {
 
@@ -14,9 +16,9 @@ public interface UserMapper extends BaseMapper<UserBean> {
     UserBean selectByUsername(String username);
 
     // 新建用户
-    @Insert("insert into User (username, password, userIcon) " +
-            "values (#{username}, #{password}, 'default_icon')")
-    int insertUser(String username, String password);
+    @Insert("insert into User (username, password, userIcon, createDate) " +
+            "values (#{username}, #{password}, 'default_icon', #{createDate})")
+    int insertUser(String username, String password, Date createDate);
 
     // 删除用户
     @Delete("delete from User " +
