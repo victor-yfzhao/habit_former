@@ -16,8 +16,8 @@ import java.sql.Date;
 @AllArgsConstructor
 @TableName("user")
 public class UserBean {
-    @TableId(value = "userID", type = IdType.ASSIGN_UUID)
-    private int userID;
+    @TableId(value = "userID", type = IdType.ASSIGN_ID)
+    private Integer userID;
 
     @TableField("username")
     private String username;
@@ -29,7 +29,7 @@ public class UserBean {
     @TableField("userIcon")
     private String userIcon;
 
-    @TableField("createDate")
+    @TableField("userCreateDate")
     @JsonIgnore
     private Date createDate;
 

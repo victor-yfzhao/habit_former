@@ -8,6 +8,8 @@ import org.laorui_out.habit_former.bean.UserBean;
 import org.laorui_out.habit_former.mapper.UserMapper;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.sql.Date;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
@@ -22,7 +24,7 @@ class ProfileServiceImplTest {
     @Resource
     UserMapper mapper;
 
-    UserBean expectedUser = new UserBean(0, "test", null, "default_icon");
+    UserBean expectedUser = new UserBean(0, "test", null, "default_icon", new Date(System.currentTimeMillis()));
 
     @BeforeEach
     void setUp() {

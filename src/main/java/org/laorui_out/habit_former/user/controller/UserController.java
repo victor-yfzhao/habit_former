@@ -25,9 +25,13 @@ public class UserController {
 
     @GetMapping("/login")
     public ResponseMessage<UserBean> login(String username, String password) {
-        LoginResult result = loginService.login(username, password);
+        LoginResult result;
+        try{
+            result = loginService.login(username, password);
         if (Objects.requireNonNull(result) == LoginResult.SUCCESS) {
             return new ResponseMessage<>(200, result.toString(), profileService.getProfile(username));
+        }}catch(Exception e){
+            return new ResponseMessage<>(500, "unknown error", null);
         }
         return new ResponseMessage<>(400, result.toString(), null);
     }
