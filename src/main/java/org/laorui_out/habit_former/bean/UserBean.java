@@ -9,13 +9,15 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.sql.Date;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @TableName("user")
 public class UserBean {
-    @TableId(value = "userID", type = IdType.ASSIGN_UUID)
-    private int userID;
+    @TableId(value = "userID", type = IdType.ASSIGN_ID)
+    private Integer userID;
 
     @TableField("username")
     private String username;
@@ -26,6 +28,10 @@ public class UserBean {
 
     @TableField("userIcon")
     private String userIcon;
+
+    @TableField("userCreateDate")
+    @JsonIgnore
+    private Date createDate;
 
     @Override
     public String toString() {

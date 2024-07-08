@@ -13,11 +13,6 @@ public interface UserMapper extends BaseMapper<UserBean> {
             "where username = #{username}")
     UserBean selectByUsername(String username);
 
-    // 新建用户
-    @Insert("insert into User (username, password, userIcon) " +
-            "values (#{username}, #{password}, 'default_icon')")
-    int insertUser(String username, String password);
-
     // 删除用户
     @Delete("delete from User " +
             "where userID = #{userID}")
@@ -44,11 +39,11 @@ public interface UserMapper extends BaseMapper<UserBean> {
     @Select("select userID, username, userIcon " +
             "from User " +
             "where userID = #{userID}")
-    UserBean getUserProfile(int userID);
+    UserBean getUserProfileThroughID(int userID);
 
     // 根据用户名返回用户信息
     @Select("select userID, username, userIcon " +
             "from User " +
             "where username = #{username}")
-    UserBean getUserProfile(String username);
+    UserBean getUserProfileThroughUsername(String username);
 }

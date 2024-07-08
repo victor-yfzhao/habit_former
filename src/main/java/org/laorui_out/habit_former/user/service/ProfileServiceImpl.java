@@ -9,11 +9,11 @@ import org.springframework.stereotype.Service;
 public class ProfileServiceImpl extends ServiceImpl<UserMapper, UserBean> implements ProfileService {
 
     public UserBean getProfile(int userID) {
-        return baseMapper.getUserProfile(userID);
+        return baseMapper.getUserProfileThroughID(userID);
     }
 
     public UserBean getProfile(String username) {
-        return baseMapper.getUserProfile(username);
+        return baseMapper.getUserProfileThroughUsername(username);
     }
 
     public UserBean updateIcon(int userID, String icon) {
@@ -22,11 +22,11 @@ public class ProfileServiceImpl extends ServiceImpl<UserMapper, UserBean> implem
         baseMapper.updateUser(user);
 
         // 确保userIcon字段已被更新
-        return baseMapper.getUserProfile(userID);
+        return baseMapper.getUserProfileThroughID(userID);
     }
 
     public boolean updatePassword(int userID, String password) {
-        UserBean user = baseMapper.getUserProfile(userID);
+        UserBean user = baseMapper.getUserProfileThroughID(userID);
         user.setPassword(password);
         return baseMapper.updateUser(user) == 1;
     }
@@ -39,6 +39,6 @@ public class ProfileServiceImpl extends ServiceImpl<UserMapper, UserBean> implem
             baseMapper.updateUser(user);
         }catch (Exception ignored){}
 
-        return baseMapper.getUserProfile(userID);
+        return baseMapper.getUserProfileThroughID(userID);
     }
 }

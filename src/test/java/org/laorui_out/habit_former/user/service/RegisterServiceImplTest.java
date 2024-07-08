@@ -9,6 +9,8 @@ import org.laorui_out.habit_former.mapper.UserMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.sql.Date;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
@@ -26,8 +28,10 @@ class RegisterServiceImplTest {
         UserBean user = new UserBean();
         user.setUsername("test1");
         user.setPassword("12345678");
+        user.setUserIcon("default_icon");
+        user.setCreateDate(new Date(System.currentTimeMillis()));
 
-        mapper.insertUser(user.getUsername(), user.getPassword());
+        mapper.insert(user);
     }
 
     @AfterEach

@@ -7,6 +7,8 @@ import org.junit.jupiter.api.Test;
 import org.laorui_out.habit_former.bean.UserBean;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.sql.Date;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
@@ -17,7 +19,14 @@ class UserMapperTest {
 
     @BeforeEach
     void setUp() {
-        mapper.insertUser("test", "12345678");
+        UserBean user = new UserBean();
+
+        user.setUsername("test");
+        user.setPassword("12345678");
+        user.setUserIcon("default_icon");
+        user.setCreateDate(new Date(System.currentTimeMillis()));
+
+        mapper.insert(user);
     }
 
     @AfterEach
@@ -36,14 +45,6 @@ class UserMapperTest {
 
         user = mapper.selectByUsername("test1");
         assertNull(user);
-    }
-
-    @Test
-    void insertUser() {
-        int result = mapper.insertUser("test1", "12345678");
-        assertEquals(1, result);
-
-        assertThrows(Exception.class, () -> mapper.insertUser("test1", "12345678"));
     }
 
     @Test
@@ -73,7 +74,7 @@ class UserMapperTest {
         UserBean expected = mapper.selectByUsername("test");
         expected.setPassword(null);
 
-        UserBean user = mapper.getUserProfile(mapper.selectByUsername("test").getUserID());
+        UserBean user = mapper.getUserProfileThroughID(mapper.selectByUsername("test").getUserID());
         assertEquals(expected, user);
     }
 }
