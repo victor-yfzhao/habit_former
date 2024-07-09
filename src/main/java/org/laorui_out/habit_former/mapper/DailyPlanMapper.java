@@ -25,7 +25,7 @@ public interface DailyPlanMapper extends BaseMapper<DailyPlanBean> {
             "into dailyplan(date,planDetail,status,planID) " +
             "values(#{date},#{planDetail},'"+ Constants.NOT_CHECKED +"',#{planID})")
     @Options(useGeneratedKeys = true, keyProperty = "dailyPlanID")
-    int addDailyPlan(DailyPlanBean dailyPlanBean);
+    int addDailyPlanBean(DailyPlanBean dailyPlanBean);
     //更新
     @Update("UPDATE dailyplan " +
             "SET planDetail = #{planDetail}, status = #{status} " +
