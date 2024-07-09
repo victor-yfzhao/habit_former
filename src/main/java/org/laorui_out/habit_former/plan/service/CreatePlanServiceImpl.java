@@ -10,10 +10,12 @@ import org.laorui_out.habit_former.mapper.PlanMapper;
 import org.laorui_out.habit_former.mapper.StudyPlanMapper;
 import org.laorui_out.habit_former.plan.constant.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.sql.Time;
 
+@Service
 public class CreatePlanServiceImpl implements CreatePlanService{
     @Autowired
     PlanMapper planMapper;

@@ -2,13 +2,14 @@ package org.laorui_out.habit_former.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Delete;
+import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 import org.laorui_out.habit_former.bean.StudyPlanBean;
 
 import java.sql.Date;
 import java.util.List;
-
+@Mapper
 public interface StudyPlanMapper extends BaseMapper<StudyPlanBean> {
 
     // 选择特定的study plan
