@@ -2,15 +2,13 @@ package org.laorui_out.habit_former.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Delete;
-import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 import org.laorui_out.habit_former.bean.FitPlanBean;
 
-import java.util.Date;
+import java.sql.Date;
 import java.util.List;
 
-@Mapper
 public interface FitPlanMapper extends BaseMapper<FitPlanBean> {
 
     // 选择特定的fit plan
@@ -24,10 +22,6 @@ public interface FitPlanMapper extends BaseMapper<FitPlanBean> {
             "from FitPlanItem " +
             "where planID = #{planID} and date = #{date};")
     List<FitPlanBean> getFitPlanByDate(int planID, Date date);
-    @Select("select * " +
-            "from FitPlanItem " +
-            "where planID = #{planID} ;")
-    List<FitPlanBean> getFitPlanByPlanID(int planID);
 
     // 删除某一健身计划
     @Delete("delete from FitPlanItem " +
@@ -36,7 +30,7 @@ public interface FitPlanMapper extends BaseMapper<FitPlanBean> {
 
     // 更新某一健身计划
     @Update("update FitPlanItem " +
-            "set fitType = #{fitType}, groupNum = #{groupNum}, " +
+            "set fitType = #{fitSubject}, groupNum = #{groupNum}, " +
             "numPerGroup = #{numPerGroup}, timePerGroup = #{timePerGroup} " +
             "where fitPlanItemID = #{fitPlanItemID};")
     int updateFitPlan(FitPlanBean fitPlanBean);

@@ -49,8 +49,10 @@ public class LLMRequestController {
 
     //流式的prompt响应（传参的标准待修改）
     @PostMapping("/prompt")
-    public SseEmitter handlePlannerRequestStreamPrompt(@org.springframework.web.bind.annotation.RequestBody String theme,String target,String time) throws IOException {
-        String messages=messageService.getJsonMessageStreamPrompt(theme,target,time);
+    public SseEmitter handlePlannerRequestStreamPrompt(@org.springframework.web.bind.annotation.RequestBody PlaningRequest planingRequest) throws IOException {
+        String messages;
+        //这里的传参要改
+        messages=messageService.getJsonMessageStreamPrompt("健身","练腹肌","3");
         ClientParam clientParam=new ClientParam();
         clientService.init(messages,clientParam);
         return clientService.getResponseStream();
