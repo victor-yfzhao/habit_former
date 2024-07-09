@@ -1,4 +1,4 @@
-package org.laorui_out.habit_former.controller;
+package org.laorui_out.habit_former.user.controller;
 
 import jakarta.annotation.Resource;
 import org.laorui_out.habit_former.mapper.UserMapper;

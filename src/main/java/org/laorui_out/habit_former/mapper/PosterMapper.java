@@ -11,10 +11,12 @@ public interface PosterMapper {
 
 
     //根据帖子ID删除poster
-//    @Delete("delete from poster where posterID = #{posterID}")
-//    public boolean deletePosterByPosterId(@Param("posterID") int posterID);
+    @Delete("delete from poster where posterID = #{posterID}")
+    public boolean deletePosterByPosterId(@Param("posterID") int posterID);
 
-
+    //根据帖子ID删除poster图片
+    @Delete("delete from posterpicture where posterID = #{posterID}")
+    public boolean deletePosterPictureByPosterId(@Param("posterID") int posterID);
 
     //直接返回所有poster
     @Select("select * from poster")
@@ -44,10 +46,6 @@ public interface PosterMapper {
     @Select("select COUNT(*) from collection where posterID = #{posterID}")
     int getTotalCollection(int posterID);
 
-    //根据userID选择Poster
-//    @Select("select posterID from poster where userID = #{userID}")
-//    List<Integer> getPosterIDByUserID(int userID);
-
     //根据给来的信息创建帖子
     @Insert("INSERT INTO poster (posterHeadline, posterDetail, userID, planID, posterDate) " +
             "VALUES (#{posterHeadline}, #{posterDetail}, #{userID}, #{planID}, #{posterDate})")
@@ -64,6 +62,7 @@ public interface PosterMapper {
 //
 //
 //    @Select()
-
+//
+//
 
 }

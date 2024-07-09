@@ -30,7 +30,7 @@ public class PosterController {
 
 
     //根据帖子ID，展示一个帖子的所有信息，包括用户信息和帖子信息
-    @GetMapping("poster/findPosterAndUser")
+    @GetMapping("poster/details")
     public ResponseMessage<PosterAndUserBean> getPosterDetails(
             @RequestParam("posterID") int posterID) {
 
@@ -84,7 +84,7 @@ public class PosterController {
     }
 
     //根据ID返回缩略信息
-    @GetMapping("poster/findPosterAndUserParts")
+    @GetMapping("poster/parts/searchID")
     public Object getPosterParts(
             @RequestParam("posterID") int posterID) {
 
@@ -96,6 +96,11 @@ public class PosterController {
 
         //返回一个匿名类对象
         if(poster.getPosterPicture()!=null){
+            System.out.println("列表的长度:");
+            System.out.println(poster.getPosterPicture().size());
+            for(int i =0;i<poster.getPosterPicture().size();i++){
+                System.out.println(poster.getPosterPicture().get(i));
+            }
             return new Object() {
                 public final int userID = userBean.getUserID();
                 public final String username = userBean.getUsername();
@@ -103,7 +108,8 @@ public class PosterController {
                 public final int posterID = poster.getPosterID();
                 public final String posterHeadline = poster.getPosterHeadline();
                 //主要看这里传参的数据类型
-                public final String posterPicture = String.valueOf(poster.getPosterPicture().stream().findFirst());
+                //public final String posterPicture = String.valueOf(poster.getPosterPicture().stream().findFirst());
+                public final String posterPicture = poster.getPosterPicture().get(0);
             };
         }
         else{
@@ -112,7 +118,7 @@ public class PosterController {
     }
 
     //返回封面全部帖子的缩略信息
-    @GetMapping("poster/findAllPosterParts")
+    @GetMapping("poster/allparts")
     public List<ResponseMessage<Object>> getAllPosterParts(){
         List<PosterBean> posterBeanList = posterService.getAllPosterWithPictures();
         return getResponseMessages(posterBeanList);
@@ -127,12 +133,23 @@ public class PosterController {
         return posterMessages;
     }
 
-    @GetMapping("poster/findPosterWithWords")
+    @GetMapping("poster/parts/searchWords")
     public List<ResponseMessage<Object>> getPosterWithWords(String searchWords){
         List<PosterBean> posterBeanList = searchPosterService.getPosterWithWordsAndPictrues(searchWords);
         System.out.println("此时的posterBeanList");
         System.out.println(posterBeanList);
         return getResponseMessages(posterBeanList);
+    }
+
+    @DeleteMapping("poster/deletePoster")
+    public ResponseMessage<String> deletePoster(int posterID){
+        boolean isPosterDelete = posterService.deletePoster(posterID);
+        if(isPosterDelete){
+            return new ResponseMessage<String>(200,"成功删除","成功删除");
+        }
+        else {
+            return new ResponseMessage<String>(400,"删除失败","删除失败");
+        }
     }
 
 

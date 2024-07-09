@@ -67,6 +67,24 @@ public class PosterService {
         return posterMapper.getTotalCollection(posterID);
     }
 
+    public Boolean deletePoster(int posterID){
+        try {
+
+            // 删除 posterpicture 表中的记录
+            boolean pictureDeleted = posterMapper.deletePosterPictureByPosterId(posterID);
+            // 删除 poster 表中的记录
+            boolean posterDeleted = posterMapper.deletePosterByPosterId(posterID);
+
+            // 如果两者都删除成功，则返回 true，否则返回 false
+            return posterDeleted && pictureDeleted;
+        } catch (Exception e) {
+            // 处理异常
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+
     //创建poster
     public String createPoster(int userID,int planID, String posterHeadline,List<String>posterPicture, String posterDetail){
         PosterBean posterBean = new PosterBean();
