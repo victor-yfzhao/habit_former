@@ -2,7 +2,6 @@ package org.laorui_out.habit_former.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.*;
-import org.laorui_out.habit_former.bean.DailyPlanBean;
 import org.laorui_out.habit_former.bean.PlanBean;
 import org.laorui_out.habit_former.plan.constant.Constants;
 
@@ -13,20 +12,20 @@ import java.util.List;
 public interface PlanMapper extends BaseMapper<PlanBean> {
     //查询v2.0
     @Select("select * from plan where userID=#{userID}")
-    List<PlanBean> getAllPlanBeanByUserID(int userID);
+    List<PlanBean> getAllPlanByUserID(int userID);
 
     @Select("select * from plan where planID=#{planID}")
-    PlanBean getPlanBeanByPlanID(int planID);
+    PlanBean getPlanByPlanID(int planID);
 
-    @Select("select * from plan where date=#{date} AND userID=#{userID}")
-    List<PlanBean> getPlanBeanByDate(Date date, int userID);
+    @Select("select * from plan where planDate=#{date} AND userID=#{userID}")
+    List<PlanBean> getPlanByDate(Date date, int userID);
 
     //插入v2.0
     @Insert("insert " +
             "into plan(planName,planInfo,status,userID,planDate,planTime,planType) " +
             "values(#{planName},#{planInfo},'"+ Constants.NOT_CHECKED +"',#{userID},#{planDate},#{planTime},#{planType})")
     @Options(useGeneratedKeys = true, keyProperty = "planID")
-    int addPlanBean(PlanBean planBean);
+    int addPlan(PlanBean planBean);
 
     //更新v2.0
     //date和time不允许更新

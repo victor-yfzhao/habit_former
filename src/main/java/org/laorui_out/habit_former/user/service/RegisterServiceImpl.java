@@ -9,21 +9,27 @@ import java.sql.Date;
 
 @Service
 public class RegisterServiceImpl extends ServiceImpl<UserMapper, UserBean> implements RegisterService {
+
     public RegisterResult register(String username, String password) {
         if (username.isEmpty() || password.length() < 8 || password.length() > 20) {
             return RegisterResult.INVALID_INPUT;
         }
         try{
+            UserBean user = baseMapper.selectByUsername(username);
+            if(user != null) {
+                return RegisterResult.USERNAME_ALREADY_EXISTS;
+            }
+
             UserBean new_user = new UserBean();
 
             new_user.setUsername(username);
             new_user.setPassword(password);
             new_user.setUserIcon("default_icon");
-            new_user.setCreateDate(new Date(System.currentTimeMillis()));
+            new_user.setUserCreateDate(new Date(System.currentTimeMillis()));
 
-            baseMapper.insert(new_user);
+            baseMapper.createUser(new_user);
         }catch (Exception e){
-            return RegisterResult.USERNAME_ALREADY_EXISTS;
+            return RegisterResult.SQL_EXCEPTION;
         }
         return RegisterResult.SUCCESS;
     }

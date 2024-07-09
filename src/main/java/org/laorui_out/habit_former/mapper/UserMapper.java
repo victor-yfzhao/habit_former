@@ -46,4 +46,8 @@ public interface UserMapper extends BaseMapper<UserBean> {
             "from User " +
             "where username = #{username}")
     UserBean getUserProfileThroughUsername(String username);
+
+    @Insert("insert into User (userID, username, password, userIcon, userCreateDate) " +
+            "values (#{userID}, #{username}, #{password}, #{userIcon}, #{userCreateDate})")
+    void createUser(UserBean userBean);
 }

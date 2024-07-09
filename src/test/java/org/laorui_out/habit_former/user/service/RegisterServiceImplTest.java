@@ -29,7 +29,7 @@ class RegisterServiceImplTest {
         user.setUsername("test1");
         user.setPassword("12345678");
         user.setUserIcon("default_icon");
-        user.setCreateDate(new Date(System.currentTimeMillis()));
+        user.setUserCreateDate(new Date(System.currentTimeMillis()));
 
         mapper.insert(user);
     }

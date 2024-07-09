@@ -3,12 +3,19 @@ package org.laorui_out.habit_former.bean;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.Date;
 
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
+@TableName("FitPlanItem")
 public class FitPlanBean {
+
     @TableId(value = "fitPlanItemID", type = IdType.AUTO)
     private Integer fitPlanItemID;
 
