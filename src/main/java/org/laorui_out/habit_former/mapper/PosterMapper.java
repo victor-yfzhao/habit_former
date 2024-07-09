@@ -14,8 +14,18 @@ public interface PosterMapper {
 //    @Delete("delete from poster where posterID = #{posterID}")
 //    public boolean deletePosterByPosterId(@Param("posterID") int posterID);
 
+
+
+    //直接返回所有poster
+    @Select("select * from poster")
+    List<PosterBean> getAllPosters();
+
+    //根据搜索词返回所有标题或者正文带关键词的poster,${}用于参数绑定
+    @Select("SELECT * FROM poster WHERE posterHeadline LIKE CONCAT('%', #{searchWords}, '%') OR posterDetail LIKE CONCAT('%', #{searchWords}, '%') ")
+    List<PosterBean> getPosterWithWords(@Param("searchWords") String searchWords);
+
     //根据帖子ID返回poster
-    @Select("select posterID, posterHeadline, posterDetail, userID, planID, posterDate from poster where posterID = #{posterID}")
+    @Select("select * from poster where posterID = #{posterID}")
     PosterBean getPosterById(int posterID);
 
     //根据帖子ID返回帖子所有图片
@@ -48,8 +58,7 @@ public interface PosterMapper {
     @Insert("INSERT INTO posterpicture (posterID,posterPicture) VALUES (#{posterID},#{posterPicture})")
     int insertPosterPicture(PosterPictureBean posterPictureBean);
 
-//    @Select("select * from poster")
-//    List<PosterBean> getAll();
+
 
 //    @Update()
 //

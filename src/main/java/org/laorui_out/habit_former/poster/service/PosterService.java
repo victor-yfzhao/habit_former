@@ -35,6 +35,18 @@ public class PosterService {
         return posterBean;
     }
 
+    //获取所有图片
+    public List<PosterBean> getAllPosterWithPictures(){
+        List<PosterBean> posterBeanList = posterMapper.getAllPosters();
+        for(PosterBean posterBean:posterBeanList){
+            posterBean = getPosterWithPictures(posterBean.getPosterID());
+        }
+        return posterBeanList;
+    }
+
+
+
+
     //根据posterID获取对应计划的名字
     public String getPlanNameByPosterId(int posterID) {
         return posterMapper.getPlanNameByPosterId(posterID);
@@ -54,16 +66,6 @@ public class PosterService {
     public int getTotalCollection(int posterID){
         return posterMapper.getTotalCollection(posterID);
     }
-
-
-//    public List<PosterBean> getAll(){
-//        return posterMapper.getAll();
-//    }
-
-
-
-
-
 
     //创建poster
     public String createPoster(int userID,int planID, String posterHeadline,List<String>posterPicture, String posterDetail){
@@ -98,8 +100,6 @@ public class PosterService {
         catch (Exception e){
             return "错误";
         }
-
-
         return "上传成功";
     }
 }
