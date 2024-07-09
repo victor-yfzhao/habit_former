@@ -2,10 +2,8 @@ package org.laorui_out.habit_former.poster.controller;
 
 import org.laorui_out.habit_former.bean.PosterAndUserBean;
 import org.laorui_out.habit_former.bean.PosterBean;
-import org.laorui_out.habit_former.bean.PosterPictureBean;
 import org.laorui_out.habit_former.bean.UserBean;
-import org.laorui_out.habit_former.poster.service.PosterService;
-import org.laorui_out.habit_former.poster.service.SearchPosterService;
+import org.laorui_out.habit_former.poster.service.*;
 import org.laorui_out.habit_former.utils.ResponseMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -20,13 +18,21 @@ public class PosterController {
 
     private final PosterService posterService;
     private final SearchPosterService searchPosterService;
+    private final CreatePosterService createPosterService;
+    private final PosterPictureService posterPictureService;
+    private final DeletePosterService deletePosterService;
+
 
 
     @Autowired
-    public PosterController(PosterService posterService, SearchPosterService searchPosterService) {
+    public PosterController(PosterService posterService, SearchPosterService searchPosterService, CreatePosterService createPosterService, PosterPictureService posterPictureService, DeletePosterService deletePosterService) {
         this.posterService = posterService;
         this.searchPosterService = searchPosterService;
+        this.createPosterService = createPosterService;
+        this.posterPictureService = posterPictureService;
+        this.deletePosterService = deletePosterService;
     }
+
 
 
     //根据帖子ID，展示一个帖子的所有信息，包括用户信息和帖子信息
@@ -37,7 +43,7 @@ public class PosterController {
         // Get user details
         UserBean userBean = posterService.getUserByPosterId(posterID);
         // Get poster details with pictures
-        PosterBean poster = posterService.getPosterWithPictures(posterID);
+        PosterBean poster = posterPictureService.getPosterWithPictures(posterID);
 
         String planName = posterService.getPlanNameByPosterId(posterID);
 
@@ -76,7 +82,7 @@ public class PosterController {
     @PostMapping("poster/createPoster")
     public ResponseMessage<String> createPoster(@RequestBody Map<String,Object> map)
     {   List<String> pictureList = (List< String>)map.get("posterPicture");
-        String isCreate = posterService.createPoster((int)map.get("userID"), (int)map.get("planID"), (String) map.get("posterHeadline"), pictureList, (String) map.get("posterDetail"));
+        String isCreate = createPosterService.createPoster((int)map.get("userID"), (int)map.get("planID"), (String) map.get("posterHeadline"), pictureList, (String) map.get("posterDetail"));
         if(Objects.equals(isCreate, "上传成功")){
             return new ResponseMessage<String>(200,"成功",isCreate);
         }
@@ -92,7 +98,7 @@ public class PosterController {
         UserBean userBean = posterService.getUserByPosterId(posterID);
 
         //获取帖子信息
-        PosterBean poster = posterService.getPosterWithPictures(posterID);
+        PosterBean poster = posterPictureService.getPosterWithPictures(posterID);
 
         //返回一个匿名类对象
         if(poster.getPosterPicture()!=null){
@@ -120,7 +126,7 @@ public class PosterController {
     //返回封面全部帖子的缩略信息
     @GetMapping("poster/allparts")
     public List<ResponseMessage<Object>> getAllPosterParts(){
-        List<PosterBean> posterBeanList = posterService.getAllPosterWithPictures();
+        List<PosterBean> posterBeanList = posterPictureService.getAllPosterWithPictures();
         return getResponseMessages(posterBeanList);
     }
 
@@ -143,7 +149,7 @@ public class PosterController {
 
     @DeleteMapping("poster/deletePoster")
     public ResponseMessage<String> deletePoster(int posterID){
-        boolean isPosterDelete = posterService.deletePoster(posterID);
+        boolean isPosterDelete = deletePosterService.deletePoster(posterID);
         if(isPosterDelete){
             return new ResponseMessage<String>(200,"成功删除","成功删除");
         }

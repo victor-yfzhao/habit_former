@@ -13,9 +13,12 @@ public class SearchPosterService {
     private final PosterMapper posterMapper;
     private final PosterService posterService;
 
-    SearchPosterService(PosterMapper posterMapper, PosterService posterService) {
+    private final PosterPictureService posterPictureService;
+
+    SearchPosterService(PosterMapper posterMapper, PosterService posterService, PosterPictureService posterPictureService) {
         this.posterMapper = posterMapper;
         this.posterService = posterService;
+        this.posterPictureService = posterPictureService;
     }
 //    List<PosterBean> getPosterWithWords(String searchWords){
 //        return posterMapper.getPosterWithWords(searchWords);
@@ -29,7 +32,7 @@ public class SearchPosterService {
 //        System.out.println(posterBeanList);
         //这里最初没更新图片列表
         for(PosterBean posterBean:posterBeanList){
-            posterBean = posterService.getPosterWithPictures(posterBean.getPosterID());
+            posterBean = posterPictureService.getPosterWithPictures(posterBean.getPosterID());
             newPosterBeanList.add(posterBean);
         }
 //        System.out.println("更新图片后的帖子列表");

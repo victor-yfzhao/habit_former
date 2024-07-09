@@ -11,7 +11,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 @Service
-//帖子的一些操作，如增删改查
+//帖子的一些操作，获取信息的操作
 public class PosterService {
     private final PosterMapper posterMapper;
     private final UserMapper userMapper;
@@ -20,32 +20,6 @@ public class PosterService {
         this.posterMapper = posterMapper;
         this.userMapper = userMapper;
     }
-//    public boolean deletePosterByPosterId(int posterid){
-//        boolean isDelete = posterMapper.deletePosterByPosterId(posterid);
-//        return isDelete;
-//    }
-
-    //根据posterID获取帖子中的所有图片
-    public PosterBean getPosterWithPictures(int posterID) {
-        PosterBean posterBean = posterMapper.getPosterById(posterID);
-        if (posterBean != null) {
-            List<String> pictureUrls = posterMapper.getPosterPicturesByPosterId(posterID);
-            posterBean.setPosterPicture(pictureUrls);
-        }
-        return posterBean;
-    }
-
-    //获取所有图片
-    public List<PosterBean> getAllPosterWithPictures(){
-        List<PosterBean> posterBeanList = posterMapper.getAllPosters();
-        for(PosterBean posterBean:posterBeanList){
-            posterBean = getPosterWithPictures(posterBean.getPosterID());
-        }
-        return posterBeanList;
-    }
-
-
-
 
     //根据posterID获取对应计划的名字
     public String getPlanNameByPosterId(int posterID) {
@@ -67,57 +41,4 @@ public class PosterService {
         return posterMapper.getTotalCollection(posterID);
     }
 
-    public Boolean deletePoster(int posterID){
-        try {
-
-            // 删除 posterpicture 表中的记录
-            boolean pictureDeleted = posterMapper.deletePosterPictureByPosterId(posterID);
-            // 删除 poster 表中的记录
-            boolean posterDeleted = posterMapper.deletePosterByPosterId(posterID);
-
-            // 如果两者都删除成功，则返回 true，否则返回 false
-            return posterDeleted && pictureDeleted;
-        } catch (Exception e) {
-            // 处理异常
-            e.printStackTrace();
-            return false;
-        }
-    }
-
-
-    //创建poster
-    public String createPoster(int userID,int planID, String posterHeadline,List<String>posterPicture, String posterDetail){
-        PosterBean posterBean = new PosterBean();
-        posterBean.setPosterHeadline(posterHeadline);
-        posterBean.setPosterDetail(posterDetail);
-        posterBean.setUserID(userID);
-        posterBean.setPlanID(planID);
-        posterBean.setPosterDate(LocalDate.now());
-        //获取当前的posterID,和userID一起插入关系表中
-        //更新一个poster的信息
-        try{
-            //
-            if(posterPicture == null){
-                return "没有图片，加载错误";
-            }
-            int isUP = posterMapper.insertPoster(posterBean);
-            System.out.println(isUP);
-            if( isUP < 0){
-                return "个人帖子加载失败";
-            }
-            for(String picture:posterPicture){
-                PosterPictureBean posterPictureBean = new PosterPictureBean();
-                posterPictureBean.setPosterID(posterBean.getPosterID());
-                posterPictureBean.setPosterPicture(picture);
-                int isInsertPicture = posterMapper.insertPosterPicture(posterPictureBean);
-                if( isInsertPicture < 0){
-                    return "图片加载失败";
-                }
-            }
-        }
-        catch (Exception e){
-            return "错误";
-        }
-        return "上传成功";
-    }
 }
