@@ -22,6 +22,10 @@ public interface StudyPlanMapper extends BaseMapper<StudyPlanBean> {
             "from StudyPlanItem " +
             "where planID = #{planID} and date = #{date};")
     List<StudyPlanBean> getStudyPlanByDate(int planID, Date date);
+    @Select("select * " +
+            "from StudyPlanItem " +
+            "where planID = #{planID} ;")
+    List<StudyPlanBean> getStudyPlanByPlanID(int planID);
 
     // 删除某一学习计划
     @Delete("delete from StudyPlanItem " +
