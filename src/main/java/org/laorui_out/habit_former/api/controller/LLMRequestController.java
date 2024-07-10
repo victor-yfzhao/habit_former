@@ -7,12 +7,10 @@ import org.laorui_out.habit_former.api.service.ClientService;
 import org.laorui_out.habit_former.api.service.MessageService;
 import org.laorui_out.habit_former.bean.DailyPlanBean;
 import org.laorui_out.habit_former.bean.PlanBean;
+import org.laorui_out.habit_former.plan.constant.Constants;
 import org.laorui_out.habit_former.plan.service.CreatePlanService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.util.ArrayList;
@@ -55,11 +53,17 @@ public class LLMRequestController {
     }
 
     //流式的prompt响应（传参的标准待统一）
-    @PostMapping("/prompt")
-    public SseEmitter handlePlannerRequestStreamPrompt(@RequestBody String theme,String target,String time) {
+    @GetMapping("/prompt")
+    public SseEmitter handlePlannerRequestStreamPrompt(@RequestParam String theme, String target, String time) {
         //String messages=messageService.getJsonMessageStreamPrompt(theme,target,time);
         //根据不同的theme的值调用不同的messageService方法
-        String messages=messageService.getJsonMessageFitPrompt("增胸肌","5");
+        System.out.println("theme:"+theme+"target:"+target+"time:"+time);
+        String messages;
+        if(theme.equals(Constants.FIT_PLAN_TYPE))
+            messages=messageService.getJsonMessageFitPrompt(target,time);
+        else if(theme.equals(Constants.STUDY_PLAN_TYPE))
+            messages=messageService.getJsonMessageStudyPrompt(target,time);
+        else messages=messageService.getJsonMessageStreamPrompt(theme,target,time);
 
         ClientParam clientParam=new ClientParam();
         clientService.init(messages,clientParam);
