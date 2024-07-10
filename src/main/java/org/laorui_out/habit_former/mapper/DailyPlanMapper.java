@@ -11,32 +11,32 @@ import java.util.List;
 @Mapper
 public interface DailyPlanMapper extends BaseMapper<DailyPlanBean> {
     //查询
-    @Select("select * from dailyplan where planID=#{planID}")
+    @Select("select * from DailyPlan where planID=#{planID}")
     List<DailyPlanBean> getAllDailyPlanByPlanID(int planID);
 
-    @Select("select * from dailyplan where dailyPlanID=#{dailyPlanID}")
+    @Select("select * from DailyPlan where dailyPlanID=#{dailyPlanID}")
     DailyPlanBean getDailyPlanByID(int dailyPlanID);
 
-    @Select("select * from dailyplan where date=#{date} AND planID=#{planID}")
+    @Select("select * from DailyPlan where date=#{date} AND planID=#{planID}")
     List<DailyPlanBean> getDailyPlanByDate(Date date,int planID);
 
     //插入
     @Insert("insert " +
-            "into dailyplan(date,planDetail,status,planID) " +
+            "into DailyPlan(date,planDetail,status,planID) " +
             "values(#{date},#{planDetail},'"+ Constants.NOT_CHECKED +"',#{planID})")
     @Options(useGeneratedKeys = true, keyProperty = "dailyPlanID")
     int addDailyPlan(DailyPlanBean dailyPlanBean);
     //更新
-    @Update("UPDATE dailyplan " +
+    @Update("UPDATE DailyPlan " +
             "SET planDetail = #{planDetail}, status = #{status} " +
             "WHERE dailyPlanID = #{dailyPlanID}")
     int updateDailyPlan(DailyPlanBean dailyPlanBean);
 
     //删除
-    @Delete("Delete from dailyplan where dailyPlanID=#{dailyPlanID}")
+    @Delete("Delete from DailyPlan where dailyPlanID=#{dailyPlanID}")
     int deleteDailyPlanByID(int dailyPlanID);
 
-    @Delete("Delete from dailyplan where planID=#{planID}")
+    @Delete("Delete from DailyPlan where planID=#{planID}")
     int deleteAllDailyPlanByPlanID(int planID);
 
 }
