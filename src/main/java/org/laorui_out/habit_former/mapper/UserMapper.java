@@ -4,8 +4,15 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.*;
 import org.laorui_out.habit_former.bean.UserBean;
 
+import java.util.List;
+
 @Mapper
 public interface UserMapper extends BaseMapper<UserBean> {
+
+    //根据帖子ID查找用户信息
+    @Select("SELECT userID, username, userIcon FROM User WHERE " +
+            "userID = (SELECT userID FROM poster WHERE posterID = #{posterID})")
+    UserBean getUserByPosterId(@Param("posterID") int posterID);
 
     // 根据用户名查找用户（仅供登录使用）
     @Select("select * " +
@@ -46,4 +53,6 @@ public interface UserMapper extends BaseMapper<UserBean> {
             "from User " +
             "where username = #{username}")
     UserBean getUserProfileThroughUsername(String username);
+
+
 }

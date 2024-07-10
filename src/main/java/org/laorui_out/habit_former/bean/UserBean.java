@@ -31,7 +31,7 @@ public class UserBean {
 
     @TableField("userCreateDate")
     @JsonIgnore
-    private Date createDate;
+    private Date userCreateDate;
 
     @Override
     public String toString() {

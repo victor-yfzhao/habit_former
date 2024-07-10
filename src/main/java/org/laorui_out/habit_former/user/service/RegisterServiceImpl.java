@@ -19,7 +19,7 @@ public class RegisterServiceImpl extends ServiceImpl<UserMapper, UserBean> imple
             new_user.setUsername(username);
             new_user.setPassword(password);
             new_user.setUserIcon("default_icon");
-            new_user.setCreateDate(new Date(System.currentTimeMillis()));
+            new_user.setUserCreateDate(new Date(System.currentTimeMillis()));
 
             baseMapper.insert(new_user);
         }catch (Exception e){
