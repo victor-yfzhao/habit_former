@@ -28,9 +28,9 @@ public class UserController {
         LoginResult result;
         try{
             result = loginService.login(username, password);
-        if (Objects.requireNonNull(result) == LoginResult.SUCCESS) {
-            return new ResponseMessage<>(200, result.toString(), profileService.getProfile(username));
-        }}catch(Exception e){
+            if (Objects.requireNonNull(result) == LoginResult.SUCCESS) {
+                return new ResponseMessage<>(200, result.toString(), profileService.getProfile(username));
+            }}catch(Exception e){
             return new ResponseMessage<>(500, "unknown error", null);
         }
         return new ResponseMessage<>(400, result.toString(), null);
@@ -77,3 +77,4 @@ public class UserController {
         return new ResponseMessage<>(400, "failed to update username", null);
     }
 }
+
