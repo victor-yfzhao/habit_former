@@ -2,7 +2,6 @@ package org.laorui_out.habit_former.utils;
 
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -15,23 +14,12 @@ import java.io.IOException;
 public class FileHandler {
     @PostMapping("/uploadFile")
     public String uploadFile(HttpServletRequest request, @RequestParam("file") MultipartFile file) throws IOException{
+        // 这样就可以收到文件了，files.length == 1
         String path = request.getServletContext().getRealPath("/uploadFile/");
         saveFile(file, path);
         System.out.println(path);
         return path + file.getOriginalFilename();
-
-        // 这样就可以收到文件了，files.length == 1.
-        //System.out.println(file.length);
-
     }
-
-
-//    public String upLoad(MultipartFile picture, HttpServletRequest request) throws IOException {
-//        String path = request.getServletContext().getRealPath("/uploadFile/");
-//
-//        saveFile(picture, path);
-//        return path;
-//    }
 
     public void saveFile(MultipartFile picture, String path) throws IOException {
         File dir = new File(path);

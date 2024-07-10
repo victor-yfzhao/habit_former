@@ -1,11 +1,13 @@
 package org.laorui_out.habit_former.bean;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import java.time.LocalDate;
 import java.util.List;
 
 @Data
+@AllArgsConstructor
 public class PosterAndUserBean {
 
         private int userID;
@@ -18,7 +20,7 @@ public class PosterAndUserBean {
         private LocalDate posterDate;
         private int planID;
         private String planName;
-        private int NumOfLikes;
-        private int NumOfCollections;
+        private int numOfLikes;
+        private int numOfCollections;
 
 }

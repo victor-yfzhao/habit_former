@@ -1,5 +1,6 @@
 package org.laorui_out.habit_former.poster.service;
 
+import jakarta.annotation.Resource;
 import org.laorui_out.habit_former.bean.PosterBean;
 import org.laorui_out.habit_former.bean.PosterPictureBean;
 import org.laorui_out.habit_former.mapper.PosterMapper;
@@ -7,13 +8,11 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
+
 @Service
 public class CreatePosterService {
-    private final PosterMapper posterMapper;
-
-    public CreatePosterService(PosterMapper posterMapper) {
-        this.posterMapper = posterMapper;
-    }
+    @Resource
+    PosterMapper posterMapper;
 
     public String createPoster(int userID, int planID, String posterHeadline, List<String> posterPicture, String posterDetail){
         PosterBean posterBean = new PosterBean();
@@ -45,7 +44,7 @@ public class CreatePosterService {
             }
         }
         catch (Exception e){
-            return "错误";
+            return "出现错误";
         }
         return "上传成功";
     }

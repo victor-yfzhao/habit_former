@@ -56,6 +56,8 @@ public interface PosterMapper {
     @Insert("INSERT INTO posterpicture (posterID,posterPicture) VALUES (#{posterID},#{posterPicture})")
     int insertPosterPicture(PosterPictureBean posterPictureBean);
 
+    @Select("select posterID from poster")
+    List<Integer> getAllPosterID();
 
 
 //    @Update()

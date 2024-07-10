@@ -6,9 +6,6 @@ import org.laorui_out.habit_former.bean.UserBean;
 
 @Mapper
 public interface UserMapper extends BaseMapper<UserBean> {
-//    @Select("select * from user where username = #{username}")
-//    UserBean getUserByUsername(String username);
-
 
     //根据帖子ID查找用户信息
     @Select("SELECT userID, username, userIcon FROM User WHERE " +

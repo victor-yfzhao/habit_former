@@ -1,10 +1,12 @@
 package org.laorui_out.habit_former.poster.controller;
 
+import jakarta.annotation.Resource;
 import org.laorui_out.habit_former.bean.PosterAndUserBean;
 import org.laorui_out.habit_former.bean.PosterBean;
 import org.laorui_out.habit_former.bean.UserBean;
 import org.laorui_out.habit_former.poster.service.*;
 import org.laorui_out.habit_former.utils.ResponseMessage;
+import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,25 +17,16 @@ import java.util.Objects;
 
 @RestController
 public class PosterController {
-
-    private final PosterService posterService;
-    private final SearchPosterService searchPosterService;
-    private final CreatePosterService createPosterService;
-    private final PosterPictureService posterPictureService;
-    private final DeletePosterService deletePosterService;
-
-
-
-    @Autowired
-    public PosterController(PosterService posterService, SearchPosterService searchPosterService, CreatePosterService createPosterService, PosterPictureService posterPictureService, DeletePosterService deletePosterService) {
-        this.posterService = posterService;
-        this.searchPosterService = searchPosterService;
-        this.createPosterService = createPosterService;
-        this.posterPictureService = posterPictureService;
-        this.deletePosterService = deletePosterService;
-    }
-
-
+    @Resource
+    PosterService posterService;
+    @Resource
+    SearchPosterService searchPosterService;
+    @Resource
+    CreatePosterService createPosterService;
+    @Resource
+    PosterPictureService posterPictureService;
+    @Resource
+    DeletePosterService deletePosterService;
 
     //根据帖子ID，展示一个帖子的所有信息，包括用户信息和帖子信息
     @GetMapping("poster/details")
@@ -56,25 +49,21 @@ public class PosterController {
         System.out.println(numOfCollection);
 
         // 为这个类对象赋值
-        PosterAndUserBean posterAndUserBean = new PosterAndUserBean();
-        posterAndUserBean.setUserID(userBean.getUserID());
-        posterAndUserBean.setUsername(userBean.getUsername());
-        posterAndUserBean.setUserIcon(userBean.getUserIcon());
-        posterAndUserBean.setPosterID(poster.getPosterID());
-        posterAndUserBean.setPosterHeadline(poster.getPosterHeadline());
-        posterAndUserBean.setPosterPicture(poster.getPosterPicture());
-        posterAndUserBean.setPosterDetail(poster.getPosterDetail());
-        posterAndUserBean.setPosterDate(poster.getPosterDate());
-        posterAndUserBean.setPlanID(poster.getPlanID());
-        posterAndUserBean.setPlanName(planName);
-        posterAndUserBean.setNumOfLikes(numOfLikes);
-        posterAndUserBean.setNumOfCollections(numOfCollection);
+        PosterAndUserBean posterAndUserBean = new PosterAndUserBean(
+                userBean.getUserID(),
+                userBean.getUsername(),
+                userBean.getUserIcon(),
+                poster.getPosterID(),
+                poster.getPosterHeadline(),
+                poster.getPosterPicture(),
+                poster.getPosterDetail(),
+                poster.getPosterDate(),
+                poster.getPlanID(),
+                planName,
+                numOfLikes,
+                numOfCollection);
 
-        ResponseMessage<PosterAndUserBean> responseMessage = new ResponseMessage<PosterAndUserBean>();
-        responseMessage.setCode(200);
-        responseMessage.setMessage("成功显示");
-        responseMessage.setData(posterAndUserBean);
-        return responseMessage;
+        return new ResponseMessage<PosterAndUserBean>(200,"成功显示",posterAndUserBean);
 
     }
 
@@ -93,7 +82,6 @@ public class PosterController {
     @GetMapping("poster/parts/searchID")
     public Object getPosterParts(
             @RequestParam("posterID") int posterID) {
-
         //获取用户信息
         UserBean userBean = posterService.getUserByPosterId(posterID);
 
@@ -108,42 +96,39 @@ public class PosterController {
                 System.out.println(poster.getPosterPicture().get(i));
             }
             return new Object() {
-                public final int userID = userBean.getUserID();
-                public final String username = userBean.getUsername();
-                public final String userIcon = userBean.getUserIcon();
-                public final int posterID = poster.getPosterID();
-                public final String posterHeadline = poster.getPosterHeadline();
-                //主要看这里传参的数据类型
-                //public final String posterPicture = String.valueOf(poster.getPosterPicture().stream().findFirst());
-                public final String posterPicture = poster.getPosterPicture().get(0);
-            };
+                        public final int userID = userBean.getUserID();
+                        public final String username = userBean.getUsername();
+                        public final String userIcon = userBean.getUserIcon();
+                        public final int posterID = poster.getPosterID();
+                        public final String posterHeadline = poster.getPosterHeadline();
+                        //主要看这里传参的数据类型
+                        public final String posterPicture = poster.getPosterPicture().get(0);
+                    };
         }
         else{
-            return "图片不能为空";
+            return "信息获取失败";
         }
     }
 
     //返回封面全部帖子的缩略信息
     @GetMapping("poster/allparts")
-    public List<ResponseMessage<Object>> getAllPosterParts(){
+    public ResponseMessage<List> getAllPosterParts(){
         List<PosterBean> posterBeanList = posterPictureService.getAllPosterWithPictures();
         return getResponseMessages(posterBeanList);
     }
 
-    private List<ResponseMessage<Object>> getResponseMessages(List<PosterBean> posterBeanList) {
-        List<ResponseMessage<Object>> posterMessages = new ArrayList<>();
+    private ResponseMessage<List> getResponseMessages(List<PosterBean> posterBeanList) {
+        List<Object> posterMessages = new ArrayList<>();
         for(PosterBean posterBean : posterBeanList){
             Object posterBeanPartItem = getPosterParts(posterBean.getPosterID());
-            posterMessages.add(new ResponseMessage<Object>(200,"显示成功",posterBeanPartItem));
+            posterMessages.add(posterBeanPartItem);
         }
-        return posterMessages;
+        return new ResponseMessage<>(200,"帖子缩略信息返回成功",posterMessages);
     }
 
     @GetMapping("poster/parts/searchWords")
-    public List<ResponseMessage<Object>> getPosterWithWords(String searchWords){
+    public ResponseMessage<List> getPosterWithWords(String searchWords){
         List<PosterBean> posterBeanList = searchPosterService.getPosterWithWordsAndPictrues(searchWords);
-        System.out.println("此时的posterBeanList");
-        System.out.println(posterBeanList);
         return getResponseMessages(posterBeanList);
     }
 

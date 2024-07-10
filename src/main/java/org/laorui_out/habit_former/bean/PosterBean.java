@@ -15,8 +15,8 @@ public class PosterBean {
     private int userID; //外键
     private int planID; //外键
     private LocalDate posterDate;   //帖子发布时间
-    private int NumOfLikes;     //帖子的当前点赞数
-    private int NumOfCollections;   //帖子的当前收藏数
+    private int numOfLikes;     //帖子的当前点赞数
+    private int numOfCollections;   //帖子的当前收藏数
 
 
 }

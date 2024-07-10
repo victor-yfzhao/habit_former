@@ -1,14 +1,14 @@
 package org.laorui_out.habit_former.poster.service;
 
+import jakarta.annotation.Resource;
 import org.laorui_out.habit_former.mapper.PosterMapper;
 import org.springframework.stereotype.Service;
 
 @Service
 public class DeletePosterService {
-    private final PosterMapper posterMapper;
-    public DeletePosterService(PosterMapper posterMapper) {
-        this.posterMapper = posterMapper;
-    }
+    @Resource
+    PosterMapper posterMapper;
+
     //根据帖子ID删除帖子
     public Boolean deletePoster(int posterID){
         try {
