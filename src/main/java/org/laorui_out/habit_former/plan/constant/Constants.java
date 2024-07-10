@@ -1,8 +1,3 @@
-//package org.laorui_out.habit_former.plan.constant;
-//
-//public class Constants {
-//}
-
 package org.laorui_out.habit_former.plan.constant;
 
 public class Constants {
