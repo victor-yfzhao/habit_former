@@ -11,7 +11,7 @@ public interface UserMapper extends BaseMapper<UserBean> {
 
     //根据帖子ID查找用户信息
     @Select("SELECT userID, username, userIcon FROM User WHERE " +
-            "userID = (SELECT userID FROM poster WHERE posterID = #{posterID})")
+            "userID = (SELECT userID FROM Poster WHERE posterID = #{posterID})")
     UserBean getUserByPosterId(@Param("posterID") int posterID);
 
     // 根据用户名查找用户（仅供登录使用）
@@ -54,5 +54,7 @@ public interface UserMapper extends BaseMapper<UserBean> {
             "where username = #{username}")
     UserBean getUserProfileThroughUsername(String username);
 
-
+    @Insert("insert into User (username, password, userIcon, userCreateDate) " +
+            "values (#{username}, #{password}, #{userIcon}, #{userCreateDate})")
+    void createUser(UserBean userBean);
 }

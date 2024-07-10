@@ -13,6 +13,13 @@ public class RegisterServiceImpl extends ServiceImpl<UserMapper, UserBean> imple
         if (username.isEmpty() || password.length() < 8 || password.length() > 20) {
             return RegisterResult.INVALID_INPUT;
         }
+
+        UserBean user = baseMapper.selectByUsername(username);
+
+        if (user != null) {
+            return RegisterResult.USERNAME_ALREADY_EXISTS;
+        }
+
         try{
             UserBean new_user = new UserBean();
 
@@ -21,9 +28,10 @@ public class RegisterServiceImpl extends ServiceImpl<UserMapper, UserBean> imple
             new_user.setUserIcon("default_icon");
             new_user.setUserCreateDate(new Date(System.currentTimeMillis()));
 
-            baseMapper.insert(new_user);
+            baseMapper.createUser(new_user);
         }catch (Exception e){
-            return RegisterResult.USERNAME_ALREADY_EXISTS;
+            System.out.println(e.getMessage());
+            return RegisterResult.SQL_ERROR;
         }
         return RegisterResult.SUCCESS;
     }

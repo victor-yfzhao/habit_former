@@ -50,28 +50,24 @@ public class CreatePosterService {
         posterBean.setPosterDate(LocalDate.now());
         //获取当前的posterID,和userID一起插入关系表中
         //更新一个poster的信息s
-        try{
-            if(posterPicture == null || posterPicture.isEmpty()){
-                return "没有图片，帖子创建失败";
-            }
-            int isUP = posterMapper.insertPoster(posterBean);
-            System.out.println(isUP);
-            if( isUP <= 0){
-                return "个人帖子创建失败";
-            }
-            for(String picture:posterPicture){
-                PosterPictureBean posterPictureBean = new PosterPictureBean();
-                posterPictureBean.setPosterID(posterBean.getPosterID());
-                posterPictureBean.setPosterPicture(picture);
-                int isInsertPicture = posterMapper.insertPosterPicture(posterPictureBean);
-                if( isInsertPicture <= 0){
-                    return "图片加载失败";
-                }
+        if(posterPicture == null || posterPicture.isEmpty()){
+            return "没有图片，帖子创建失败";
+        }
+        int isUP = posterMapper.insertPoster(posterBean);
+        System.out.println(isUP);
+        if( isUP <= 0){
+            return "个人帖子创建失败";
+        }
+        for(String picture:posterPicture){
+            PosterPictureBean posterPictureBean = new PosterPictureBean();
+            posterPictureBean.setPosterID(posterBean.getPosterID());
+            posterPictureBean.setPosterPicture(picture);
+            int isInsertPicture = posterMapper.insertPosterPicture(posterPictureBean);
+            if( isInsertPicture <= 0){
+                return "图片加载失败";
             }
         }
-        catch (Exception e){
-            return "创建出现错误";
-        }
+
         return "创建成功";
     }
 }

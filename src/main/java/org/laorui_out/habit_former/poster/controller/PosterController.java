@@ -33,46 +33,51 @@ public class PosterController {
     public ResponseMessage<Object> getPosterDetails(
             @RequestParam("posterID") int posterID) {
 
-        if(!posterService.isInPosterIDList(posterID)){
-            return new ResponseMessage<>(500,"错误","帖子ID不存在，信息显示错误");
+        try{
+            if(!posterService.isInPosterIDList(posterID)){
+                return new ResponseMessage<>(500,"错误","帖子ID不存在，信息显示错误");
+            }
+            // Get user details
+            UserBean userBean = posterService.getUserByPosterId(posterID);
+            if(userBean == null){
+                return new ResponseMessage<>(500,"错误","帖子对应的用户信息不存在，信息显示错误");
+            }
+            // Get poster details with pictures
+            PosterBean poster = posterPictureService.getPosterWithPictures(posterID);
+            if(poster.getPosterPicture() == null){
+                return new ResponseMessage<>(500,"错误","帖子对应的图片信息不存在，信息显示错误");
+            }
+
+            String planName = posterService.getPlanNameByPosterId(posterID);
+            if(planName == null){
+                return new ResponseMessage<>(500,"错误","帖子对应的计划不存在，信息显示错误");
+            }
+
+            int numOfLikes = posterService.getTotalLikes(posterID);
+
+            int numOfCollection = posterService.getTotalCollection(posterID);
+
+            // 为这个类对象赋值
+            PosterAndUserBean posterAndUserBean = new PosterAndUserBean(
+                    userBean.getUserID(),
+                    userBean.getUsername(),
+                    userBean.getUserIcon(),
+                    poster.getPosterID(),
+                    poster.getPosterHeadline(),
+                    poster.getPosterPicture(),
+                    poster.getPosterDetail(),
+                    poster.getPosterDate(),
+                    poster.getPlanID(),
+                    planName,
+                    numOfLikes,
+                    numOfCollection);
+            return new ResponseMessage<>(200,"成功显示",posterAndUserBean);
+
+        }catch (Exception e){
+            return new ResponseMessage<>(500,"失败",e.getMessage());
         }
 
-        // Get user details
-        UserBean userBean = posterService.getUserByPosterId(posterID);
-        if(userBean == null){
-            return new ResponseMessage<>(500,"错误","帖子对应的用户信息不存在，信息显示错误");
-        }
-        // Get poster details with pictures
-        PosterBean poster = posterPictureService.getPosterWithPictures(posterID);
-        if(poster.getPosterPicture() == null){
-            return new ResponseMessage<>(500,"错误","帖子对应的图片信息不存在，信息显示错误");
-        }
 
-        String planName = posterService.getPlanNameByPosterId(posterID);
-        if(planName == null){
-            return new ResponseMessage<>(500,"错误","帖子对应的计划不存在，信息显示错误");
-        }
-
-        int numOfLikes = posterService.getTotalLikes(posterID);
-
-        int numOfCollection = posterService.getTotalCollection(posterID);
-
-        // 为这个类对象赋值
-        PosterAndUserBean posterAndUserBean = new PosterAndUserBean(
-                userBean.getUserID(),
-                userBean.getUsername(),
-                userBean.getUserIcon(),
-                poster.getPosterID(),
-                poster.getPosterHeadline(),
-                poster.getPosterPicture(),
-                poster.getPosterDetail(),
-                poster.getPosterDate(),
-                poster.getPlanID(),
-                planName,
-                numOfLikes,
-                numOfCollection);
-
-        return new ResponseMessage<>(200,"成功显示",posterAndUserBean);
 
     }
 
@@ -80,12 +85,19 @@ public class PosterController {
     //创建帖子
     @PostMapping("poster/createPoster")
     public ResponseMessage<String> createPoster(@RequestBody Map<String,Object> map)
-    {   List<String> pictureList = (List< String>)map.get("posterPicture");
-        String isCreate = createPosterService.createPoster((int)map.get("userID"), (int)map.get("planID"), (String) map.get("posterHeadline"), pictureList, (String) map.get("posterDetail"));
-        if(Objects.equals(isCreate, "上传成功")){
-            return new ResponseMessage<String>(200,"成功",isCreate);
+    {
+        try{
+            List<String> pictureList = (List< String>)map.get("posterPicture");
+            String isCreate = createPosterService.createPoster((int)map.get("userID"), (int)map.get("planID"), (String) map.get("posterHeadline"), pictureList, (String) map.get("posterDetail"));
+            System.out.println("现在的isCreate是：" + isCreate);
+            if(Objects.equals(isCreate, "创建成功")){
+                return new ResponseMessage<String>(200,"成功",isCreate);
+            }
+            return new ResponseMessage<String>(500,"失败",isCreate);
         }
-        return new ResponseMessage<String>(500,"失败",isCreate);
+        catch (Exception e){
+            return new ResponseMessage<>(500, "失败", e.getMessage());
+        }
     }
 
 

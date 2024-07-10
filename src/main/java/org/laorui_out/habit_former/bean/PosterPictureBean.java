@@ -4,6 +4,7 @@ import lombok.Data;
 
 @Data
 public class PosterPictureBean {
+
     private int posterID;
     private String posterPicture;
 
