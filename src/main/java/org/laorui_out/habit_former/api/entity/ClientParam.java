@@ -7,7 +7,7 @@ import java.util.Date;
 @Data
 public class ClientParam {
     //获取token的源地址
-    private String baseUrl="https://aip.baidubce.com/oauth/2.0/token";
+    private static final String baseUrl="https://aip.baidubce.com/oauth/2.0/token";
 
     //获取凭证的id(APIKEY)
     private String clientID="Gii5F3jajJBZ6b3eJqrvRm8A";

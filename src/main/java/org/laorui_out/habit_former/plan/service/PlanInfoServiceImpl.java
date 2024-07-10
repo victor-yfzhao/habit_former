@@ -30,17 +30,19 @@ public class PlanInfoServiceImpl extends ServiceImpl<PlanMapper, PlanBean> imple
 
     @Resource
     private StudyPlanMapper studyPlanMapper;
+    @Resource
+    private PlanMapper planMapper;
 
     @Override
     public List<PlanBean> getAllPlanInfo(int userID) {
-        return baseMapper.getAllPlanByUserID(userID);
+        return planMapper.getAllPlanByUserID(userID);
     }
 
     @Override
     public List<Plan4EachDay> getPlanInMonth(int userID, int year, int month) {
         Calendar calendar = Calendar.getInstance();
         calendar.set(year, month - 1, 1);
-        Date startDate = (Date) calendar.getTime();
+        Date startDate = new Date(calendar.getTime().getTime());
         if (month == 12) {
             month = 1;
             year++;
@@ -49,7 +51,7 @@ public class PlanInfoServiceImpl extends ServiceImpl<PlanMapper, PlanBean> imple
             month++;
         }
         calendar.set(year, month - 1, 1);
-        Date endDate = (Date) calendar.getTime();
+        Date endDate = new Date(calendar.getTime().getTime());
 
         List<PlanBean> planList = getAllPlanInfo(userID);
         if (planList == null) return null;
@@ -105,6 +107,6 @@ public class PlanInfoServiceImpl extends ServiceImpl<PlanMapper, PlanBean> imple
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(date);
         calendar.add(Calendar.DAY_OF_MONTH, 1);
-        return (Date) calendar.getTime();
+        return new Date(calendar.getTime().getTime());
     }
 }

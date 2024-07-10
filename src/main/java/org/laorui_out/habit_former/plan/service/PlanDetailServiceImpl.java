@@ -14,6 +14,7 @@ import org.laorui_out.habit_former.plan.constant.Constants;
 import org.springframework.stereotype.Service;
 
 import java.sql.Date;
+import java.util.ArrayList;
 import java.util.Objects;
 
 @Service
@@ -39,6 +40,7 @@ public class PlanDetailServiceImpl implements PlanDetailService {
         PlanDetailMessage<FitPlanBean> message = new PlanDetailMessage<>();
         message.setPlanID(planID);
         message.setDate(date);
+        message.setPlanItems(new ArrayList<>());
         message.getPlanItems().addAll(fitPlanMapper.getFitPlanByDate(planID, date));
 
         return message;
@@ -52,6 +54,7 @@ public class PlanDetailServiceImpl implements PlanDetailService {
         PlanDetailMessage<StudyPlanBean> message = new PlanDetailMessage<>();
         message.setPlanID(planID);
         message.setDate(date);
+        message.setPlanItems(new ArrayList<>());
         message.getPlanItems().addAll(studyPlanMapper.getStudyPlanByDate(planID, date));
 
         return message;
@@ -65,6 +68,7 @@ public class PlanDetailServiceImpl implements PlanDetailService {
         PlanDetailMessage<DailyPlanBean> message = new PlanDetailMessage<>();
         message.setPlanID(planID);
         message.setDate(date);
+        message.setPlanItems(new ArrayList<>());
         message.getPlanItems().addAll(dailyPlanMapper.getDailyPlanByDate(date, planID));
 
         return message;
