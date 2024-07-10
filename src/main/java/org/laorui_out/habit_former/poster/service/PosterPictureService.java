@@ -16,6 +16,9 @@ public class PosterPictureService {
         PosterBean posterBean = posterMapper.getPosterById(posterID);
         if (posterBean != null) {
             List<String> pictureUrls = posterMapper.getPosterPicturesByPosterId(posterID);
+            if(pictureUrls == null){    //如果这个帖子没图片，直接就不传它了！
+                return null;
+            }
             posterBean.setPosterPicture(pictureUrls);
         }
         return posterBean;
@@ -24,9 +27,14 @@ public class PosterPictureService {
     //获取所有带有图片的帖子
     public List<PosterBean> getAllPosterWithPictures(){
         List<PosterBean> posterBeanList = posterMapper.getAllPosters();
-        for(PosterBean posterBean:posterBeanList){
-            posterBean = getPosterWithPictures(posterBean.getPosterID());
+        if(posterBeanList == null){ //此时没有帖子
+            return null;
+        }else{
+            for(PosterBean posterBean:posterBeanList){
+                posterBean = getPosterWithPictures(posterBean.getPosterID());
+            }
+            return posterBeanList;
         }
-        return posterBeanList;
     }
+
 }

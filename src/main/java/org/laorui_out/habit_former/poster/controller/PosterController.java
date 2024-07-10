@@ -30,23 +30,32 @@ public class PosterController {
 
     //根据帖子ID，展示一个帖子的所有信息，包括用户信息和帖子信息
     @GetMapping("poster/details")
-    public ResponseMessage<PosterAndUserBean> getPosterDetails(
+    public ResponseMessage<Object> getPosterDetails(
             @RequestParam("posterID") int posterID) {
+
+        if(!posterService.isInPosterIDList(posterID)){
+            return new ResponseMessage<>(500,"错误","帖子ID不存在，信息显示错误");
+        }
 
         // Get user details
         UserBean userBean = posterService.getUserByPosterId(posterID);
+        if(userBean == null){
+            return new ResponseMessage<>(500,"错误","帖子对应的用户信息不存在，信息显示错误");
+        }
         // Get poster details with pictures
         PosterBean poster = posterPictureService.getPosterWithPictures(posterID);
+        if(poster.getPosterPicture() == null){
+            return new ResponseMessage<>(500,"错误","帖子对应的图片信息不存在，信息显示错误");
+        }
 
         String planName = posterService.getPlanNameByPosterId(posterID);
+        if(planName == null){
+            return new ResponseMessage<>(500,"错误","帖子对应的计划不存在，信息显示错误");
+        }
 
         int numOfLikes = posterService.getTotalLikes(posterID);
-        System.out.println("点赞数：");
-        System.out.println(numOfLikes);
 
         int numOfCollection = posterService.getTotalCollection(posterID);
-        System.out.println("收藏数：");
-        System.out.println(numOfCollection);
 
         // 为这个类对象赋值
         PosterAndUserBean posterAndUserBean = new PosterAndUserBean(
@@ -63,9 +72,10 @@ public class PosterController {
                 numOfLikes,
                 numOfCollection);
 
-        return new ResponseMessage<PosterAndUserBean>(200,"成功显示",posterAndUserBean);
+        return new ResponseMessage<>(200,"成功显示",posterAndUserBean);
 
     }
+
 
     //创建帖子
     @PostMapping("poster/createPoster")
@@ -75,63 +85,42 @@ public class PosterController {
         if(Objects.equals(isCreate, "上传成功")){
             return new ResponseMessage<String>(200,"成功",isCreate);
         }
-        return new ResponseMessage<String>(400,"失败",isCreate);
+        return new ResponseMessage<String>(500,"失败",isCreate);
     }
 
-    //根据ID返回缩略信息
-    @GetMapping("poster/parts/searchID")
-    public Object getPosterParts(
-            @RequestParam("posterID") int posterID) {
-        //获取用户信息
-        UserBean userBean = posterService.getUserByPosterId(posterID);
-
-        //获取帖子信息
-        PosterBean poster = posterPictureService.getPosterWithPictures(posterID);
-
-        //返回一个匿名类对象
-        if(poster.getPosterPicture()!=null){
-            System.out.println("列表的长度:");
-            System.out.println(poster.getPosterPicture().size());
-            for(int i =0;i<poster.getPosterPicture().size();i++){
-                System.out.println(poster.getPosterPicture().get(i));
-            }
-            return new Object() {
-                        public final int userID = userBean.getUserID();
-                        public final String username = userBean.getUsername();
-                        public final String userIcon = userBean.getUserIcon();
-                        public final int posterID = poster.getPosterID();
-                        public final String posterHeadline = poster.getPosterHeadline();
-                        //主要看这里传参的数据类型
-                        public final String posterPicture = poster.getPosterPicture().get(0);
-                    };
-        }
-        else{
-            return "信息获取失败";
-        }
-    }
 
     //返回封面全部帖子的缩略信息
     @GetMapping("poster/allparts")
     public ResponseMessage<List> getAllPosterParts(){
         List<PosterBean> posterBeanList = posterPictureService.getAllPosterWithPictures();
-        return getResponseMessages(posterBeanList);
+        if(posterBeanList == null){
+            return new ResponseMessage<>(200,"帖子缩略信息返回", null);
+        }else{
+            return getResponseMessages(posterBeanList);
+        }
     }
 
+    //根据帖子的列表获取他们的ResponseMessage的列表
     private ResponseMessage<List> getResponseMessages(List<PosterBean> posterBeanList) {
         List<Object> posterMessages = new ArrayList<>();
         for(PosterBean posterBean : posterBeanList){
-            Object posterBeanPartItem = getPosterParts(posterBean.getPosterID());
+            Object posterBeanPartItem = posterService.getPosterParts(posterBean.getPosterID());
             posterMessages.add(posterBeanPartItem);
         }
-        return new ResponseMessage<>(200,"帖子缩略信息返回成功",posterMessages);
+        return new ResponseMessage<>(200,"帖子缩略信息返回",posterMessages);
     }
 
+    //获取根据输入词查找到的所有帖子的缩略信息
     @GetMapping("poster/parts/searchWords")
     public ResponseMessage<List> getPosterWithWords(String searchWords){
         List<PosterBean> posterBeanList = searchPosterService.getPosterWithWordsAndPictrues(searchWords);
+        if(posterBeanList == null){
+            return new ResponseMessage<>(200,"帖子缩略信息返回", null);
+        }
         return getResponseMessages(posterBeanList);
     }
 
+    //根据posterID删除帖子
     @DeleteMapping("poster/deletePoster")
     public ResponseMessage<String> deletePoster(int posterID){
         boolean isPosterDelete = deletePosterService.deletePoster(posterID);
@@ -139,7 +128,7 @@ public class PosterController {
             return new ResponseMessage<String>(200,"成功删除","成功删除");
         }
         else {
-            return new ResponseMessage<String>(400,"删除失败","删除失败");
+            return new ResponseMessage<String>(500,"删除失败","帖子信息不存在，删除失败");
         }
     }
 

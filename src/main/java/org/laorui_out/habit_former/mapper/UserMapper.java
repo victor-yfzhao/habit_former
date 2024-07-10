@@ -4,6 +4,8 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.*;
 import org.laorui_out.habit_former.bean.UserBean;
 
+import java.util.List;
+
 @Mapper
 public interface UserMapper extends BaseMapper<UserBean> {
 
@@ -51,4 +53,6 @@ public interface UserMapper extends BaseMapper<UserBean> {
             "from User " +
             "where username = #{username}")
     UserBean getUserProfileThroughUsername(String username);
+
+
 }

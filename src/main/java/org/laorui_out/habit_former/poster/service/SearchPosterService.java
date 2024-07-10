@@ -19,13 +19,17 @@ public class SearchPosterService {
     public List<PosterBean> getPosterWithWordsAndPictrues(String searchWords){
         String likeSearchWords = '%' + searchWords + '%';
         List<PosterBean> posterBeanList = posterMapper.getPosterWithWords(likeSearchWords);
-        List<PosterBean> newPosterBeanList = new ArrayList<PosterBean>();
-        //这里最初没更新图片列表
-        for(PosterBean posterBean:posterBeanList){
-            posterBean = posterPictureService.getPosterWithPictures(posterBean.getPosterID());
-            newPosterBeanList.add(posterBean);
+        if(posterBeanList == null){
+            return null;
+        }else{
+            List<PosterBean> newPosterBeanList = new ArrayList<PosterBean>();
+            //这里最初没更新图片列表
+            for(PosterBean posterBean:posterBeanList){
+                posterBean = posterPictureService.getPosterWithPictures(posterBean.getPosterID());
+                newPosterBeanList.add(posterBean);
+            }
+            return newPosterBeanList;
         }
-        return newPosterBeanList;
     }
 
 

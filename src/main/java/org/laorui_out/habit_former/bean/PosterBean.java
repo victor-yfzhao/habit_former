@@ -1,5 +1,6 @@
 package org.laorui_out.habit_former.bean;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import java.time.LocalDate;

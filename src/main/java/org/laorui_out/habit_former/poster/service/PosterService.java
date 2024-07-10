@@ -4,10 +4,12 @@ package org.laorui_out.habit_former.poster.service;
 //import org.laorui_out.habit_former.bean.PosterPictureBean;
 //import java.time.LocalDate;
 import jakarta.annotation.Resource;
+import org.laorui_out.habit_former.bean.PosterBean;
 import org.laorui_out.habit_former.bean.UserBean;
 import org.laorui_out.habit_former.mapper.PosterMapper;
 import org.laorui_out.habit_former.mapper.UserMapper;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
@@ -18,6 +20,8 @@ public class PosterService {
     PosterMapper posterMapper;
     @Resource
     UserMapper userMapper;
+    @Resource
+    PosterPictureService posterPictureService;
 
     //根据posterID获取对应计划的名字
     public String getPlanNameByPosterId(int posterID) {
@@ -43,5 +47,49 @@ public class PosterService {
     public List<Integer> getAllPosterID(){
         return posterMapper.getAllPosterID();
     }
+
+    public Object getPosterParts(int posterID) {
+
+        PosterBean posterTestBean = posterMapper.getPosterById(posterID);
+        if(posterTestBean == null){
+            return "帖子ID不存在，缩略信息返回错误";
+        }
+
+        //获取用户信息
+        UserBean userBean = getUserByPosterId(posterID);
+        if(userBean==null){
+            return "帖子对应的用户不存在，缩略信息返回错误";
+        }
+
+        //获取帖子信息
+        PosterBean poster = posterPictureService.getPosterWithPictures(posterID);
+
+
+        //返回一个匿名类对象
+        if(poster.getPosterPicture()!=null){
+            for(int i =0;i<poster.getPosterPicture().size();i++){
+                System.out.println(poster.getPosterPicture().get(i));
+            }
+            return new Object() {
+                public final int userID = userBean.getUserID();
+                public final String username = userBean.getUsername();
+                public final String userIcon = userBean.getUserIcon();
+                public final int posterID = poster.getPosterID();
+                public final String posterHeadline = poster.getPosterHeadline();
+                //主要看这里传参的数据类型
+                public final String posterPicture = poster.getPosterPicture().get(0);
+            };
+        }
+        else{
+            return "帖子无图片，缩略信息返回错误";
+        }
+    }
+
+    //判断输入的posterID是否为已经存在的posterID
+    public Boolean isInPosterIDList(int posterID){
+        List<Integer> posterIDList = posterMapper.getAllPosterID();
+        return posterIDList.contains(posterID);
+    }
+
 
 }
