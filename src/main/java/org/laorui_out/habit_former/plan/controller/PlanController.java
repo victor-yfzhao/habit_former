@@ -1,7 +1,16 @@
 package org.laorui_out.habit_former.plan.controller;
 
+import jakarta.annotation.Resource;
 import org.laorui_out.habit_former.bean.DailyPlanBean;
+import org.laorui_out.habit_former.bean.FitPlanBean;
 import org.laorui_out.habit_former.bean.PlanBean;
+import org.laorui_out.habit_former.bean.StudyPlanBean;
+import org.laorui_out.habit_former.plan.constant.Constants;
+import org.laorui_out.habit_former.plan.service.PlanDetailService;
+import org.laorui_out.habit_former.plan.service.PlanInfoService;
+import org.laorui_out.habit_former.plan.utils.Plan4EachDay;
+import org.laorui_out.habit_former.plan.utils.PlanDetailMessage;
+import org.laorui_out.habit_former.plan.utils.PlanMessageAdapter;
 import org.laorui_out.habit_former.utils.ResponseMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -10,12 +19,57 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
-import java.util.Date;
+import java.sql.Date;
 import java.util.List;
 
 @RestController
-@RequestMapping("/index")public class PlanController {
+public class PlanController {
 
+    @Resource
+    PlanInfoService planInfoService;
+
+    @Resource
+    PlanDetailService planDetailService;
+
+    @GetMapping("/index")
+    public ResponseMessage<List<PlanBean>> index(int userID){
+        try{
+            List<PlanBean> plans = planInfoService.getAllPlanInfo(userID);
+            return new ResponseMessage<>(200,"success",plans);
+        }catch (Exception e){
+            return new ResponseMessage<>(400,e.getMessage(),null);
+        }
+    }
+
+    @GetMapping("/index/calendar")
+    public ResponseMessage<List<Plan4EachDay>> calendarRequest(int userID, int currenYear, int currentMonth){
+        try{
+            List<Plan4EachDay> plans = planInfoService.getPlanInMonth(userID, currenYear, currentMonth);
+            return new ResponseMessage<>(200,"success",plans);
+        }catch (Exception e){
+            return new ResponseMessage<>(400,e.getMessage(),null);
+        }
+    }
+
+    @GetMapping("/plan_detail")
+    public ResponseMessage<PlanMessageAdapter> planDetail(int planID, String date, String planType){
+        switch (planType){
+            case Constants.PLAN_TYPE:
+                PlanDetailMessage<DailyPlanBean> plans = planDetailService.getDailyPlanDetail(planID, Date.valueOf(date));
+                PlanMessageAdapter message = new PlanMessageAdapter(planType, plans, null, null);
+                return new ResponseMessage<>(200,"success",message);
+            case Constants.FIT_PLAN_TYPE:
+                PlanDetailMessage<FitPlanBean> fitPlans = planDetailService.getFitPlanDetail(planID, Date.valueOf(date));
+                message = new PlanMessageAdapter(planType, null, fitPlans, null);
+                return new ResponseMessage<>(200,"success",message);
+            case Constants.STUDY_PLAN_TYPE:
+                PlanDetailMessage<StudyPlanBean> studyPlans = planDetailService.getStudyPlanDetail(planID, Date.valueOf(date));
+                message = new PlanMessageAdapter(planType, null, null, studyPlans);
+                return new ResponseMessage<>(200,"success",message);
+            default:
+                return new ResponseMessage<>(400,"UNDEFINED_PLAN_TYPE",null);
+        }
+    }
 
     //1.GET首页计划列表初始化(需要传id，名称，任务简介)
     @GetMapping("/init/plan")
