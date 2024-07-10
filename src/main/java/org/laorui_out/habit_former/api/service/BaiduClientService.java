@@ -1,12 +1,14 @@
 package org.laorui_out.habit_former.api.service;
 import okhttp3.*;
 import okio.BufferedSource;
+import org.json.JSONObject;
 import org.laorui_out.habit_former.api.entity.ClientParam;
 import org.laorui_out.habit_former.api.entity.PlaningResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.io.IOException;
+import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -26,7 +28,7 @@ public class BaiduClientService implements ClientService {
         MediaType mediaType = MediaType.get("application/json; charset=utf-8");
         this.client = new OkHttpClient.Builder().readTimeout(60, TimeUnit.SECONDS).build();
         okhttp3.RequestBody body = okhttp3.RequestBody.Companion.create(mediaType, messages);
-        HttpUrl.Builder urlBuilder = HttpUrl.parse(clientParam.getModelUrl()).newBuilder();
+        HttpUrl.Builder urlBuilder = Objects.requireNonNull(HttpUrl.parse(clientParam.getModelUrl())).newBuilder();
         urlBuilder.addQueryParameter("access_token", clientParam.getAccessToken());
         String url = urlBuilder.build().toString();
 
@@ -42,7 +44,7 @@ public class BaiduClientService implements ClientService {
     public PlaningResponse getResponse() {
         try (Response response = client.newCall(request).execute()) {
             if (response.isSuccessful()) {
-                String responseBody = response.body().string();
+                String responseBody = Objects.requireNonNull(response.body()).string();
                 PlaningResponse planingResponse = new PlaningResponse();
                 planingResponse.setRaw(responseBody);
                 System.out.println(responseBody);
@@ -64,16 +66,35 @@ public class BaiduClientService implements ClientService {
                     try (Response response = client.newCall(request).execute()) {
                         if (response.isSuccessful()) {
                             ResponseBody responseBody = response.body();
-                            BufferedSource bufferedSource = responseBody.source();
-                            char tmp;
-                            String res = "", buf = "";
+                            BufferedSource bufferedSource = Objects.requireNonNull(responseBody).source();
+                            String res = "", buf,result;int index,ptr_start=-1,ptr_end=-1;
+                            JSONObject jsonObject;
                             while (bufferedSource.isOpen() && !bufferedSource.exhausted()) {
-                                //String buf;
                                 buf = bufferedSource.readUtf8LineStrict();
-                                res += buf;
-                                System.out.println(buf);
-                                emitter.send(buf);
-                                //buf="";
+                                if(buf.isEmpty())
+                                    continue;
+                                //System.out.println("buf:"+buf);
+                                index=buf.indexOf('{');
+                                buf=buf.substring(index);
+                                jsonObject=new JSONObject(buf);
+                                result=jsonObject.getString("result");
+                                res+= result;//字符串缓冲区
+                                System.out.println(" res:"+res);
+                                if(ptr_start==-1)
+                                    ptr_start=res.indexOf('{');
+                                if(ptr_end==-1)
+                                    ptr_end=res.indexOf('}');
+                                System.out.println("start:"+ptr_start+" end:"+ptr_end);
+                                if(ptr_start!=-1&&ptr_end!=-1){
+                                    System.out.println("------starting to send!\nstart:"+ptr_start+" end:"+ptr_end+" res:"+res);
+                                    emitter.send(res.substring(ptr_start,ptr_end+1));
+                                    if(res.length()==ptr_end+1)
+                                        res="";
+                                    else res=res.substring(ptr_end+1);
+                                    ptr_start=-1;ptr_end=-1;
+                                }
+                                //System.out.println("result:"+result);
+                                //emitter.send(result);
                             }
                             //emitter.complete();//在这里complete会报错？最后一条message发不出去。
                         } else {
