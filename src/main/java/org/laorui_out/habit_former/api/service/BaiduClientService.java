@@ -12,7 +12,8 @@ import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
-
+import org.laorui_out.habit_former.plan.constant.Constants;
+import org.laorui_out.habit_former.api.util.ResponseReader;
 @Service
 public class BaiduClientService implements ClientService {
     private OkHttpClient client;
@@ -59,7 +60,7 @@ public class BaiduClientService implements ClientService {
         return null;
     }
 
-    public SseEmitter getResponseStream() {
+    public SseEmitter getResponseStream(String theme) {
         SseEmitter emitter = new SseEmitter();
         ExecutorService executor = Executors.newSingleThreadExecutor();
         executor.execute(() -> {
@@ -87,7 +88,15 @@ public class BaiduClientService implements ClientService {
                                 System.out.println("start:"+ptr_start+" end:"+ptr_end);
                                 if(ptr_start!=-1&&ptr_end!=-1){
                                     System.out.println("------starting to send!\nstart:"+ptr_start+" end:"+ptr_end+" res:"+res);
-                                    emitter.send(res.substring(ptr_start,ptr_end+1));
+                                    switch (theme) {
+                                        case Constants.FIT_PLAN_TYPE ->
+                                                emitter.send(ResponseReader.readFPResponse(res.substring(ptr_start, ptr_end + 1)));
+                                        case Constants.STUDY_PLAN_TYPE ->
+                                                emitter.send(ResponseReader.readSPResponse(res.substring(ptr_start, ptr_end + 1)));
+                                        default ->
+                                                emitter.send(ResponseReader.readDPResponse(res.substring(ptr_start, ptr_end + 1)));
+                                    }
+                                    //emitter.send(res.substring(ptr_start,ptr_end+1));
                                     if(res.length()==ptr_end+1)
                                         res="";
                                     else res=res.substring(ptr_end+1);

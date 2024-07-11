@@ -19,6 +19,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.util.Date;
+
 @SpringBootTest
 @ExtendWith(MockitoExtension.class)
 public class CreatePlanServiceImplTest {
@@ -79,7 +81,8 @@ public class CreatePlanServiceImplTest {
         String planDetail = "Daily Plan Detail";
         int planID = 1;
 
-        DailyPlanBean dailyPlanBean = createPlanService.addDailyPlan(planDetail, planID);
+        Date date = new Date();
+        DailyPlanBean dailyPlanBean = createPlanService.addDailyPlan(date, planDetail, planID);
 
         assertNotNull(dailyPlanBean);
         assertEquals(planDetail, dailyPlanBean.getPlanDetail());
@@ -92,12 +95,13 @@ public class CreatePlanServiceImplTest {
     public void testAddFitPlan() {
         String fitItemName = "Fit Item Name";
         String fitType = "Cardio";
+        Date date = new Date();
         int groupNum = 3;
         int numPerGroup = 15;
         int timePerGroup = 30;
         int planID = 1;
 
-        FitPlanBean fitPlanBean = createPlanService.addFitPlan(fitItemName, fitType, groupNum, numPerGroup, timePerGroup, planID);
+        FitPlanBean fitPlanBean = createPlanService.addFitPlan(date, fitItemName, fitType, groupNum, numPerGroup, timePerGroup, planID);
 
         assertNotNull(fitPlanBean);
         assertEquals(fitItemName, fitPlanBean.getFitItemName());
@@ -115,10 +119,11 @@ public class CreatePlanServiceImplTest {
     public void testAddStudyPlan() {
         String studySubject = "Study Subject";
         String studyContent = "Study Content";
+        Date date = new Date();
         int studyTime = 120;
         int planID = 1;
 
-        StudyPlanBean studyPlanBean = createPlanService.addStudyPlan(studySubject, studyContent, studyTime, planID);
+        StudyPlanBean studyPlanBean = createPlanService.addStudyPlan(date, studySubject, studyContent, studyTime, planID);
 
         assertNotNull(studyPlanBean);
         assertEquals(studySubject, studyPlanBean.getStudySubject());

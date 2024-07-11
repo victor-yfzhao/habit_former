@@ -73,4 +73,27 @@ public class PlanDetailServiceImpl implements PlanDetailService {
 
         return message;
     }
+    @Override
+    public DailyPlanBean editDPDetail(DailyPlanBean dailyPlanBean){
+        String s = dailyPlanMapper.getDailyPlanByID(dailyPlanBean.getDailyPlanID()).getStatus();
+        dailyPlanBean.setStatus(s);
+        int res=dailyPlanMapper.updateDailyPlan(dailyPlanBean);
+        if(res!=0)
+            return dailyPlanBean;
+        else return null;//未更新
+    }
+    @Override
+    public FitPlanBean editFPDetail(FitPlanBean fitPlanBean){
+        int res=fitPlanMapper.updateFitPlan(fitPlanBean);
+        if(res!=0)
+            return fitPlanBean;
+        else return null;//未更新
+    }
+    @Override
+    public StudyPlanBean editSPDetail(StudyPlanBean studyPlanBean){
+        int res=studyPlanMapper.updateStudyPlan(studyPlanBean);
+        if(res!=0)
+            return studyPlanBean;
+        else return null;//未更新
+    }
 }

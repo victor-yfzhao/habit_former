@@ -42,16 +42,16 @@ public class CreatePlanServiceImpl implements CreatePlanService{
         planMapper.addPlan(planBean);
         return planBean;
     }
-    public DailyPlanBean addDailyPlan(String planDetail, int planID){
+    public DailyPlanBean addDailyPlan(Date date, String planDetail, int planID){
         DailyPlanBean dailyPlanBean = new DailyPlanBean();
         dailyPlanBean.setPlanID(planID);
         dailyPlanBean.setPlanDetail(planDetail);
-        Date date=new Date();
         dailyPlanBean.setDate(date);
+        dailyPlanBean.setStatus(Constants.NOT_CHECKED);
         dailyPlanMapper.addDailyPlan(dailyPlanBean);
         return dailyPlanBean;
     }
-    public FitPlanBean addFitPlan(String fitItemName,String fitType,int groupNum,int numPerGroup,int timePerGroup, int planID){
+    public FitPlanBean addFitPlan(Date date,String fitItemName,String fitType,int groupNum,int numPerGroup,int timePerGroup, int planID){
         FitPlanBean fitPlanBean = new FitPlanBean();
         fitPlanBean.setFitItemName(fitItemName);
         fitPlanBean.setFitType(fitType);
@@ -60,18 +60,16 @@ public class CreatePlanServiceImpl implements CreatePlanService{
         fitPlanBean.setTimePerGroup(timePerGroup);
         fitPlanBean.setPlanID(planID);
         fitPlanBean.setStatus(Constants.NOT_CHECKED);
-        Date date=new Date();
         fitPlanBean.setDate(date);
         fitPlanMapper.insert(fitPlanBean);
         return fitPlanBean;
     }
-    public StudyPlanBean addStudyPlan(String studySubject, String studyContent, int studyTime, int planID){
+    public StudyPlanBean addStudyPlan(Date date,String studySubject, String studyContent, int studyTime, int planID){
         StudyPlanBean studyPlanBean = new StudyPlanBean();
         studyPlanBean.setStudyContent(studyContent);
         studyPlanBean.setStudySubject(studySubject);
         studyPlanBean.setStudyTime(studyTime);
         studyPlanBean.setStatus(Constants.NOT_CHECKED);
-        Date date = new Date();
         studyPlanBean.setDate(date);
         studyPlanBean.setPlanID(planID);
         studyPlanMapper.insert(studyPlanBean);

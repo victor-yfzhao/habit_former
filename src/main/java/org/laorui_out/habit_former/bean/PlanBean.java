@@ -10,8 +10,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.sql.Time;
-import java.text.SimpleDateFormat;
-import java.time.LocalDate;
 import java.util.Date;
 
 @Data
@@ -39,6 +37,7 @@ public class PlanBean {
     @JsonIgnore
     private Date planDate;
 
+    @TableField(select = false)
     private String planDateShow;
 
     @TableField("planTime")
