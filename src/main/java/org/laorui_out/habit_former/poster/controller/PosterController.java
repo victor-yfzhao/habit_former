@@ -104,19 +104,12 @@ public class PosterController {
     //返回封面全部帖子的缩略信息
     @GetMapping("poster/allparts")
     public ResponseMessage<List> getAllPosterParts(){
-        List<String> errorMessage = new ArrayList<>();
-        try{
-            List<PosterBean> posterBeanList = posterPictureService.getAllPosterWithPictures();
-            if(posterBeanList == null){
-                return new ResponseMessage<>(200,"帖子缩略信息返回", null);
-            }else{
-                return getResponseMessages(posterBeanList);
-            }
-        }catch (Exception e){
-            errorMessage.add(e.getMessage());
-            return new ResponseMessage<>(500,"失败",errorMessage);
+        List<PosterBean> posterBeanList = posterPictureService.getAllPosterWithPictures();
+        if(posterBeanList == null){
+            return new ResponseMessage<>(200,"帖子缩略信息返回", null);
+        }else{
+            return getResponseMessages(posterBeanList);
         }
-
     }
 
     //根据帖子的列表获取他们的ResponseMessage的列表
@@ -132,40 +125,23 @@ public class PosterController {
     //获取根据输入词查找到的所有帖子的缩略信息
     @GetMapping("poster/parts/searchWords")
     public ResponseMessage<List> getPosterWithWords(String searchWords){
-        List<String> errorMessage = new ArrayList<>();
-        try{
-            List<PosterBean> posterBeanList = searchPosterService.getPosterWithWordsAndPictrues(searchWords);
-            if(posterBeanList == null){
-                return new ResponseMessage<>(200,"帖子缩略信息返回", null);
-            }else{
-                return getResponseMessages(posterBeanList);
-            }
-        }catch (Exception e){
-            errorMessage.add(e.getMessage());
-            return new ResponseMessage<>(500,"失败",errorMessage);
+        List<PosterBean> posterBeanList = searchPosterService.getPosterWithWordsAndPictrues(searchWords);
+        if(posterBeanList == null){
+            return new ResponseMessage<>(200,"帖子缩略信息返回", null);
         }
-//        List<PosterBean> posterBeanList = searchPosterService.getPosterWithWordsAndPictrues(searchWords);
-//        if(posterBeanList == null){
-//            return new ResponseMessage<>(200,"帖子缩略信息返回", null);
-//        }
-//        return getResponseMessages(posterBeanList);
+        return getResponseMessages(posterBeanList);
     }
 
     //根据posterID删除帖子
     @DeleteMapping("poster/deletePoster")
     public ResponseMessage<String> deletePoster(int posterID){
-        try{
-            boolean isPosterDelete = deletePosterService.deletePoster(posterID);
-            if(isPosterDelete){
-                return new ResponseMessage<String>(200,"成功删除","成功删除");
-            }
-            else {
-                return new ResponseMessage<String>(500,"删除失败","帖子信息不存在，删除失败");
-            }
-        }catch (Exception e){
-            return new ResponseMessage<>(500,"删除失败",e.getMessage());
+        boolean isPosterDelete = deletePosterService.deletePoster(posterID);
+        if(isPosterDelete){
+            return new ResponseMessage<String>(200,"成功删除","成功删除");
         }
-
+        else {
+            return new ResponseMessage<String>(500,"删除失败","帖子信息不存在，删除失败");
+        }
     }
 
 

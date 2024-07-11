@@ -19,7 +19,7 @@ public class SearchPosterService {
     public List<PosterBean> getPosterWithWordsAndPictrues(String searchWords){
         String likeSearchWords = '%' + searchWords + '%';
         List<PosterBean> posterBeanList = posterMapper.getPosterWithWords(likeSearchWords);
-        if(posterBeanList == null || posterBeanList.isEmpty()){
+        if(posterBeanList == null){
             return null;
         }else{
             List<PosterBean> newPosterBeanList = new ArrayList<PosterBean>();
