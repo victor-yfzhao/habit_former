@@ -61,7 +61,7 @@ public class BaiduClientService implements ClientService {
     }
 
     public SseEmitter getResponseStream(String theme) {
-        SseEmitter emitter = new SseEmitter();
+        SseEmitter emitter = new SseEmitter(null);
         ExecutorService executor = Executors.newSingleThreadExecutor();
         executor.execute(() -> {
                     try (Response response = client.newCall(request).execute()) {
