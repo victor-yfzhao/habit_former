@@ -96,4 +96,8 @@ public class PlanDetailServiceImpl implements PlanDetailService {
             return studyPlanBean;
         else return null;//未更新
     }
+    @Override
+    public int deletePlan(int planID){
+        return planMapper.deletePlanByID(planID);
+    }
 }

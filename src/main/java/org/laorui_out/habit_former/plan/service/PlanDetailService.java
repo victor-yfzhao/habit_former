@@ -14,4 +14,5 @@ public interface PlanDetailService {
     DailyPlanBean editDPDetail(DailyPlanBean dailyPlanBean);
     FitPlanBean editFPDetail(FitPlanBean fitPlanBean);
     StudyPlanBean editSPDetail(StudyPlanBean studyPlanBean);
+    int deletePlan(int planID);
 }

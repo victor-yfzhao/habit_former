@@ -118,7 +118,7 @@ public class PlanController {
     }
 
     //TODO:定期refresh plan的状态
-    @PostMapping("/plandetail/check")
+    @PostMapping("/plan_detail/check")
     public ResponseMessage<String> checkPlanDetail(@RequestParam int planDetailID, int completeStatus, String planDetailType) {
 
         switch (planDetailType) {
@@ -202,6 +202,14 @@ public class PlanController {
         if(res!=null)
             return new ResponseMessage<>(200,"success",res);
         else return new ResponseMessage<>(400,"failed",null);
+    }
+
+    @PostMapping("/delete")
+    public ResponseMessage<String> deletePlan(int planID){
+        int res= planDetailService.deletePlan(planID);
+        if(res!=0)
+            return new ResponseMessage<>(200,"success","deleted.");
+        else return new ResponseMessage<>(400,"success","not-found");
     }
 
 }
