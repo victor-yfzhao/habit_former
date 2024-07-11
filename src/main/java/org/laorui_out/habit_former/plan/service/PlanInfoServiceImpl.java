@@ -104,7 +104,8 @@ public class PlanInfoServiceImpl extends ServiceImpl<PlanMapper, PlanBean> imple
         }
 
         if (!hit) {
-            List<PlanBean> planBeans = List.of(plan);
+            List<PlanBean> planBeans = new ArrayList<>();
+            planBeans.add(plan);
             results.add(new Plan4EachDay(date, planBeans));
         }
     }
