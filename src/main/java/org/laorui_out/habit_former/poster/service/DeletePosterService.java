@@ -23,11 +23,16 @@ public class DeletePosterService {
             return false;
         }
         try {
-            // 删除 posterpicture 表中的记录
-            boolean pictureDeleted = posterMapper.deletePosterPictureByPosterId(posterID);
-            // 删除 poster 表中的记录
-            boolean posterDeleted = posterMapper.deletePosterByPosterId(posterID);
-            return posterDeleted && pictureDeleted;
+
+            if(posterTestBean.getPosterPicture()==null || posterTestBean.getPosterPicture().isEmpty()){
+                return posterMapper.deletePosterByPosterId(posterID);
+            }else{
+                // 删除 posterpicture 表中的记录
+                boolean pictureDeleted = posterMapper.deletePosterPictureByPosterId(posterID);
+                // 删除 poster 表中的记录
+                boolean posterDeleted = posterMapper.deletePosterByPosterId(posterID);
+                return posterDeleted && pictureDeleted;
+            }
         }
         catch (Exception e) {
             e.printStackTrace();

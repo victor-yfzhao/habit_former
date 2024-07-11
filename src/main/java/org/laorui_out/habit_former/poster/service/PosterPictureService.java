@@ -5,6 +5,7 @@ import org.laorui_out.habit_former.bean.PosterBean;
 import org.laorui_out.habit_former.mapper.PosterMapper;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -16,7 +17,7 @@ public class PosterPictureService {
         PosterBean posterBean = posterMapper.getPosterById(posterID);
         if (posterBean != null) {
             List<String> pictureUrls = posterMapper.getPosterPicturesByPosterId(posterID);
-            if(pictureUrls == null){    //如果这个帖子没图片，直接就不传它了！
+            if(pictureUrls == null || pictureUrls.isEmpty()){    //如果这个帖子没图片，直接就不传它了！
                 return null;
             }
             posterBean.setPosterPicture(pictureUrls);
@@ -27,13 +28,17 @@ public class PosterPictureService {
     //获取所有带有图片的帖子
     public List<PosterBean> getAllPosterWithPictures(){
         List<PosterBean> posterBeanList = posterMapper.getAllPosters();
-        if(posterBeanList == null){ //此时没有帖子
+        List<PosterBean> newPosterBeanList = new ArrayList<>();
+        if(posterBeanList == null || posterBeanList.isEmpty()){ //此时没有帖子
             return null;
         }else{
             for(PosterBean posterBean:posterBeanList){
                 posterBean = getPosterWithPictures(posterBean.getPosterID());
+                if(posterBean!=null){
+                    newPosterBeanList.add(posterBean);
+                }
             }
-            return posterBeanList;
+            return newPosterBeanList;
         }
     }
 
