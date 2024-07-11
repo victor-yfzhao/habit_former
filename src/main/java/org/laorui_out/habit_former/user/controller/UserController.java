@@ -31,7 +31,7 @@ public class UserController {
             if (Objects.requireNonNull(result) == LoginResult.SUCCESS) {
                 return new ResponseMessage<>(200, result.toString(), profileService.getProfile(username));
             }}catch(Exception e){
-            return new ResponseMessage<>(500, "unknown error", null);
+            return new ResponseMessage<>(500, e.getMessage(), null);
         }
         return new ResponseMessage<>(400, result.toString(), null);
     }
