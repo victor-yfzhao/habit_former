@@ -35,7 +35,13 @@ public class PlanInfoServiceImpl extends ServiceImpl<PlanMapper, PlanBean> imple
 
     @Override
     public List<PlanBean> getAllPlanInfo(int userID) {
-        return planMapper.getAllPlanByUserID(userID);
+        List<PlanBean> plans = planMapper.getAllPlanByUserID(userID);
+
+        for(PlanBean plan : plans){
+            plan.setPlanDateShow(Constants.sdf.format(plan.getPlanDate()));
+        }
+
+        return plans;
     }
 
     @Override

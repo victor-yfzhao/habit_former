@@ -4,11 +4,14 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.sql.Time;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.Date;
 
 @Data
@@ -33,7 +36,10 @@ public class PlanBean {
     private Integer userID;
 
     @TableField("planDate")
+    @JsonIgnore
     private Date planDate;
+
+    private String planDateShow;
 
     @TableField("planTime")
     private Time planTime;
