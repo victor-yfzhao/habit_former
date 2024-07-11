@@ -9,6 +9,7 @@ import java.sql.Date;
 
 @Service
 public class RegisterServiceImpl extends ServiceImpl<UserMapper, UserBean> implements RegisterService {
+
     public RegisterResult register(String username, String password) {
         if (username.isEmpty() || password.length() < 8 || password.length() > 20) {
             return RegisterResult.INVALID_INPUT;
