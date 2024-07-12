@@ -59,7 +59,7 @@ public interface UserMapper extends BaseMapper<UserBean> {
             "where username = #{username}")
     UserBean getUserProfileThroughUsername(String username);
 
-    @Insert("insert into User (username, password, userIcon, userCreateDate) " +
-            "values (#{username}, #{password}, #{userIcon}, #{userCreateDate})")
+    @Insert("insert into User (userID, username, password, userIcon, userCreateDate) " +
+            "values (#{userID}, #{username}, #{password}, #{userIcon}, #{userCreateDate})")
     void createUser(UserBean userBean);
 }

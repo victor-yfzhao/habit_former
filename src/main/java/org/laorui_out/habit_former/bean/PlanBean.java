@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -33,7 +34,11 @@ public class PlanBean {
     private Integer userID;
 
     @TableField("planDate")
+    @JsonIgnore
     private Date planDate;
+
+    @TableField(select = false)
+    private String planDateShow;
 
     @TableField("planTime")
     private Time planTime;
@@ -55,4 +60,3 @@ public class PlanBean {
                 '}';
     }
 }
-
