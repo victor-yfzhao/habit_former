@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.io.IOException;
+import java.util.Date;
 import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -27,7 +28,7 @@ public class BaiduClientService implements ClientService {
     @Override
     public void init(String messages, ClientParam clientParam) {
         MediaType mediaType = MediaType.get("application/json; charset=utf-8");
-        this.client = new OkHttpClient.Builder().readTimeout(60, TimeUnit.SECONDS).build();
+        this.client = new OkHttpClient.Builder().readTimeout(600, TimeUnit.SECONDS).build();
         okhttp3.RequestBody body = okhttp3.RequestBody.Companion.create(mediaType, messages);
         HttpUrl.Builder urlBuilder = Objects.requireNonNull(HttpUrl.parse(clientParam.getModelUrl())).newBuilder();
         urlBuilder.addQueryParameter("access_token", clientParam.getAccessToken());
@@ -60,7 +61,7 @@ public class BaiduClientService implements ClientService {
         return null;
     }
 
-    public SseEmitter getResponseStream(String theme) {
+    public SseEmitter getResponseStream(String theme, Date startDate) {
         SseEmitter emitter = new SseEmitter(null);
         ExecutorService executor = Executors.newSingleThreadExecutor();
         executor.execute(() -> {
@@ -74,47 +75,70 @@ public class BaiduClientService implements ClientService {
                                 buf = bufferedSource.readUtf8LineStrict();
                                 if(buf.isEmpty())
                                     continue;
-                                //System.out.println("buf:"+buf);
+                                System.out.println("buf:"+buf);
                                 index=buf.indexOf('{');
                                 buf=buf.substring(index);
                                 jsonObject=new JSONObject(buf);
                                 result=jsonObject.getString("result");
                                 res+= result;//字符串缓冲区
-                                System.out.println(" res:"+res);
+                                //System.out.println(" res:"+res);
                                 if(ptr_start==-1)
                                     ptr_start=res.indexOf('{');
                                 if(ptr_end==-1)
                                     ptr_end=res.indexOf('}');
-                                System.out.println("start:"+ptr_start+" end:"+ptr_end);
+                                //System.out.println("start:"+ptr_start+" end:"+ptr_end);
                                 if(ptr_start!=-1&&ptr_end!=-1){
                                     System.out.println("------starting to send!\nstart:"+ptr_start+" end:"+ptr_end+" res:"+res);
                                     switch (theme) {
                                         case Constants.FIT_PLAN_TYPE ->
-                                                emitter.send(ResponseReader.readFPResponse(res.substring(ptr_start, ptr_end + 1)));
+                                                emitter.send(ResponseReader.readFPResponse(res.substring(ptr_start, ptr_end + 1),startDate));
                                         case Constants.STUDY_PLAN_TYPE ->
-                                                emitter.send(ResponseReader.readSPResponse(res.substring(ptr_start, ptr_end + 1)));
+                                                emitter.send(ResponseReader.readSPResponse(res.substring(ptr_start, ptr_end + 1),startDate));
                                         default ->
-                                                emitter.send(ResponseReader.readDPResponse(res.substring(ptr_start, ptr_end + 1)));
+                                                emitter.send(ResponseReader.readDPResponse(res.substring(ptr_start, ptr_end + 1),startDate));
                                     }
-                                    //emitter.send(res.substring(ptr_start,ptr_end+1));
                                     if(res.length()==ptr_end+1)
                                         res="";
                                     else res=res.substring(ptr_end+1);
                                     ptr_start=-1;ptr_end=-1;
                                 }
-                                //System.out.println("result:"+result);
-                                //emitter.send(result);
                             }
-                            //emitter.complete();//在这里complete会报错？最后一条message发不出去。
+                            System.out.println("buf reading finished");
+                            while(res.indexOf('{')!=-1&&res.indexOf('}')!=-1){
+                                if(ptr_start==-1)
+                                    ptr_start=res.indexOf('{');
+                                if(ptr_end==-1)
+                                    ptr_end=res.indexOf('}');
+                                switch (theme) {
+                                    case Constants.FIT_PLAN_TYPE ->
+                                            emitter.send(ResponseReader.readFPResponse(res.substring(ptr_start, ptr_end + 1),startDate));
+                                    case Constants.STUDY_PLAN_TYPE ->
+                                            emitter.send(ResponseReader.readSPResponse(res.substring(ptr_start, ptr_end + 1),startDate));
+                                    default ->
+                                            emitter.send(ResponseReader.readDPResponse(res.substring(ptr_start, ptr_end + 1),startDate));
+                                }
+                                if(res.length()==ptr_end+1)
+                                    res="";
+                                else res=res.substring(ptr_end+1);
+                                ptr_start=-1;ptr_end=-1;
+                            }
                         } else {
                             System.err.println("Request failed: " + response.code());
                         }
-                    } catch (IOException e) {
-                        emitter.completeWithError(e);
                     }
-                    emitter.complete();
+                    catch (IOException e) {
+                        //emitter.completeWithError(e);
+                        //System.out.println("!!!ERROR");
+                        e.printStackTrace();
+                    }finally {
+                        System.out.println("---emitter complete----");
+                        emitter.complete();
+                    }
+
                 }
         );
+
+
         return emitter;
     }
 }

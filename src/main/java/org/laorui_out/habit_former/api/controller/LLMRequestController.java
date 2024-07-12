@@ -6,10 +6,15 @@ import org.laorui_out.habit_former.api.entity.PlaningResponse;
 import org.laorui_out.habit_former.api.service.ClientService;
 import org.laorui_out.habit_former.api.service.MessageService;
 import org.laorui_out.habit_former.plan.constant.Constants;
-import org.laorui_out.habit_former.plan.service.CreatePlanService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
+
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
+import java.util.Date;
 
 @RestController
 @RequestMapping("/api/planner")
@@ -42,14 +47,18 @@ public class LLMRequestController {
         System.out.println(messages);
         ClientParam clientParam=new ClientParam();
         clientService.init(messages,clientParam);
-        return clientService.getResponseStream("null");
+        return clientService.getResponseStream("null",new Date());
     }
 
     //流式的prompt响应（传参的标准待统一）
     @GetMapping("/prompt")
-    public SseEmitter handlePlannerRequestStreamPrompt(@RequestParam String theme, String target, String time) {
+    public SseEmitter handlePlannerRequestStreamPrompt(@RequestParam String theme, String target, String startDate,String endDate) {
         //String messages=messageService.getJsonMessageStreamPrompt(theme,target,time);
         //根据不同的theme的值调用不同的messageService方法
+        Date start = java.sql.Date.valueOf(startDate);
+        Date end =java.sql.Date.valueOf(endDate);
+        int daysBetween = (int)calculateDaysBetween(start,end);
+        String time = String.valueOf(daysBetween+1);
         System.out.println("theme:"+theme+"target:"+target+"time:"+time);
         String messages;
         if(theme.equals(Constants.FIT_PLAN_TYPE))
@@ -60,7 +69,20 @@ public class LLMRequestController {
 
         ClientParam clientParam=new ClientParam();
         clientService.init(messages,clientParam);
-        return clientService.getResponseStream(theme);
+        return clientService.getResponseStream(theme,start);
+    }
+
+    public static LocalDate convertToLocalDateViaInstant(Date date) {
+        return Instant.ofEpochMilli(date.getTime())
+                .atZone(ZoneId.systemDefault())
+                .toLocalDate();
+    }
+
+    // 计算两个日期之间的天数差
+    public static long calculateDaysBetween(Date startDate, Date endDate) {
+        LocalDate startLocalDate = convertToLocalDateViaInstant(startDate);
+        LocalDate endLocalDate = convertToLocalDateViaInstant(endDate);
+        return ChronoUnit.DAYS.between(startLocalDate, endLocalDate);
     }
 
 

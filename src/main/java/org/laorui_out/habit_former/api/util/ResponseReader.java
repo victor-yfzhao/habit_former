@@ -7,20 +7,25 @@ import org.laorui_out.habit_former.bean.StudyPlanBean;
 import org.laorui_out.habit_former.plan.constant.Constants;
 import org.laorui_out.habit_former.utils.ResponseMessage;
 
+import java.util.Calendar;
+import java.util.Date;
+
 
 public class ResponseReader {
-    public static ResponseMessage<DailyPlanBean> readDPResponse(String jsResponse){
+    public static ResponseMessage<DailyPlanBean> readDPResponse(String jsResponse,Date startDate){
         DailyPlanBean dailyPlanBean=new DailyPlanBean();
         JSONObject jsonObject=new JSONObject(jsResponse);
-        dailyPlanBean.setDate(null);
+        int days=jsonObject.getInt("day");
+        dailyPlanBean.setDate(calculateFutureDate(startDate,days));
         dailyPlanBean.setStatus(Constants.NOT_CHECKED);
         dailyPlanBean.setPlanDetail(jsonObject.getString("task_name")+':'+jsonObject.getString("task_content"));
         return new ResponseMessage<>(200,"day:"+jsonObject.getInt("day"),dailyPlanBean);
     }
-    public static ResponseMessage<FitPlanBean> readFPResponse(String jsResponse){
+    public static ResponseMessage<FitPlanBean> readFPResponse(String jsResponse,Date startDate){
         FitPlanBean fitPlanBean=new FitPlanBean();
         JSONObject jsonObject=new JSONObject(jsResponse);
-        fitPlanBean.setDate(null);
+        int days=jsonObject.getInt("day");
+        fitPlanBean.setDate(calculateFutureDate(startDate,days));
         fitPlanBean.setStatus(Constants.NOT_CHECKED);
         fitPlanBean.setFitItemName(jsonObject.getString("name")+':'+jsonObject.getString("task_content"));
         fitPlanBean.setFitType(jsonObject.getString("num"));
@@ -32,14 +37,21 @@ public class ResponseReader {
         else fitPlanBean.setNumPerGroup(jsonObject.getInt("num_per_group"));
         return new ResponseMessage<>(200,"day:"+jsonObject.getInt("day"),fitPlanBean);
     }
-    public static ResponseMessage<StudyPlanBean> readSPResponse(String jsResponse){
+    public static ResponseMessage<StudyPlanBean> readSPResponse(String jsResponse,Date startDate){
         StudyPlanBean studyPlanBean=new StudyPlanBean();
         JSONObject jsonObject=new JSONObject(jsResponse);
-        studyPlanBean.setDate(null);
+        int days=jsonObject.getInt("day");
+        studyPlanBean.setDate(calculateFutureDate(startDate,days));
         studyPlanBean.setStatus(Constants.NOT_CHECKED);
         studyPlanBean.setStudyContent(jsonObject.getString("task_name")+':'+jsonObject.getString("task_content"));
         studyPlanBean.setStudyTime(jsonObject.getInt("duration"));
         studyPlanBean.setStudySubject(jsonObject.getString("studySubject"));
         return new ResponseMessage<>(200,"day:"+jsonObject.getInt("day"),studyPlanBean);
+    }
+    private static Date calculateFutureDate(Date startDate, int days) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(startDate);
+        calendar.add(Calendar.DAY_OF_YEAR, days);
+        return calendar.getTime();
     }
 }

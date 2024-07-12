@@ -17,9 +17,11 @@ public class ClientParam {
 
     //大模型接口的访问地址
     private String modelUrl="https://aip.baidubce.com/rpc/2.0/ai_custom/v1/wenxinworkshop/chat/yi_34b_chat";
+    //private String modelUrl="https://aip.baidubce.com/rpc/2.0/ai_custom/v1/wenxinworkshop/chat/completions_pro";
 
     //大模型的access-token
     private String accessToken="24.2041ef6103cb572b02a351b342aad324.2592000.1722395266.282335-89533141";
+    //
 
     //token的有效时间
     private long expiresIn=30;
