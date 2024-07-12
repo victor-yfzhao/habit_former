@@ -1,4 +1,4 @@
-package org.laorui_out.habit_former.configuration;
+package org.laorui_out.habit_former.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.cors.CorsConfiguration;
