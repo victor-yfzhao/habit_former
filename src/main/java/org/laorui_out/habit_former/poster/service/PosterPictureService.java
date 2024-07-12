@@ -42,4 +42,21 @@ public class PosterPictureService {
         }
     }
 
+    public List<PosterBean> getPosterWithPicturesByUserID(int userID){
+        List<PosterBean> posterBeanList = posterMapper.getPosterByUserID(userID);
+        List<PosterBean> newPosterBeanList = new ArrayList<>();
+        if(posterBeanList == null || posterBeanList.isEmpty()){ //此时没有帖子
+            return null;
+        }
+        else{
+            for(PosterBean posterBean:posterBeanList){
+                posterBean = getPosterWithPictures(posterBean.getPosterID());
+                if(posterBean!=null){
+                    newPosterBeanList.add(posterBean);
+                }
+            }
+            return newPosterBeanList;
+        }
+    }
+
 }

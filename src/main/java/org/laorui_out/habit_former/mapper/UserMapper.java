@@ -9,6 +9,10 @@ import java.util.List;
 @Mapper
 public interface UserMapper extends BaseMapper<UserBean> {
 
+    //根据给出的用户头像URL来更新用户头像
+    @Update("UPDATE User SET userIcon = #{userIcon} WHERE userID = #{userID}")
+    int updateUserIcon(@Param("userID") Integer userID, @Param("userIcon") String userIcon);
+
     //根据帖子ID查找用户信息
     @Select("SELECT userID, username, userIcon FROM User WHERE " +
             "userID = (SELECT userID FROM Poster WHERE posterID = #{posterID})")

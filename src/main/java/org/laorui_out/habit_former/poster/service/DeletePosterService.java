@@ -13,12 +13,14 @@ public class DeletePosterService {
     PosterMapper posterMapper;
     @Resource
     PosterService posterService;
+    @Resource
+    PosterPictureService posterPictureService;
 
     //根据帖子ID删除帖子
     public Boolean deletePoster(int posterID){
 
         //对于输入posterID是否存在的判断
-        PosterBean posterTestBean = posterMapper.getPosterById(posterID);
+        PosterBean posterTestBean = posterPictureService.getPosterWithPictures(posterID);
         if(posterTestBean == null){
             return false;
         }

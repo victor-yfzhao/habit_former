@@ -60,6 +60,7 @@ public class CommentController {
                         childCommentBean.getCommentDetail(),
                         childCommentBean.getCommentDate(),
                         childCommentBean.getCommentTime(),
+                        childCommentBean.getParentCommentID(),
                         userBean.getUserID(),
                         userBean.getUsername(),
                         userBean.getUserIcon()
