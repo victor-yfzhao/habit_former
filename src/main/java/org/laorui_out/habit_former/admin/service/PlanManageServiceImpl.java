@@ -5,7 +5,9 @@ import org.laorui_out.habit_former.mapper.DailyPlanMapper;
 import org.laorui_out.habit_former.mapper.FitPlanMapper;
 import org.laorui_out.habit_former.mapper.PlanMapper;
 import org.laorui_out.habit_former.mapper.StudyPlanMapper;
+import org.springframework.stereotype.Service;
 
+@Service
 public class PlanManageServiceImpl implements PlanManageService {
     @Resource
     private PlanMapper planMapper;

@@ -5,9 +5,10 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.laorui_out.habit_former.bean.PosterBean;
 import org.laorui_out.habit_former.bean.UserBean;
 import org.laorui_out.habit_former.mapper.PosterMapper;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
-
+@Service
 public class PosterManageServiceImpl extends ServiceImpl<PosterMapper, PosterBean> implements PosterManageService {
     @Override
     public IPage<PosterBean> selectAllPosters(int pageCount, int pageSize) {
