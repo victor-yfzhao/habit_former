@@ -41,6 +41,8 @@ public class PlanController {
         }
     }
 
+    //有点小问题
+    //选7月 7.1没有但是8.1有
     @GetMapping("/index/calendar")
     public ResponseMessage<List<Plan4EachDay>> calendarRequest(int userID, int currentYear, int currentMonth) {
         try {
@@ -120,7 +122,7 @@ public class PlanController {
     //TODO:定期refresh plan的状态
     @PostMapping("/plan_detail/check")
     public ResponseMessage<String> checkPlanDetail(@RequestParam int planDetailID, int completeStatus, String planDetailType) {
-
+    //TODO:要先检查输入的数据是否合法，不然会报500
         switch (planDetailType) {
             case Constants.PLAN_TYPE:
                 if (completeStatus == 1) {
@@ -159,7 +161,9 @@ public class PlanController {
         PlanBean planBean = createPlanService.addPlan(dailyPlanGenerateRequest.getPlanInfo(), dailyPlanGenerateRequest.getPlanName(),dailyPlanGenerateRequest.getType(),dailyPlanGenerateRequest.getUserID());
         List<DailyPlanBean> res=new ArrayList<>();
         for (DailyPlanBean item: dailyPlanGenerateRequest.getData()) {
-            res.add(createPlanService.addDailyPlan(Date.valueOf(item.getDateShow()), item.getPlanDetail(), planBean.getPlanID()));
+            DailyPlanBean tmp = createPlanService.addDailyPlan(Date.valueOf(item.getDateShow()), item.getPlanDetail(), planBean.getPlanID());
+            tmp.setDateShow(item.getDateShow());
+            res.add(tmp);
         }
         return new ResponseMessage<>(200,"success",res);
     }
@@ -168,7 +172,9 @@ public class PlanController {
         PlanBean planBean = createPlanService.addPlan(FitPlanGenerateRequest.getPlanInfo(), FitPlanGenerateRequest.getPlanName(),FitPlanGenerateRequest.getType(),FitPlanGenerateRequest.getUserID());
         List<FitPlanBean> res=new ArrayList<>();
         for (FitPlanBean item: FitPlanGenerateRequest.getData()) {
-            res.add(createPlanService.addFitPlan(Date.valueOf(item.getDateShow()), item.getFitItemName(),item.getFitType(),item.getGroupNum(),item.getNumPerGroup(),item.getTimePerGroup(), planBean.getPlanID()));
+            FitPlanBean tmp = createPlanService.addFitPlan(Date.valueOf(item.getDateShow()), item.getFitItemName(),item.getFitType(),item.getGroupNum(),item.getNumPerGroup(),item.getTimePerGroup(), planBean.getPlanID());
+            tmp.setDateShow(item.getDateShow());
+            res.add(tmp);
         }
         return new ResponseMessage<>(200,"success",res);
     }
@@ -177,7 +183,9 @@ public class PlanController {
         PlanBean planBean = createPlanService.addPlan(StudyPlanGenerateRequest.getPlanInfo(), StudyPlanGenerateRequest.getPlanName(),StudyPlanGenerateRequest.getType(),StudyPlanGenerateRequest.getUserID());
         List<StudyPlanBean> res=new ArrayList<>();
         for (StudyPlanBean item: StudyPlanGenerateRequest.getData()) {
-            res.add(createPlanService.addStudyPlan(Date.valueOf(item.getDateShow()), item.getStudySubject(),item.getStudyContent(),item.getStudyTime(), planBean.getPlanID()));
+            StudyPlanBean tmp = createPlanService.addStudyPlan(Date.valueOf(item.getDateShow()), item.getStudySubject(),item.getStudyContent(),item.getStudyTime(), planBean.getPlanID());
+            tmp.setDateShow(item.getDateShow());
+            res.add(tmp);
         }
         return new ResponseMessage<>(200,"success",res);
     }

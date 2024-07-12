@@ -16,7 +16,7 @@ public class ResponseReader {
         DailyPlanBean dailyPlanBean=new DailyPlanBean();
         JSONObject jsonObject=new JSONObject(jsResponse);
         int days=jsonObject.getInt("day");
-        dailyPlanBean.setDate(calculateFutureDate(startDate,days));
+        dailyPlanBean.setDate(calculateFutureDate(startDate,days-1));
         dailyPlanBean.setDateShow(Constants.sdf.format(dailyPlanBean.getDate()));
         dailyPlanBean.setStatus(Constants.NOT_CHECKED);
         dailyPlanBean.setPlanDetail(jsonObject.getString("task_name")+':'+jsonObject.getString("task_content"));
@@ -26,10 +26,10 @@ public class ResponseReader {
         FitPlanBean fitPlanBean=new FitPlanBean();
         JSONObject jsonObject=new JSONObject(jsResponse);
         int days=jsonObject.getInt("day");
-        fitPlanBean.setDate(calculateFutureDate(startDate,days));
+        fitPlanBean.setDate(calculateFutureDate(startDate,days-1));
         fitPlanBean.setDateShow(Constants.sdf.format(fitPlanBean.getDate()));
         fitPlanBean.setStatus(Constants.NOT_CHECKED);
-        fitPlanBean.setFitItemName(jsonObject.getString("name")+':'+jsonObject.getString("task_content"));
+        fitPlanBean.setFitItemName(jsonObject.getString("task_content")+':'+jsonObject.getString("name"));
         fitPlanBean.setFitType(jsonObject.getString("num"));
         fitPlanBean.setGroupNum(jsonObject.getInt("task_group_num"));
         fitPlanBean.setTimePerGroup(0);
@@ -43,7 +43,7 @@ public class ResponseReader {
         StudyPlanBean studyPlanBean=new StudyPlanBean();
         JSONObject jsonObject=new JSONObject(jsResponse);
         int days=jsonObject.getInt("day");
-        studyPlanBean.setDate(calculateFutureDate(startDate,days));
+        studyPlanBean.setDate(calculateFutureDate(startDate,days-1));
         studyPlanBean.setDateShow(Constants.sdf.format(studyPlanBean.getDate()));
         studyPlanBean.setStatus(Constants.NOT_CHECKED);
         studyPlanBean.setStudyContent(jsonObject.getString("task_name")+':'+jsonObject.getString("task_content"));

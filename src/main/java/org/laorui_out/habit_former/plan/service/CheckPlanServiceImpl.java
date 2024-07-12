@@ -54,7 +54,7 @@ public class CheckPlanServiceImpl implements CheckPlanService {
         FitPlanBean fitPlanBean = fitPlanMapper.getFitPlanByID(fitPlanID);
         if (fitPlanBean.getStatus().equals(Constants.NOT_CHECKED)) {
             fitPlanBean.setStatus(Constants.CHECKED);
-            fitPlanMapper.updateFitPlan(fitPlanBean);
+            fitPlanMapper.updateFitPlanStatus(fitPlanBean);
             return true;
         }
         return false;
@@ -64,7 +64,7 @@ public class CheckPlanServiceImpl implements CheckPlanService {
         FitPlanBean fitPlanBean = fitPlanMapper.getFitPlanByID(fitPlanID);
         if (fitPlanBean.getStatus().equals(Constants.CHECKED)) {
             fitPlanBean.setStatus(Constants.NOT_CHECKED);
-            fitPlanMapper.updateFitPlan(fitPlanBean);
+            fitPlanMapper.updateFitPlanStatus(fitPlanBean);
             return true;
         }
         return false;
@@ -74,7 +74,7 @@ public class CheckPlanServiceImpl implements CheckPlanService {
         StudyPlanBean studyPlanBean = studyPlanMapper.getStudyPlanByID(studyPlanID);
         if (studyPlanBean.getStatus().equals(Constants.NOT_CHECKED)) {
             studyPlanBean.setStatus(Constants.CHECKED);
-            studyPlanMapper.updateStudyPlan(studyPlanBean);
+            studyPlanMapper.updateStudyPlanStatus(studyPlanBean);
             return true;
         }
         return false;
@@ -84,7 +84,7 @@ public class CheckPlanServiceImpl implements CheckPlanService {
         StudyPlanBean studyPlanBean = studyPlanMapper.getStudyPlanByID(studyPlanID);
         if (studyPlanBean.getStatus().equals(Constants.CHECKED)) {
             studyPlanBean.setStatus(Constants.NOT_CHECKED);
-            studyPlanMapper.updateStudyPlan(studyPlanBean);
+            studyPlanMapper.updateStudyPlanStatus(studyPlanBean);
             return true;
         }
         return false;
