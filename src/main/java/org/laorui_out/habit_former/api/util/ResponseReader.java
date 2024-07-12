@@ -17,6 +17,7 @@ public class ResponseReader {
         JSONObject jsonObject=new JSONObject(jsResponse);
         int days=jsonObject.getInt("day");
         dailyPlanBean.setDate(calculateFutureDate(startDate,days));
+        dailyPlanBean.setDateShow(Constants.sdf.format(dailyPlanBean.getDate()));
         dailyPlanBean.setStatus(Constants.NOT_CHECKED);
         dailyPlanBean.setPlanDetail(jsonObject.getString("task_name")+':'+jsonObject.getString("task_content"));
         return new ResponseMessage<>(200,"day:"+jsonObject.getInt("day"),dailyPlanBean);
@@ -26,6 +27,7 @@ public class ResponseReader {
         JSONObject jsonObject=new JSONObject(jsResponse);
         int days=jsonObject.getInt("day");
         fitPlanBean.setDate(calculateFutureDate(startDate,days));
+        fitPlanBean.setDateShow(Constants.sdf.format(fitPlanBean.getDate()));
         fitPlanBean.setStatus(Constants.NOT_CHECKED);
         fitPlanBean.setFitItemName(jsonObject.getString("name")+':'+jsonObject.getString("task_content"));
         fitPlanBean.setFitType(jsonObject.getString("num"));
@@ -42,6 +44,7 @@ public class ResponseReader {
         JSONObject jsonObject=new JSONObject(jsResponse);
         int days=jsonObject.getInt("day");
         studyPlanBean.setDate(calculateFutureDate(startDate,days));
+        studyPlanBean.setDateShow(Constants.sdf.format(studyPlanBean.getDate()));
         studyPlanBean.setStatus(Constants.NOT_CHECKED);
         studyPlanBean.setStudyContent(jsonObject.getString("task_name")+':'+jsonObject.getString("task_content"));
         studyPlanBean.setStudyTime(jsonObject.getInt("duration"));
