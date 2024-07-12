@@ -37,62 +37,51 @@ public class CommentController {
     }
 
     @GetMapping("comment/showReply")
-    public ResponseMessage<Object> getReply(@RequestParam("commentID") int commentID){
+    public ResponseMessage<List> getReply(@RequestParam("commentID") int commentID){
         List<CommentAndUserBean> replyDetailList = new ArrayList<>();
         try{
             CommentBean commentBean = commentService.getCommentByCommentID(commentID);
             if(commentBean == null){
-                return new ResponseMessage<>(500,"错误","父评论ID不存在，信息查找错误");
+                return new ResponseMessage<>(500,"父评论ID不存在，信息查找错误",null);
             }
             List<CommentBean> childCommentList = commentService.getChildComment(commentID);
-            if(!childCommentList.isEmpty()){
-                for(CommentBean childCommentBean:childCommentList){
-                    UserBean userBean = commentService.getUserByCommentId(childCommentBean.getCommentID());
-                    CommentAndUserBean commentAndUserBean = new CommentAndUserBean(
-                            childCommentBean.getCommentID(),
-                            childCommentBean.getCommentDetail(),
-                            childCommentBean.getCommentDate(),
-                            childCommentBean.getCommentTime(),
-                            userBean.getUserID(),
-                            userBean.getUsername(),
-                            userBean.getUserIcon()
-                    );
-                    replyDetailList.add(commentAndUserBean);
-                }
-            }
-            return new ResponseMessage<>(200,"成功",replyDetailList);
+            return getListResponseMessage(replyDetailList, childCommentList);
         }catch (Exception e){
-            return new ResponseMessage<>(500,"失败",e.getMessage());
+            return new ResponseMessage<>(500,"出现错误"+e.getMessage(),null);
         }
     }
 
+    private ResponseMessage<List> getListResponseMessage(List<CommentAndUserBean> replyDetailList, List<CommentBean> childCommentList) {
+        if(!childCommentList.isEmpty()){
+            for(CommentBean childCommentBean:childCommentList){
+                UserBean userBean = commentService.getUserByCommentId(childCommentBean.getCommentID());
+                CommentAndUserBean commentAndUserBean = new CommentAndUserBean(
+                        childCommentBean.getCommentID(),
+                        childCommentBean.getCommentDetail(),
+                        childCommentBean.getCommentDate(),
+                        childCommentBean.getCommentTime(),
+                        userBean.getUserID(),
+                        userBean.getUsername(),
+                        userBean.getUserIcon()
+                );
+                replyDetailList.add(commentAndUserBean);
+            }
+        }
+        return new ResponseMessage<>(200,"成功",replyDetailList);
+    }
+
     @GetMapping("comment/showComment")
-    public ResponseMessage<Object> getComment(@RequestParam("posterID") int posterID){
+    public ResponseMessage<List> getComment(@RequestParam("posterID") int posterID){
         if(!posterService.isInPosterIDList(posterID)){
-            return new ResponseMessage<>(200,"失败","不存在对应的帖子，评论查找失败");
+            return new ResponseMessage<>(200,"不存在对应的帖子，评论查找失败",null);
         }
         List<CommentAndUserBean> commentDetailList = new ArrayList<>();
         try{
             List<CommentBean>commentList = commentService.getCommentByPosterID(posterID);
-            if(!commentList.isEmpty()){
-                for(CommentBean commentBean:commentList){
-                    UserBean userBean = commentService.getUserByCommentId(commentBean.getCommentID());
-                    CommentAndUserBean commentAndUserBean = new CommentAndUserBean(
-                            commentBean.getCommentID(),
-                            commentBean.getCommentDetail(),
-                            commentBean.getCommentDate(),
-                            commentBean.getCommentTime(),
-                            userBean.getUserID(),
-                            userBean.getUsername(),
-                            userBean.getUserIcon()
-                    );
-                    commentDetailList.add(commentAndUserBean);
-                }
-            }
-            return new ResponseMessage<>(200,"成功",commentDetailList);
+            return getListResponseMessage(commentDetailList, commentList);
 
         }catch(Exception e){
-            return new ResponseMessage<>(500, "失败", e.getMessage());
+            return new ResponseMessage<>(500, "失败:"+e.getMessage() ,null);
         }
     }
 
