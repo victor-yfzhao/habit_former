@@ -77,8 +77,6 @@ public class PosterController {
             return new ResponseMessage<>(500,"失败",e.getMessage());
         }
 
-
-
     }
 
 

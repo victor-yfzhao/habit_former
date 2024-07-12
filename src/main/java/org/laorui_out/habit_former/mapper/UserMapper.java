@@ -14,6 +14,11 @@ public interface UserMapper extends BaseMapper<UserBean> {
             "userID = (SELECT userID FROM Poster WHERE posterID = #{posterID})")
     UserBean getUserByPosterId(@Param("posterID") int posterID);
 
+    //根据评论ID查找用户信息
+    @Select("SELECT userID, username, userIcon FROM User WHERE " +
+            "userID = (SELECT userID FROM Comment WHERE commentID = #{commentID})")
+    UserBean getUserByCommentId(@Param("commentID") int commentID);
+
     // 根据用户名查找用户（仅供登录使用）
     @Select("select * " +
             "from User " +
