@@ -66,7 +66,7 @@ public class PosterService {
 
 
         //返回一个匿名类对象
-        if(poster.getPosterPicture()!=null){
+        if(!poster.getPosterPicture().isEmpty()){
             for(int i =0;i<poster.getPosterPicture().size();i++){
                 System.out.println(poster.getPosterPicture().get(i));
             }
