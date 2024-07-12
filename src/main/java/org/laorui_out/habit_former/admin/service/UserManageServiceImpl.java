@@ -25,21 +25,23 @@ public class UserManageServiceImpl extends ServiceImpl<UserMapper, UserBean> imp
 
     @Override
     public List<UserBean> selectUserByUsername(String username) {
-        return null;
+        UserBean userBean = baseMapper.selectByUsername(username);
+        return List.of(userBean);
     }
 
     @Override
     public int deleteUser(int userID) {
-        return 0;
+        return baseMapper.deleteUser(userID);
     }
 
     @Override
-    public List<UserBean> updateUser(UserBean userBean) {
-        return null;
+    public int updateUser(UserBean userBean) {
+        return baseMapper.updateUser(userBean);
     }
 
     @Override
     public int createUser(UserBean userBean) {
-        return 0;
+        baseMapper.createUser(userBean);
+        return userBean.getUserID();
     }
 }

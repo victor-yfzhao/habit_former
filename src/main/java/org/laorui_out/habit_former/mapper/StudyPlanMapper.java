@@ -32,7 +32,9 @@ public interface StudyPlanMapper extends BaseMapper<StudyPlanBean> {
     @Delete("delete from StudyPlanItem " +
             "where studyPlanItemID = #{studyPlanItemID};")
     int deleteStudyPlan(int studyPlanID);
-
+    @Delete("delete from StudyPlanItem " +
+            "where planID = #{planID};")
+    int deleteAllStudyPlanByPlanID(int planID);
     // 更新某一学习计划
     @Update("update StudyPlanItem " +
             "set studySubject = #{studySubject}, studyContent = #{studyContent}, studyTime = #{studyTime} " +

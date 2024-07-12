@@ -33,6 +33,9 @@ public interface FitPlanMapper extends BaseMapper<FitPlanBean> {
     @Delete("delete from FitPlanItem " +
             "where fitPlanItemID = #{fitPlanItemID};")
     int deleteFitPlan(int fitPlanID);
+    @Delete("delete from FitPlanItem " +
+            "where planID = #{planID};")
+    int deleteAllFitPlanByPlanID(int planID);
 
     // 更新某一健身计划
     @Update("update FitPlanItem " +

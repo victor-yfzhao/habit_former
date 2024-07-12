@@ -17,7 +17,7 @@ public interface UserManageService extends IService<UserBean> {
 
     int deleteUser(int userID);
 
-    List<UserBean> updateUser(UserBean userBean);
+    int updateUser(UserBean userBean);
 
     int createUser(UserBean userBean);
 

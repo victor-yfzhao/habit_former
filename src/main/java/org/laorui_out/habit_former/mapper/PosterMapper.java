@@ -1,4 +1,5 @@
 package org.laorui_out.habit_former.mapper;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.*;
 import org.laorui_out.habit_former.bean.PosterBean;
 import org.laorui_out.habit_former.bean.PosterPictureBean;
@@ -7,16 +8,16 @@ import java.util.List;
 
 
 @Mapper
-public interface PosterMapper {
+public interface PosterMapper extends BaseMapper<PosterBean> {
 
 
     //根据帖子ID删除poster
     @Delete("delete from Poster where posterID = #{posterID}")
-    public boolean deletePosterByPosterId(@Param("posterID") int posterID);
+    boolean deletePosterByPosterId(@Param("posterID") int posterID);
 
     //根据帖子ID删除poster图片
     @Delete("delete from Posterpicture where posterID = #{posterID}")
-    public boolean deletePosterPictureByPosterId(@Param("posterID") int posterID);
+    boolean deletePosterPictureByPosterId(@Param("posterID") int posterID);
 
     //直接返回所有poster
     @Select("select * from Poster")
@@ -59,6 +60,8 @@ public interface PosterMapper {
     @Select("select posterID from Poster")
     List<Integer> getAllPosterID();
 
+    @Select("select posterID from Poster where userID = #{userID}")
+    List<Integer> getAllPosterIDByUserID(int userID);
 
 
 
