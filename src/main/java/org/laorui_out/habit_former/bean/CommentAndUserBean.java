@@ -26,6 +26,7 @@ public class CommentAndUserBean {
                 ", commentDetail='" + commentDetail + '\'' +
                 ", commentDate=" + commentDate +
                 ", commentTime=" + commentTime +
+                ", parentCommentID=" + parentCommentID +
                 ", userID=" + userID +
                 ", username='" + username + '\'' +
                 ", userIcon='" + userIcon + '\'' +
