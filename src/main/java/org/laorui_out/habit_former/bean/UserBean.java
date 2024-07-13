@@ -33,6 +33,15 @@ public class UserBean {
     @JsonIgnore
     private Date userCreateDate;
 
+    @TableField("gender")
+    private String gender;
+
+    @TableField("address")
+    private String address;
+
+    @TableField("userIntro")
+    private String userIntro;
+
     @Override
     public String toString() {
         return "UserBean{" +
@@ -40,6 +49,10 @@ public class UserBean {
                 ", username='" + username + '\'' +
                 ", password='" + password + '\'' +
                 ", userIcon='" + userIcon + '\'' +
+                ", userCreateDate=" + userCreateDate +
+                ", gender='" + gender + '\'' +
+                ", address='" + address + '\'' +
+                ", userIntroduction='" + userIntro + '\'' +
                 '}';
     }
 }

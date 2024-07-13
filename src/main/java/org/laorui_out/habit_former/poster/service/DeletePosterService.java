@@ -18,14 +18,12 @@ public class DeletePosterService {
 
     //根据帖子ID删除帖子
     public Boolean deletePoster(int posterID){
-
         //对于输入posterID是否存在的判断
         PosterBean posterTestBean = posterPictureService.getPosterWithPictures(posterID);
         if(posterTestBean == null){
-            return false;
+            return posterMapper.deletePosterByPosterId(posterID);
         }
         try {
-
             if(posterTestBean.getPosterPicture()==null || posterTestBean.getPosterPicture().isEmpty()){
                 return posterMapper.deletePosterByPosterId(posterID);
             }else{

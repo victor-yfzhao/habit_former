@@ -46,6 +46,34 @@ public class ProfileServiceImpl extends ServiceImpl<UserMapper, UserBean> implem
 
         return baseMapper.getUserProfileThroughID(userID);
     }
+
+    public boolean updateGender(int userID, String gender){
+        UserBean user = baseMapper.getUserProfileThroughID(userID);
+        user.setGender(gender);
+        return baseMapper.updateUser(user) == 1;
+    }
+
+    public boolean updateAddress(int userID, String address){
+        UserBean user = baseMapper.getUserProfileThroughID(userID);
+        user.setAddress(address);
+        return baseMapper.updateUser(user) == 1;
+    }
+
+    public boolean updateUserIntro(int userID, String userIntro){
+        UserBean user = baseMapper.getUserProfileThroughID(userID);
+        user.setUserIntro(userIntro);
+        return baseMapper.updateUser(user) == 1;
+    }
+
+
+
+
+
+
+
+
+
+
     @Transactional
     public boolean updateUserIcon(int userID, String userIcon) {
         return userMapper.updateUserIcon(userID, userIcon) > 0;

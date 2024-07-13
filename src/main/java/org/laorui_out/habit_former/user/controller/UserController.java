@@ -92,6 +92,9 @@ public class UserController {
                     user.getUserID(),
                     user.getUsername(),
                     user.getUserIcon(),
+                    user.getGender(),
+                    user.getAddress(),
+                    user.getUserIntro(),
                     posterMessages
             );
             return new ResponseMessage<>(200,"用户个人展示成功",userPersonalPageBean);
@@ -102,7 +105,7 @@ public class UserController {
 
 
     //更新用户头像
-    @PutMapping("/user/update_icon")
+    @PostMapping("/user/update_icon")
     public ResponseMessage<String> updateUserIcon(@RequestParam Integer userID, @RequestParam String userIcon) {
         boolean isUpdated = profileService.updateUserIcon(userID, userIcon);
         if (isUpdated) {
@@ -128,5 +131,31 @@ public class UserController {
         }
         return new ResponseMessage<>(400, "failed to update username", null);
     }
+
+    @PostMapping("/user/update_gender")
+    public ResponseMessage<Boolean> updateUserGender(int userID, String gender) {
+        if(profileService.updateGender(userID, gender)) {
+            return new ResponseMessage<>(200, "success update gender", true);
+        }
+        return new ResponseMessage<>(400, "failed to update gender", false);
+    }
+
+    @PostMapping("/user/update_address")
+    public ResponseMessage<Boolean> updateUserAddress(int userID, String address) {
+        if(profileService.updateAddress(userID, address)) {
+            return new ResponseMessage<>(200, "success update address", true);
+        }
+        return new ResponseMessage<>(400, "failed to update address", false);
+    }
+
+    @PostMapping("/user/update_userIntro")
+    public ResponseMessage<Boolean> updateUserIntro(int userID, String userIntro) {
+        if(profileService.updateUserIntro(userID, userIntro)) {
+            return new ResponseMessage<>(200, "success update userIntro", true);
+        }
+        return new ResponseMessage<>(400, "failed to update userIntro", false);
+    }
+
+
 }
 

@@ -13,4 +13,8 @@ public interface ProfileService extends IService<UserBean> {
     boolean updatePassword(int userID, String password);
 
     UserBean updateUsername(int userID, String newUsername);
+
+    boolean updateGender(int userID, String gender);
+    boolean updateAddress(int userID, String address);
+    boolean updateUserIntro(int userID, String userIntro);
 }

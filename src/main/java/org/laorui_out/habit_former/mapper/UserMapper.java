@@ -52,13 +52,13 @@ public interface UserMapper extends BaseMapper<UserBean> {
     UserBean[] selectAllUsers();
 
     // 根据用户ID返回用户信息
-    @Select("select userID, username, userIcon " +
+    @Select("select userID, username, userIcon, gender, address, userIntro " +
             "from User " +
             "where userID = #{userID}")
     UserBean getUserProfileThroughID(int userID);
 
     // 根据用户名返回用户信息
-    @Select("select userID, username, userIcon " +
+    @Select("select userID, username, userIcon, gender, address, userIntro " +
             "from User " +
             "where username = #{username}")
     UserBean getUserProfileThroughUsername(String username);

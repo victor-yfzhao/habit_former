@@ -16,7 +16,11 @@ public class UserPersonalPageBean {
     private Integer userID;
     private String username;
     private String userIcon;
+    private String gender;
+    private String address;
+    private String userIntro;
     private List<Object> personalPosterList;
+
 
     @Override
     public String toString() {
@@ -24,6 +28,9 @@ public class UserPersonalPageBean {
                 "userID=" + userID +
                 ", username='" + username + '\'' +
                 ", userIcon='" + userIcon + '\'' +
+                ", gender='" + gender + '\'' +
+                ", address='" + address + '\'' +
+                ", userIntroduction='" + userIntro + '\'' +
                 ", personalPosterList=" + personalPosterList +
                 '}';
     }
