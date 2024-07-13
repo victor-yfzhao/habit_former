@@ -13,6 +13,21 @@ public interface UserMapper extends BaseMapper<UserBean> {
     @Update("UPDATE User SET userIcon = #{userIcon} WHERE userID = #{userID}")
     int updateUserIcon(@Param("userID") Integer userID, @Param("userIcon") String userIcon);
 
+    @Update("UPDATE User SET username = #{username} WHERE userID = #{userID}")
+    int updateUserName(@Param("userID") Integer userID, @Param("username") String username);
+
+    @Update("UPDATE User SET password = #{password} WHERE userID = #{userID}")
+    int updatePassword(@Param("userID") Integer userID, @Param("password") String password);
+
+    @Update("UPDATE User SET gender = #{gender} WHERE userID = #{userID}")
+    int updateUserGender(@Param("userID") Integer userID, @Param("gender") String gender);
+
+    @Update("UPDATE User SET address = #{address} WHERE userID = #{userID}")
+    int updateUserAddress(@Param("userID") Integer userID, @Param("address") String address);
+
+    @Update("UPDATE User SET userIntro = #{userIntro} WHERE userID = #{userID}")
+    int updateUserIntro(@Param("userID") Integer userID, @Param("userIntro") String userIntro);
+
     //根据帖子ID查找用户信息
     @Select("SELECT userID, username, userIcon FROM User WHERE " +
             "userID = (SELECT userID FROM Poster WHERE posterID = #{posterID})")

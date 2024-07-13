@@ -124,12 +124,11 @@ public class UserController {
     }
 
     @PostMapping("/user/update_username")
-    public ResponseMessage<UserBean> updateUserUsername(int userID, String username) {
-        UserBean user = profileService.updateUsername(userID, username);
-        if(user != null) {
-            return new ResponseMessage<>(200, "success update username", user);
+    public ResponseMessage<Boolean> updateUserUserName(int userID, String username) {
+        if(profileService.updateUserName(userID, username)) {
+            return new ResponseMessage<>(200, "success update username", true);
         }
-        return new ResponseMessage<>(400, "failed to update username", null);
+        return new ResponseMessage<>(400, "failed to update username", false);
     }
 
     @PostMapping("/user/update_gender")
@@ -158,4 +157,3 @@ public class UserController {
 
 
 }
-
