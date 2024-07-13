@@ -95,9 +95,7 @@ public class CheckPlanServiceImpl implements CheckPlanService {
         List<PlanBean> result = new ArrayList<>();
         for (PlanBean planbean : plans) {
             PlanBean tmp = refreshPlanStatus(planbean.getPlanID());
-            if (tmp != null)//检验是否更新
-                result.add(tmp);
-            else result.add(planbean);
+            result.add(tmp);
         }
         return result;
     }
@@ -106,18 +104,15 @@ public class CheckPlanServiceImpl implements CheckPlanService {
         //plan 目前只设定check和uncheck两种状态，不存在fail
         //当所有子计划项都不是uncheck状态的时候，将plan标为check
         PlanBean planBean = planMapper.getPlanByPlanID(planID);
-        if (!planBean.getStatus().equals(Constants.NOT_CHECKED))
-            return null;
+        if (!(planBean.getStatus().equals(Constants.NOT_CHECKED)))
+            return planBean;//状态保持不变
         boolean res;
-        //TODO:方法体，调用三种不同的子计划项的检查方法
-        if (planBean.getPlanType().equals(Constants.PLAN_TYPE)) {
-            res = refreshAllDailyPlan(planID);
-        } else if (planBean.getPlanType().equals(Constants.FIT_PLAN_TYPE)) {
+        if (planBean.getPlanType().equals(Constants.FIT_PLAN_TYPE)) {
             res = refreshAllFitPlan(planID);
         } else if (planBean.getPlanType().equals(Constants.STUDY_PLAN_TYPE)) {
             res = refreshAllStudyPlan(planID);
         } else {
-            return null;//TODO:类型异常
+            res = refreshAllDailyPlan(planID);
         }
         if (res) {
             planBean.setStatus(Constants.CHECKED);
@@ -138,6 +133,7 @@ public class CheckPlanServiceImpl implements CheckPlanService {
                 now = stripTime(now);
                 if (now.after(date)) {
                     item.setStatus(Constants.FAILED);
+                    dailyPlanMapper.updateDailyPlan(item);
                 } else {//有未过期且未打卡的子项目
                     return false;
                 }
@@ -158,6 +154,7 @@ public class CheckPlanServiceImpl implements CheckPlanService {
                 now = stripTime(now);
                 if (now.after(date)) {
                     item.setStatus(Constants.FAILED);
+                    fitPlanMapper.updateFitPlanStatus(item);
                 } else {
                     return false;
                 }
@@ -177,12 +174,35 @@ public class CheckPlanServiceImpl implements CheckPlanService {
                 now = stripTime(now);
                 if (now.after(date)) {
                     item.setStatus(Constants.FAILED);
+                    studyPlanMapper.updateStudyPlanStatus(item);
                 } else {
                     return false;
                 }
             }
         }
         return true;
+    }
+
+    //adapter转接口
+    public int getPlanIDByDP(int dailyPlanID) {
+        DailyPlanBean tmp = dailyPlanMapper.getDailyPlanByID(dailyPlanID);
+        if (tmp != null)
+            return tmp.getPlanID();
+        return -1;
+    }
+
+    public int getPlanIDByFP(int fitPlanID) {
+        FitPlanBean tmp = fitPlanMapper.getFitPlanByID(fitPlanID);
+        if (tmp != null)
+            return tmp.getPlanID();
+        return -1;
+    }
+
+    public int getPlanIDBySP(int studyPlanID) {
+        StudyPlanBean tmp = studyPlanMapper.getStudyPlanByID(studyPlanID);
+        if (tmp != null)
+            return tmp.getPlanID();
+        return -1;
     }
 
     public int countSuccess(int planID) {

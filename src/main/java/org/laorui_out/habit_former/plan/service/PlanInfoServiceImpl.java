@@ -36,12 +36,27 @@ public class PlanInfoServiceImpl extends ServiceImpl<PlanMapper, PlanBean> imple
     @Override
     public List<PlanBean> getAllPlanInfo(int userID) {
         List<PlanBean> plans = planMapper.getAllPlanByUserID(userID);
-
-        for(PlanBean plan : plans){
-            plan.setPlanDateShow(Constants.sdf.format(plan.getPlanDate()));
+        List<PlanBean> res = new ArrayList<>();
+        for (PlanBean plan : plans) {
+            if (plan.getStatus().equals(Constants.NOT_CHECKED)) {
+                plan.setPlanDateShow(Constants.sdf.format(plan.getPlanDate()));
+                res.add(plan);
+            }
         }
+        return res;
+    }
 
-        return plans;
+    @Override
+    public List<PlanBean> getAllHistoryPlanInfo(int userID) {
+        List<PlanBean> plans = planMapper.getAllPlanByUserID(userID);
+        List<PlanBean> res = new ArrayList<>();
+        for (PlanBean plan : plans) {
+            if (!plan.getStatus().equals(Constants.NOT_CHECKED)) {
+                plan.setPlanDateShow(Constants.sdf.format(plan.getPlanDate()));
+                res.add(plan);
+            }
+        }
+        return res;
     }
 
     @Override
@@ -52,8 +67,7 @@ public class PlanInfoServiceImpl extends ServiceImpl<PlanMapper, PlanBean> imple
         if (month == 12) {
             month = 1;
             year++;
-        }
-        else {
+        } else {
             month++;
         }
         calendar.set(year, month - 1, 1);
@@ -63,9 +77,9 @@ public class PlanInfoServiceImpl extends ServiceImpl<PlanMapper, PlanBean> imple
         if (planList == null) return null;
 
         List<Plan4EachDay> results = new ArrayList<>();
-        for(PlanBean plan : planList) {
+        for (PlanBean plan : planList) {
             String planType = plan.getPlanType();
-            switch (planType){
+            switch (planType) {
                 case Constants.FIT_PLAN_TYPE:
                     for (Date date = startDate; date.compareTo(endDate) < 0; date = plusOneDay(date)) {
                         List<FitPlanBean> fitPlan = fitPlanMapper.getFitPlanByDate(plan.getPlanID(), date);
@@ -95,7 +109,7 @@ public class PlanInfoServiceImpl extends ServiceImpl<PlanMapper, PlanBean> imple
         if (empty) return;
 
         boolean hit = false;
-        for(Plan4EachDay plan4EachDay : results) {
+        for (Plan4EachDay plan4EachDay : results) {
             if (date.compareTo(plan4EachDay.getDate()) == 0) {
                 plan4EachDay.getPlanList().add(plan);
                 hit = true;
@@ -110,7 +124,7 @@ public class PlanInfoServiceImpl extends ServiceImpl<PlanMapper, PlanBean> imple
         }
     }
 
-    private Date plusOneDay(Date date){
+    private Date plusOneDay(Date date) {
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(date);
         calendar.add(Calendar.DAY_OF_MONTH, 1);
