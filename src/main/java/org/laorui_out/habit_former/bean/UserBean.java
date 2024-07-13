@@ -23,14 +23,12 @@ public class UserBean {
     private String username;
 
     @TableField("password")
-    @JsonIgnore
     private String password;
 
     @TableField("userIcon")
     private String userIcon;
 
     @TableField("userCreateDate")
-    @JsonIgnore
     private Date userCreateDate;
 
     @Override

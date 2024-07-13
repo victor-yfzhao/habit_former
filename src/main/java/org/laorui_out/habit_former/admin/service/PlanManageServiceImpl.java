@@ -1,4 +1,5 @@
 package org.laorui_out.habit_former.admin.service;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import jakarta.annotation.Resource;
 import org.laorui_out.habit_former.bean.PlanBean;
 import org.laorui_out.habit_former.mapper.DailyPlanMapper;
@@ -8,7 +9,7 @@ import org.laorui_out.habit_former.mapper.StudyPlanMapper;
 import org.springframework.stereotype.Service;
 
 @Service
-public class PlanManageServiceImpl implements PlanManageService {
+public class PlanManageServiceImpl extends ServiceImpl<PlanMapper, PlanBean> implements PlanManageService {
     @Resource
     private PlanMapper planMapper;
 

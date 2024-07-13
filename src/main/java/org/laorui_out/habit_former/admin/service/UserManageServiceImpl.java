@@ -1,6 +1,7 @@
 package org.laorui_out.habit_former.admin.service;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.laorui_out.habit_former.bean.UserBean;
 import org.laorui_out.habit_former.mapper.UserMapper;
@@ -12,9 +13,8 @@ import java.util.List;
 public class UserManageServiceImpl extends ServiceImpl<UserMapper, UserBean> implements UserManageService {
 
     @Override
-    public IPage<UserBean> selectAllUsers(int pageCount, int pageSize) {
-        // TODO 分页查询
-        return null;
+    public IPage<UserBean> selectAllUsers(Page<UserBean> page) {
+        return baseMapper.selectPage(page, null);
     }
 
     @Override

@@ -4,6 +4,6 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import org.laorui_out.habit_former.bean.PlanBean;
 import org.springframework.stereotype.Service;
 
-@Service
-public interface PlanManageService {
+public interface PlanManageService extends IService<PlanBean> {
+
 }
