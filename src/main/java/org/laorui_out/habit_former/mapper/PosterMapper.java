@@ -59,7 +59,8 @@ public interface PosterMapper {
     @Select("select posterID from Poster")
     List<Integer> getAllPosterID();
 
-
+    @Select("select * from Poster where userID = #{userID}")
+    List<PosterBean> getPosterByUserID(int userID);
 
 
 //    @Update()

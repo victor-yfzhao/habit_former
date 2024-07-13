@@ -91,5 +91,9 @@ public class PosterService {
         return posterIDList.contains(posterID);
     }
 
+    public List<PosterBean> getPosterByUserID(int userID){
+        return posterMapper.getPosterByUserID(userID);
+    }
+
 
 }

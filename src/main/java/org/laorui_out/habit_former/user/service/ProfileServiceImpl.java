@@ -1,12 +1,17 @@
 package org.laorui_out.habit_former.user.service;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import jakarta.annotation.Resource;
 import org.laorui_out.habit_former.bean.UserBean;
 import org.laorui_out.habit_former.mapper.UserMapper;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class ProfileServiceImpl extends ServiceImpl<UserMapper, UserBean> implements ProfileService {
+
+    @Resource
+    UserMapper userMapper;
 
     public UserBean getProfile(int userID) {
         return baseMapper.getUserProfileThroughID(userID);
@@ -16,14 +21,14 @@ public class ProfileServiceImpl extends ServiceImpl<UserMapper, UserBean> implem
         return baseMapper.getUserProfileThroughUsername(username);
     }
 
-    public UserBean updateIcon(int userID, String icon) {
-        UserBean user = baseMapper.selectById(userID);
-        user.setUserIcon(icon);
-        baseMapper.updateUser(user);
-
-        // 确保userIcon字段已被更新
-        return baseMapper.getUserProfileThroughID(userID);
-    }
+//    public UserBean updateIcon(int userID, String icon) {
+//        UserBean user = baseMapper.selectById(userID);
+//        user.setUserIcon(icon);
+//        baseMapper.updateUser(user);
+//
+//        // 确保userIcon字段已被更新
+//        return baseMapper.getUserProfileThroughID(userID);
+//    }
 
     public boolean updatePassword(int userID, String password) {
         UserBean user = baseMapper.getUserProfileThroughID(userID);
@@ -41,4 +46,10 @@ public class ProfileServiceImpl extends ServiceImpl<UserMapper, UserBean> implem
 
         return baseMapper.getUserProfileThroughID(userID);
     }
+    @Transactional
+    public boolean updateUserIcon(int userID, String userIcon) {
+        return userMapper.updateUserIcon(userID, userIcon) > 0;
+    }
+
+
 }
