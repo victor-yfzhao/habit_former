@@ -8,8 +8,6 @@ import org.laorui_out.habit_former.bean.UserBean;
 import org.laorui_out.habit_former.poster.service.*;
 import org.laorui_out.habit_former.user.service.ProfileService;
 import org.laorui_out.habit_former.utils.ResponseMessage;
-import org.mybatis.spring.annotation.MapperScan;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -93,9 +91,9 @@ public class PosterController {
             String isCreate = createPosterService.createPoster((int)map.get("userID"), (int)map.get("planID"), (String) map.get("posterHeadline"), pictureList, (String) map.get("posterDetail"));
             System.out.println("现在的isCreate是：" + isCreate);
             if(Objects.equals(isCreate, "创建成功")){
-                return new ResponseMessage<String>(200,"成功",isCreate);
+                return new ResponseMessage<>(200,"成功",isCreate);
             }
-            return new ResponseMessage<String>(500,"失败",isCreate);
+            return new ResponseMessage<>(500,"失败",isCreate);
         }
         catch (Exception e){
             return new ResponseMessage<>(500, "失败", e.getMessage());
@@ -105,8 +103,7 @@ public class PosterController {
 
     //返回封面全部帖子的缩略信息
     @GetMapping("poster/allparts")
-    public ResponseMessage<List> getAllPosterParts(){
-        List<String> errorMessage = new ArrayList<>();
+    public ResponseMessage<List<Object>> getAllPosterParts(){
         try{
             List<PosterBean> posterBeanList = posterPictureService.getAllPosterWithPictures();
             if(posterBeanList == null){
@@ -115,13 +112,12 @@ public class PosterController {
                 return getResponseMessages(posterBeanList);
             }
         }catch (Exception e){
-            errorMessage.add(e.getMessage());
-            return new ResponseMessage<>(500,"失败",errorMessage);
+            return new ResponseMessage<>(500,e.getMessage(),null);
         }
     }
 
     //根据帖子的列表获取他们的ResponseMessage的列表
-    private ResponseMessage<List> getResponseMessages(List<PosterBean> posterBeanList) {
+    private ResponseMessage<List<Object>> getResponseMessages(List<PosterBean> posterBeanList) {
         List<Object> posterMessages = new ArrayList<>();
         for(PosterBean posterBean : posterBeanList){
             Object posterBeanPartItem = posterService.getPosterParts(posterBean.getPosterID());
@@ -132,8 +128,7 @@ public class PosterController {
 
     //获取根据输入词查找到的所有帖子的缩略信息
     @GetMapping("poster/parts/searchWords")
-    public ResponseMessage<List> getPosterWithWords(String searchWords){
-        List<String> errorMessage = new ArrayList<>();
+    public ResponseMessage<List<Object>> getPosterWithWords(String searchWords){
         try{
             List<PosterBean> posterBeanList = searchPosterService.getPosterWithWordsAndPictrues(searchWords);
             if(posterBeanList == null){
@@ -142,8 +137,7 @@ public class PosterController {
                 return getResponseMessages(posterBeanList);
             }
         }catch (Exception e){
-            errorMessage.add(e.getMessage());
-            return new ResponseMessage<>(500,"失败",errorMessage);
+            return new ResponseMessage<>(500,e.getMessage(),null);
         }
     }
 
@@ -153,10 +147,10 @@ public class PosterController {
         try{
             boolean isPosterDelete = deletePosterService.deletePoster(posterID);
             if(isPosterDelete){
-                return new ResponseMessage<String>(200,"成功删除","成功删除");
+                return new ResponseMessage<>(200,"成功删除","成功删除");
             }
             else {
-                return new ResponseMessage<String>(500,"删除失败","帖子信息不存在，删除失败");
+                return new ResponseMessage<>(500,"删除失败","帖子信息不存在，删除失败");
             }
         }catch (Exception e){
             return new ResponseMessage<>(500,"删除失败",e.getMessage());

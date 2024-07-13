@@ -62,14 +62,17 @@ public class BaiduClientService implements ClientService {
     }
 
     public SseEmitter getResponseStream(String theme, Date startDate) {
-        SseEmitter emitter = new SseEmitter(null);
+        SseEmitter emitter = new SseEmitter();
         ExecutorService executor = Executors.newSingleThreadExecutor();
         executor.execute(() -> {
                     try (Response response = client.newCall(request).execute()) {
                         if (response.isSuccessful()) {
                             ResponseBody responseBody = response.body();
                             BufferedSource bufferedSource = Objects.requireNonNull(responseBody).source();
-                            String res = "", buf,result;int index,ptr_start=-1,ptr_end=-1;
+                            StringBuilder res = new StringBuilder();
+                            String buf;
+                            String result;
+                            int index,ptr_start=-1,ptr_end=-1;
                             JSONObject jsonObject;
                             while (bufferedSource.isOpen() && !bufferedSource.exhausted()) {
                                 buf = bufferedSource.readUtf8LineStrict();
@@ -80,12 +83,12 @@ public class BaiduClientService implements ClientService {
                                 buf=buf.substring(index);
                                 jsonObject=new JSONObject(buf);
                                 result=jsonObject.getString("result");
-                                res+= result;//字符串缓冲区
+                                res.append(result);//字符串缓冲区
                                 //System.out.println(" res:"+res);
                                 if(ptr_start==-1)
-                                    ptr_start=res.indexOf('{');
+                                    ptr_start= res.toString().indexOf('{');
                                 if(ptr_end==-1)
-                                    ptr_end=res.indexOf('}');
+                                    ptr_end= res.toString().indexOf('}');
                                 //System.out.println("start:"+ptr_start+" end:"+ptr_end);
                                 if(ptr_start!=-1&&ptr_end!=-1){
                                     System.out.println("------starting to send!\nstart:"+ptr_start+" end:"+ptr_end+" res:"+res);
@@ -98,17 +101,17 @@ public class BaiduClientService implements ClientService {
                                                 emitter.send(ResponseReader.readDPResponse(res.substring(ptr_start, ptr_end + 1),startDate));
                                     }
                                     if(res.length()==ptr_end+1)
-                                        res="";
-                                    else res=res.substring(ptr_end+1);
+                                        res = new StringBuilder();
+                                    else res = new StringBuilder(res.substring(ptr_end + 1));
                                     ptr_start=-1;ptr_end=-1;
                                 }
                             }
                             System.out.println("buf reading finished");
-                            while(res.indexOf('{')!=-1&&res.indexOf('}')!=-1){
+                            while(res.toString().indexOf('{')!=-1&& res.toString().indexOf('}')!=-1){
                                 if(ptr_start==-1)
-                                    ptr_start=res.indexOf('{');
+                                    ptr_start= res.toString().indexOf('{');
                                 if(ptr_end==-1)
-                                    ptr_end=res.indexOf('}');
+                                    ptr_end= res.toString().indexOf('}');
                                 switch (theme) {
                                     case Constants.FIT_PLAN_TYPE ->
                                             emitter.send(ResponseReader.readFPResponse(res.substring(ptr_start, ptr_end + 1),startDate));
@@ -118,8 +121,8 @@ public class BaiduClientService implements ClientService {
                                             emitter.send(ResponseReader.readDPResponse(res.substring(ptr_start, ptr_end + 1),startDate));
                                 }
                                 if(res.length()==ptr_end+1)
-                                    res="";
-                                else res=res.substring(ptr_end+1);
+                                    res = new StringBuilder();
+                                else res = new StringBuilder(res.substring(ptr_end + 1));
                                 ptr_start=-1;ptr_end=-1;
                             }
                         } else {
@@ -127,8 +130,6 @@ public class BaiduClientService implements ClientService {
                         }
                     }
                     catch (IOException e) {
-                        //emitter.completeWithError(e);
-                        //System.out.println("!!!ERROR");
                         e.printStackTrace();
                     }finally {
                         System.out.println("---emitter complete----");

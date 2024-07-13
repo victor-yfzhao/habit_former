@@ -21,15 +21,6 @@ public class ProfileServiceImpl extends ServiceImpl<UserMapper, UserBean> implem
         return baseMapper.getUserProfileThroughUsername(username);
     }
 
-//    public UserBean updateIcon(int userID, String icon) {
-//        UserBean user = baseMapper.selectById(userID);
-//        user.setUserIcon(icon);
-//        baseMapper.updateUser(user);
-//
-//        // 确保userIcon字段已被更新
-//        return baseMapper.getUserProfileThroughID(userID);
-//    }
-
     public boolean updatePassword(int userID, String password) {
         UserBean user = baseMapper.getUserProfileThroughID(userID);
         user.setPassword(password);

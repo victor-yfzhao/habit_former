@@ -55,10 +55,11 @@ public class PlanController {
 
     @GetMapping("/plan_detail")
     public ResponseMessage<PlanMessageAdapter> planDetail(int planID, String dateShow, String planType) {
+        PlanMessageAdapter message;
         switch (planType) {
             case Constants.PLAN_TYPE:
                 PlanDetailMessage<DailyPlanBean> plans = planDetailService.getDailyPlanDetail(planID, Date.valueOf(dateShow));
-                PlanMessageAdapter message = new PlanMessageAdapter(planType, plans, null, null);
+                message = new PlanMessageAdapter(planType, plans, null, null);
                 return new ResponseMessage<>(200, "success", message);
             case Constants.FIT_PLAN_TYPE:
                 PlanDetailMessage<FitPlanBean> fitPlans = planDetailService.getFitPlanDetail(planID, Date.valueOf(dateShow));

@@ -13,11 +13,11 @@ public interface PosterMapper {
 
     //根据帖子ID删除poster
     @Delete("delete from Poster where posterID = #{posterID}")
-    public boolean deletePosterByPosterId(@Param("posterID") int posterID);
+    boolean deletePosterByPosterId(@Param("posterID") int posterID);
 
     //根据帖子ID删除poster图片
     @Delete("delete from Posterpicture where posterID = #{posterID}")
-    public boolean deletePosterPictureByPosterId(@Param("posterID") int posterID);
+    boolean deletePosterPictureByPosterId(@Param("posterID") int posterID);
 
     //直接返回所有poster
     @Select("select * from Poster")

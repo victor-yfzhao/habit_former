@@ -22,7 +22,7 @@ public class SearchPosterService {
         if(posterBeanList == null || posterBeanList.isEmpty()){
             return null;
         }else{
-            List<PosterBean> newPosterBeanList = new ArrayList<PosterBean>();
+            List<PosterBean> newPosterBeanList = new ArrayList<>();
             //这里最初没更新图片列表
             for(PosterBean posterBean:posterBeanList){
                 posterBean = posterPictureService.getPosterWithPictures(posterBean.getPosterID());

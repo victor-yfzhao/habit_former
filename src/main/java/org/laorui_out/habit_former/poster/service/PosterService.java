@@ -1,8 +1,5 @@
 package org.laorui_out.habit_former.poster.service;
 
-//import org.laorui_out.habit_former.bean.PosterBean;
-//import org.laorui_out.habit_former.bean.PosterPictureBean;
-//import java.time.LocalDate;
 import jakarta.annotation.Resource;
 import org.laorui_out.habit_former.bean.LikesBean;
 import org.laorui_out.habit_former.bean.PosterBean;
