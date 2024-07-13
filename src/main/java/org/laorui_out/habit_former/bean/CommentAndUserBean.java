@@ -14,6 +14,7 @@ public class CommentAndUserBean {
     private String commentDetail;
     private LocalDate commentDate;
     private LocalTime commentTime;
+    private Integer parentCommentID; // 使用Integer允许空值
     private Integer userID;
     private String username;
     private String userIcon;

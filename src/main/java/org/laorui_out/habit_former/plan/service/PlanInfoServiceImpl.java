@@ -67,19 +67,19 @@ public class PlanInfoServiceImpl extends ServiceImpl<PlanMapper, PlanBean> imple
             String planType = plan.getPlanType();
             switch (planType){
                 case Constants.FIT_PLAN_TYPE:
-                    for (Date date = startDate; date.compareTo(endDate) <= 0; date = plusOneDay(date)) {
+                    for (Date date = startDate; date.compareTo(endDate) < 0; date = plusOneDay(date)) {
                         List<FitPlanBean> fitPlan = fitPlanMapper.getFitPlanByDate(plan.getPlanID(), date);
                         addPlan2Result(results, plan, date, fitPlan.isEmpty());
                     }
                     break;
                 case Constants.PLAN_TYPE:
-                    for (Date date = startDate; date.compareTo(endDate) <= 0; date = plusOneDay(date)) {
+                    for (Date date = startDate; date.compareTo(endDate) < 0; date = plusOneDay(date)) {
                         List<DailyPlanBean> dailyPlan = dailyPlanMapper.getDailyPlanByDate(date, plan.getPlanID());
                         addPlan2Result(results, plan, date, dailyPlan.isEmpty());
                     }
                     break;
                 case Constants.STUDY_PLAN_TYPE:
-                    for (Date date = startDate; date.compareTo(endDate) <= 0; date = plusOneDay(date)) {
+                    for (Date date = startDate; date.compareTo(endDate) < 0; date = plusOneDay(date)) {
                         List<StudyPlanBean> studyPlan = studyPlanMapper.getStudyPlanByDate(plan.getPlanID(), date);
                         addPlan2Result(results, plan, date, studyPlan.isEmpty());
                     }
