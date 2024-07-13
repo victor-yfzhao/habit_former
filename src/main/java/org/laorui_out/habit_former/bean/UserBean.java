@@ -27,7 +27,7 @@ public class UserBean {
     private String password;
 
     @TableField("userIcon")
-    private String userIcon = "http://121.40.132.245:8080/habit_former/uploadFile/1720779151515_defaultPicture.jpg";
+    private String userIcon = "http://121.40.132.245:8080/habit_former/uploadFile/1720781853083_defaultPicture.jpg";
 
     @TableField("userCreateDate")
     @JsonIgnore

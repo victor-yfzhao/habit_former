@@ -85,6 +85,7 @@ public class UserController {
 
     }
 
+    //更新用户头像
     @PutMapping("/user/update_icon")
     public ResponseMessage<String> updateUserIcon(@RequestParam Integer userID, @RequestParam String userIcon) {
         boolean isUpdated = profileService.updateUserIcon(userID, userIcon);
