@@ -54,9 +54,9 @@ public class UserController {
         return new ResponseMessage<>(400, result.toString(), null);
     }
 
+    //展示用户个人信息以及它发过的所有帖子
     @GetMapping("/user")
     public ResponseMessage<Object> getUserPersonalPage(int userID) {
-        // TODO : 此处仍需要获取用户帖子
         try{
             List<PosterBean> posterBeanList = posterPictureService.getPosterWithPicturesByUserID(userID);
             System.out.println(posterBeanList);

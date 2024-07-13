@@ -116,28 +116,6 @@ public class PosterController {
         }
     }
 
-//    @GetMapping("poster/Userparts")
-//    public ResponseMessage<List> getAllPosterParts(){
-//        List<String> errorMessage = new ArrayList<>();
-//        try{
-//            List<PosterBean> posterBeanList = posterPictureService.getAllPosterWithPictures();
-//            if(posterBeanList == null){
-//                return new ResponseMessage<>(200,"帖子缩略信息返回", null);
-//            }else{
-//                return getResponseMessages(posterBeanList);
-//            }
-//        }catch (Exception e){
-//            errorMessage.add(e.getMessage());
-//            return new ResponseMessage<>(500,"失败",errorMessage);
-//        }
-//    }
-//    getPosterWithPicturesByUserID
-
-
-
-
-
-
     //根据帖子的列表获取他们的ResponseMessage的列表
     private ResponseMessage<List> getResponseMessages(List<PosterBean> posterBeanList) {
         List<Object> posterMessages = new ArrayList<>();
@@ -163,11 +141,6 @@ public class PosterController {
             errorMessage.add(e.getMessage());
             return new ResponseMessage<>(500,"失败",errorMessage);
         }
-//        List<PosterBean> posterBeanList = searchPosterService.getPosterWithWordsAndPictrues(searchWords);
-//        if(posterBeanList == null){
-//            return new ResponseMessage<>(200,"帖子缩略信息返回", null);
-//        }
-//        return getResponseMessages(posterBeanList);
     }
 
     //根据posterID删除帖子
