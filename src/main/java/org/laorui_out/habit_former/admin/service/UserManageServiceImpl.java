@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.laorui_out.habit_former.bean.UserBean;
 import org.laorui_out.habit_former.mapper.UserMapper;
+import org.laorui_out.habit_former.user.service.RegisterResult;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -36,12 +37,20 @@ public class UserManageServiceImpl extends ServiceImpl<UserMapper, UserBean> imp
 
     @Override
     public int updateUser(UserBean userBean) {
-        return baseMapper.updateUser(userBean);
+        try{
+            return baseMapper.updateUser(userBean);
+        }catch (Exception e){
+            return 0;
+        }
     }
 
     @Override
-    public int createUser(UserBean userBean) {
-        baseMapper.createUser(userBean);
-        return userBean.getUserID();
+    public RegisterResult createUser(UserBean userBean) {
+        try{
+            baseMapper.createUser(userBean);
+            return RegisterResult.SUCCESS;
+        }catch (Exception e){
+            return RegisterResult.USERNAME_ALREADY_EXISTS;
+        }
     }
 }

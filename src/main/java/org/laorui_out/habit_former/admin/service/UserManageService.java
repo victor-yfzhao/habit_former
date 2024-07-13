@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import org.apache.catalina.User;
 import org.laorui_out.habit_former.bean.UserBean;
+import org.laorui_out.habit_former.user.service.RegisterResult;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -21,6 +22,6 @@ public interface UserManageService extends IService<UserBean> {
 
     int updateUser(UserBean userBean);
 
-    int createUser(UserBean userBean);
+    RegisterResult createUser(UserBean userBean);
 
 }
