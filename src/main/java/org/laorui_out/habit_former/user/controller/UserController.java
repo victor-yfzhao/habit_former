@@ -1,14 +1,19 @@
 package org.laorui_out.habit_former.user.controller;
 
 import jakarta.annotation.Resource;
+import org.laorui_out.habit_former.bean.PosterBean;
+import org.laorui_out.habit_former.bean.PosterPictureBean;
 import org.laorui_out.habit_former.bean.UserBean;
+import org.laorui_out.habit_former.bean.UserPersonalPageBean;
+import org.laorui_out.habit_former.poster.service.PosterPictureService;
+import org.laorui_out.habit_former.poster.service.PosterService;
 import org.laorui_out.habit_former.user.service.*;
 import org.laorui_out.habit_former.utils.ResponseMessage;
 import org.mybatis.spring.annotation.MapperScan;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @MapperScan("org.laorui_out.habit_former.mapper")
@@ -22,6 +27,10 @@ public class UserController {
 
     @Resource
     ProfileService profileService;
+    @Resource
+    PosterPictureService posterPictureService;
+    @Resource
+    PosterService posterService;
 
     @GetMapping("/login")
     public ResponseMessage<UserBean> login(String username, String password) {
@@ -45,20 +54,47 @@ public class UserController {
         return new ResponseMessage<>(400, result.toString(), null);
     }
 
+    //展示用户个人信息以及它发过的所有帖子
     @GetMapping("/user")
-    public ResponseMessage<UserBean> getUserPersonalPage(int userID) {
-        // TODO : 此处仍需要获取用户帖子
+    public ResponseMessage<Object> getUserPersonalPage(int userID) {
+        try{
+            List<PosterBean> posterBeanList = posterPictureService.getPosterWithPicturesByUserID(userID);
+            System.out.println(posterBeanList);
+            UserBean user = profileService.getProfile(userID);
+            if (user != null){
+                List<Object> posterMessages = new ArrayList<>();
+                if(posterBeanList!=null && !posterBeanList.isEmpty()){
+                    for(PosterBean posterBean : posterBeanList){
+                        Object posterBeanPartItem = posterService.getPosterParts(posterBean.getPosterID());
+                        posterMessages.add(posterBeanPartItem);
+                    }
+                }
+                UserPersonalPageBean userPersonalPageBean = new UserPersonalPageBean(
+                        user.getUserID(),
+                        user.getUsername(),
+                        user.getUserIcon(),
+                        posterMessages
+                );
+                return new ResponseMessage<>(200,"用户个人展示成功",userPersonalPageBean);
+            }else{
+                return new ResponseMessage<>(400, "不存在对应的用户信息", null);
+            }
+        }catch (Exception e){
+            return new ResponseMessage<>(500,"展示用户个人界面失败",e.getMessage());
+        }
 
-        UserBean user = profileService.getProfile(userID);
-        if (user != null)
-            return new ResponseMessage<>(200, "success get profile", user);
-        return new ResponseMessage<>(400, "failed to get profile", null);
     }
 
-//    @PostMapping("/user/update_icon")
-//    public ResponseMessage<UserBean> updateUserIcon(int userID, String icon) {
-//        // TODO : 上传图片的处理
-//    }
+    //更新用户头像
+    @PutMapping("/user/update_icon")
+    public ResponseMessage<String> updateUserIcon(@RequestParam Integer userID, @RequestParam String userIcon) {
+        boolean isUpdated = profileService.updateUserIcon(userID, userIcon);
+        if (isUpdated) {
+            return new ResponseMessage<>(200,"成功","用户头像更换成功");
+        } else {
+            return new ResponseMessage<>(500, "失败", "用户头像更新失败");
+        }
+    }
 
     @PostMapping("/user/update_password")
     public ResponseMessage<Boolean> updateUserPassword(int userID, String password) {

@@ -114,7 +114,6 @@ public class PosterController {
             errorMessage.add(e.getMessage());
             return new ResponseMessage<>(500,"失败",errorMessage);
         }
-
     }
 
     //根据帖子的列表获取他们的ResponseMessage的列表
@@ -142,11 +141,6 @@ public class PosterController {
             errorMessage.add(e.getMessage());
             return new ResponseMessage<>(500,"失败",errorMessage);
         }
-//        List<PosterBean> posterBeanList = searchPosterService.getPosterWithWordsAndPictrues(searchWords);
-//        if(posterBeanList == null){
-//            return new ResponseMessage<>(200,"帖子缩略信息返回", null);
-//        }
-//        return getResponseMessages(posterBeanList);
     }
 
     //根据posterID删除帖子

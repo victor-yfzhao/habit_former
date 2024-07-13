@@ -11,7 +11,9 @@ import org.springframework.web.bind.annotation.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
+import java.util.Objects; 
+  
+  
 
 @RestController
 public class CommentController {
@@ -32,7 +34,7 @@ public class CommentController {
             return new ResponseMessage<String>(500,"失败",isCommentCreate);
         }
         catch (Exception e){
-            return new ResponseMessage<>(500, "失败", e.getMessage());
+            return new ResponseMessage<>(500, "失败", createCommentService.createComment((int)map.get("userID"), (int)map.get("posterID"), (int) map.get("parentCommentID"), (String) map.get("commentDetail")));
         }
     }
 
