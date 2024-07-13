@@ -6,7 +6,10 @@ import org.laorui_out.habit_former.mapper.DailyPlanMapper;
 import org.laorui_out.habit_former.mapper.FitPlanMapper;
 import org.laorui_out.habit_former.mapper.PlanMapper;
 import org.laorui_out.habit_former.mapper.StudyPlanMapper;
+import org.laorui_out.habit_former.plan.constant.Constants;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class PlanManageServiceImpl extends ServiceImpl<PlanMapper, PlanBean> implements PlanManageService {
@@ -26,10 +29,29 @@ public class PlanManageServiceImpl extends ServiceImpl<PlanMapper, PlanBean> imp
     
     //plan
     public int deletePlan(int planID){
+        PlanBean planBean=planMapper.getPlanByPlanID(planID);
+        if(planBean==null)
+            return -1;
+        switch (planBean.getPlanType()){
+            case Constants.FIT_PLAN_TYPE:
+                fitPlanMapper.deleteAllFitPlanByPlanID(planID);
+                break;
+            case Constants.STUDY_PLAN_TYPE:
+                studyPlanMapper.deleteAllStudyPlanByPlanID(planID);
+                break;
+            default:
+                dailyPlanMapper.deleteAllDailyPlanByPlanID(planID);
+                break;
+        }
         return planMapper.deletePlanByID(planID);
     }
     public int deletePlanByUserID(int userID){
-        return planMapper.deleteAllPlanByUserID(userID);
+        List<PlanBean> plans=planMapper.getAllPlanByUserID(userID);
+        int cnt=0;
+        for (PlanBean item:plans) {
+            cnt+=deletePlan(item.getPlanID());
+        }
+        return cnt;
     }
     
     //dailyPlan

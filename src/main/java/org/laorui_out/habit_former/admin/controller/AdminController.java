@@ -58,8 +58,10 @@ public class AdminController {
     }
 
     //--删除用户
+    //TODO:需要先把该用户的所有帖子、计划全部删掉。
     @GetMapping("/admin/user/delete")
     public ResponseMessage<Integer> deleteUser(int userID){
+
         int res = userManageService.deleteUser(userID);
         if(res == 1){
             return new ResponseMessage<>(200,"userID:"+userID+" delete success..",res);
@@ -139,6 +141,25 @@ public class AdminController {
         return new ResponseMessage<>(400,"userID:"+userID+" posters-delete-failed",res);
     }
     //计划管理
+    //--查询计划
+    //TODO:分页查询
+
+    //--删除计划
+    @GetMapping("/admin/plan/delete")
+    public ResponseMessage<Integer> deletePlan(int planID){
+        int res = planManageService.deletePlan(planID);
+        if(res>0)
+            return new ResponseMessage<>(200,"planID:"+planID+" delete-success",res);
+        return new ResponseMessage<>(400,"planID:"+planID+" delete-failed",res);
+
+    }
+    @GetMapping("/admin/plan/delete_all")
+    public ResponseMessage<Integer> deleteAllPlanByUserID(int userID){
+        int res = planManageService.deletePlanByUserID(userID);//affected rows
+        if(res>0)
+            return new ResponseMessage<>(200,"userID:"+userID+" plans-delete-success",res);
+        return new ResponseMessage<>(400,"userID:"+userID+" plans-delete-failed",res);
+    }
     //API请求记录(如果要实现得新建表)
     //看板
     //--平台内每日计划完成总数目
