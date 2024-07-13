@@ -1,10 +1,12 @@
 package org.laorui_out.habit_former.poster.controller;
 
 import jakarta.annotation.Resource;
+import org.laorui_out.habit_former.bean.LikesBean;
 import org.laorui_out.habit_former.bean.PosterAndUserBean;
 import org.laorui_out.habit_former.bean.PosterBean;
 import org.laorui_out.habit_former.bean.UserBean;
 import org.laorui_out.habit_former.poster.service.*;
+import org.laorui_out.habit_former.user.service.ProfileService;
 import org.laorui_out.habit_former.utils.ResponseMessage;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +29,8 @@ public class PosterController {
     PosterPictureService posterPictureService;
     @Resource
     DeletePosterService deletePosterService;
+    @Resource
+    ProfileService profileService;
 
     //根据帖子ID，展示一个帖子的所有信息，包括用户信息和帖子信息
     @GetMapping("poster/details")
@@ -159,6 +163,61 @@ public class PosterController {
         }
 
     }
+
+    //为帖子进行点赞
+    @PostMapping("poster/likes")
+    public ResponseMessage<String> addLikes(
+            @RequestParam("userID") int userID,
+            @RequestParam("posterID") int posterID
+    ){
+        try{
+            if(!posterService.isInPosterIDList(posterID)){
+                return new ResponseMessage<>(500,"错误","帖子ID不存在，点赞出现错误");
+            }
+            UserBean userBean = profileService.getProfile(userID);
+            if(userBean == null){
+                return new ResponseMessage<>(500,"错误","用户ID不存在，点赞出现错误");
+            }
+            LikesBean likesBean = new LikesBean(userID,posterID);
+            String isAddLikes = posterService.addLikes(likesBean);
+            if(Objects.equals(isAddLikes, "插入成功")){
+                return new ResponseMessage<>(200,"成功",isAddLikes);
+            }else{
+                return new ResponseMessage<>(500,"失败",isAddLikes);
+            }
+
+        }catch(Exception e){
+            return new ResponseMessage<>(500,"抛出错误",e.getMessage());
+        }
+    }
+
+    //收藏帖子
+    @PostMapping("poster/collection")
+    public ResponseMessage<String> addCollection(
+            @RequestParam("userID") int userID,
+            @RequestParam("posterID") int posterID
+    ){
+        try{
+            if(!posterService.isInPosterIDList(posterID)){
+                return new ResponseMessage<>(500,"错误","帖子ID不存在，收藏出现错误");
+            }
+            UserBean userBean = profileService.getProfile(userID);
+            if(userBean == null){
+                return new ResponseMessage<>(500,"错误","用户ID不存在，收藏出现错误");
+            }
+            LikesBean likesBean = new LikesBean(userID,posterID);
+            String isAddCollection = posterService.addCollection(likesBean);
+            if(Objects.equals(isAddCollection, "插入成功")){
+                return new ResponseMessage<>(200,"成功",isAddCollection);
+            }else{
+                return new ResponseMessage<>(500,"失败",isAddCollection);
+            }
+
+        }catch(Exception e){
+            return new ResponseMessage<>(500,"抛出错误",e.getMessage());
+        }
+    }
+
 
 
 }

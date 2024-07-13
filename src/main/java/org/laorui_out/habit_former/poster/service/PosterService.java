@@ -4,6 +4,7 @@ package org.laorui_out.habit_former.poster.service;
 //import org.laorui_out.habit_former.bean.PosterPictureBean;
 //import java.time.LocalDate;
 import jakarta.annotation.Resource;
+import org.laorui_out.habit_former.bean.LikesBean;
 import org.laorui_out.habit_former.bean.PosterBean;
 import org.laorui_out.habit_former.bean.UserBean;
 import org.laorui_out.habit_former.mapper.PosterMapper;
@@ -93,6 +94,26 @@ public class PosterService {
 
     public List<PosterBean> getPosterByUserID(int userID){
         return posterMapper.getPosterByUserID(userID);
+    }
+
+    public String addLikes(LikesBean likesBean){
+        int isLike = posterMapper.insertLikes(likesBean);
+        if(isLike <= 0){
+            return "插入失败";
+        }
+        else{
+            return "插入成功";
+        }
+    }
+
+    public String addCollection(LikesBean likesBean){
+        int isLike = posterMapper.insertCollection(likesBean);
+        if(isLike <= 0){
+            return "插入失败";
+        }
+        else{
+            return "插入成功";
+        }
     }
 
 

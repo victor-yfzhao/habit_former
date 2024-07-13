@@ -1,6 +1,7 @@
 package org.laorui_out.habit_former.user.controller;
 
 import jakarta.annotation.Resource;
+import org.jetbrains.annotations.NotNull;
 import org.laorui_out.habit_former.bean.PosterBean;
 import org.laorui_out.habit_former.bean.PosterPictureBean;
 import org.laorui_out.habit_former.bean.UserBean;
@@ -56,34 +57,49 @@ public class UserController {
 
     //展示用户个人信息以及它发过的所有帖子
     @GetMapping("/user")
-    public ResponseMessage<Object> getUserPersonalPage(int userID) {
+    public ResponseMessage<UserPersonalPageBean> getUserPersonalPage(int userID) {
         try{
             List<PosterBean> posterBeanList = posterPictureService.getPosterWithPicturesByUserID(userID);
-            System.out.println(posterBeanList);
-            UserBean user = profileService.getProfile(userID);
-            if (user != null){
-                List<Object> posterMessages = new ArrayList<>();
-                if(posterBeanList!=null && !posterBeanList.isEmpty()){
-                    for(PosterBean posterBean : posterBeanList){
-                        Object posterBeanPartItem = posterService.getPosterParts(posterBean.getPosterID());
-                        posterMessages.add(posterBeanPartItem);
-                    }
-                }
-                UserPersonalPageBean userPersonalPageBean = new UserPersonalPageBean(
-                        user.getUserID(),
-                        user.getUsername(),
-                        user.getUserIcon(),
-                        posterMessages
-                );
-                return new ResponseMessage<>(200,"用户个人展示成功",userPersonalPageBean);
-            }else{
-                return new ResponseMessage<>(400, "不存在对应的用户信息", null);
-            }
+            return getObjectResponseMessage(userID, posterBeanList);
         }catch (Exception e){
-            return new ResponseMessage<>(500,"展示用户个人界面失败",e.getMessage());
+            return new ResponseMessage<>(500,e.getMessage(),null);
         }
-
     }
+
+    //展示用户个人信息以及它收藏de的所有帖子
+    @GetMapping("/user/collection")
+    public ResponseMessage<UserPersonalPageBean> getUserPersonalCollectionPage(int userID) {
+        try{
+            List<PosterBean> posterBeanList = posterPictureService.getPosterCollectionWithPicturesByUserID(userID);
+            return getObjectResponseMessage(userID, posterBeanList);
+        }catch (Exception e){
+            return new ResponseMessage<>(500,e.getMessage(),null);
+        }
+    }
+
+    @NotNull
+    private ResponseMessage<UserPersonalPageBean> getObjectResponseMessage(int userID, List<PosterBean> posterBeanList) {
+        UserBean user = profileService.getProfile(userID);
+        if (user != null){
+            List<Object> posterMessages = new ArrayList<>();
+            if(posterBeanList!=null && !posterBeanList.isEmpty()){
+                for(PosterBean posterBean : posterBeanList){
+                    Object posterBeanPartItem = posterService.getPosterParts(posterBean.getPosterID());
+                    posterMessages.add(posterBeanPartItem);
+                }
+            }
+            UserPersonalPageBean userPersonalPageBean = new UserPersonalPageBean(
+                    user.getUserID(),
+                    user.getUsername(),
+                    user.getUserIcon(),
+                    posterMessages
+            );
+            return new ResponseMessage<>(200,"用户个人展示成功",userPersonalPageBean);
+        }else{
+            return new ResponseMessage<>(400, "不存在对应的用户信息", null);
+        }
+    }
+
 
     //更新用户头像
     @PutMapping("/user/update_icon")

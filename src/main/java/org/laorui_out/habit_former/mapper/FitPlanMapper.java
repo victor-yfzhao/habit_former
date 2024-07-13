@@ -33,10 +33,6 @@ public interface FitPlanMapper extends BaseMapper<FitPlanBean> {
     @Delete("delete from FitPlanItem " +
             "where fitPlanItemID = #{fitPlanItemID};")
     int deleteFitPlan(int fitPlanID);
-    // 删除某一健身计划
-    @Delete("delete from FitPlanItem " +
-            "where planID = #{planID};")
-    int deleteAllFitPlanByPlanID(int planID);
 
     // 更新某一健身计划
     @Update("update FitPlanItem " +
@@ -50,7 +46,6 @@ public interface FitPlanMapper extends BaseMapper<FitPlanBean> {
             "set status = #{status} " +
             "where fitPlanItemID = #{fitPlanItemID};")
     int updateFitPlanStatus(FitPlanBean fitPlanBean);
-
 
     // 添加健身计划使用默认的insert函数
 }

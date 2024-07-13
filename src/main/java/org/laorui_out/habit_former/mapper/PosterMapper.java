@@ -1,5 +1,6 @@
 package org.laorui_out.habit_former.mapper;
 import org.apache.ibatis.annotations.*;
+import org.laorui_out.habit_former.bean.LikesBean;
 import org.laorui_out.habit_former.bean.PosterBean;
 import org.laorui_out.habit_former.bean.PosterPictureBean;
 
@@ -62,7 +63,15 @@ public interface PosterMapper {
     @Select("select * from Poster where userID = #{userID}")
     List<PosterBean> getPosterByUserID(int userID);
 
+    @Insert("insert into Likes(userID, posterID) values (#{userID}, #{posterID})")
+    int insertLikes(LikesBean likesBean);
 
+    @Insert("insert into Collection(userID, posterID) values (#{userID},#{posterID})")
+    int insertCollection(LikesBean likesBean);
+
+
+    @Select("select * from Poster where posterID in (select posterID from Collection where userID = #{userID})")
+    List<PosterBean> getPosterCollectionByUserID(int userID);
 //    @Update()
 //
 //
