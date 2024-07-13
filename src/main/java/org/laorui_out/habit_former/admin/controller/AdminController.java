@@ -22,11 +22,11 @@ public class AdminController {
     @Resource
     UserManageService userManageService;
 
-//    @Resource
-//    PosterManageService posterManageService;
-//
-//    @Resource
-//    PlanManageService planManageService;
+    @Resource
+    PosterManageService posterManageService;
+
+    @Resource
+    PlanManageService planManageService;
 
     @Value("${admin.password}")
     private String password;
@@ -93,10 +93,18 @@ public class AdminController {
         }
     }
 
-    /*
     //帖子管理
     //--查询帖子
-    //TODO:分页查询
+    @GetMapping("/admin/poster")
+    public ResponseMessage<IPage<PosterBean>> selectAllPosters(int pointer, int pageSize){
+        try{
+            Page<PosterBean> page = new Page<>(pointer,pageSize);
+            IPage<PosterBean> posterRecords = posterManageService.selectAllPosters(page);
+            return new ResponseMessage<>(200,"query success", posterRecords);
+        }catch(Exception e){
+            return new ResponseMessage<>(400,"query failed",null);
+        }
+    }
 
     //--修改帖子
     //---修改内容
@@ -139,5 +147,5 @@ public class AdminController {
     //--每日计划完成的比例(按计划类型分类)
     //--帖子点赞量排名
     //--帖子收藏量排名
-     */
+
 }

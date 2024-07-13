@@ -1,6 +1,7 @@
 package org.laorui_out.habit_former.admin.service;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.laorui_out.habit_former.bean.PosterBean;
 import org.laorui_out.habit_former.bean.UserBean;
@@ -11,9 +12,8 @@ import java.util.List;
 @Service
 public class PosterManageServiceImpl extends ServiceImpl<PosterMapper, PosterBean> implements PosterManageService {
     @Override
-    public IPage<PosterBean> selectAllPosters(int pageCount, int pageSize) {
-        // TODO 分页查询
-        return null;
+    public IPage<PosterBean> selectAllPosters(Page<PosterBean> page) {
+        return baseMapper.selectPage(page, null);
     }
 
     //编辑帖子内容
