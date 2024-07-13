@@ -41,8 +41,6 @@ public class PlanController {
         }
     }
 
-    //有点小问题
-    //选7月 7.1没有但是8.1有
     @GetMapping("/index/calendar")
     public ResponseMessage<List<Plan4EachDay>> calendarRequest(int userID, int currentYear, int currentMonth) {
         try {
@@ -55,18 +53,18 @@ public class PlanController {
     }
 
     @GetMapping("/plan_detail")
-    public ResponseMessage<PlanMessageAdapter> planDetail(int planID, String date, String planType) {
+    public ResponseMessage<PlanMessageAdapter> planDetail(int planID, String dateShow, String planType) {
         switch (planType) {
             case Constants.PLAN_TYPE:
-                PlanDetailMessage<DailyPlanBean> plans = planDetailService.getDailyPlanDetail(planID, Date.valueOf(date));
+                PlanDetailMessage<DailyPlanBean> plans = planDetailService.getDailyPlanDetail(planID, Date.valueOf(dateShow));
                 PlanMessageAdapter message = new PlanMessageAdapter(planType, plans, null, null);
                 return new ResponseMessage<>(200, "success", message);
             case Constants.FIT_PLAN_TYPE:
-                PlanDetailMessage<FitPlanBean> fitPlans = planDetailService.getFitPlanDetail(planID, Date.valueOf(date));
+                PlanDetailMessage<FitPlanBean> fitPlans = planDetailService.getFitPlanDetail(planID, Date.valueOf(dateShow));
                 message = new PlanMessageAdapter(planType, null, fitPlans, null);
                 return new ResponseMessage<>(200, "success", message);
             case Constants.STUDY_PLAN_TYPE:
-                PlanDetailMessage<StudyPlanBean> studyPlans = planDetailService.getStudyPlanDetail(planID, Date.valueOf(date));
+                PlanDetailMessage<StudyPlanBean> studyPlans = planDetailService.getStudyPlanDetail(planID, Date.valueOf(dateShow));
                 message = new PlanMessageAdapter(planType, null, null, studyPlans);
                 return new ResponseMessage<>(200, "success", message);
             default:
@@ -75,7 +73,7 @@ public class PlanController {
     }
 
     @GetMapping("/calendar_detail")
-    public ResponseMessage<PlanMessageAdapter> calendarDetail(int userID, String date) {
+    public ResponseMessage<PlanMessageAdapter> calendarDetail(int userID, String dateShow) {
         List<PlanBean> plans = planInfoService.getAllPlanInfo(userID);
         PlanDetailMessage<DailyPlanBean> dailyPlans = new PlanDetailMessage<>(), dp_buff;
         PlanDetailMessage<FitPlanBean> fitPlans = new PlanDetailMessage<>(), fp_buff;
@@ -84,7 +82,7 @@ public class PlanController {
             int planID = plan.getPlanID();
             switch (plan.getPlanType()) {
                 case Constants.PLAN_TYPE -> {
-                    dp_buff = planDetailService.getDailyPlanDetail(planID, Date.valueOf(date));
+                    dp_buff = planDetailService.getDailyPlanDetail(planID, Date.valueOf(dateShow));
                     if (dailyPlans.getPlanItems() == null)
                         dailyPlans.setPlanItems(dp_buff.getPlanItems());
                     else {
@@ -94,7 +92,7 @@ public class PlanController {
                     }
                 }
                 case Constants.FIT_PLAN_TYPE -> {
-                    fp_buff = planDetailService.getFitPlanDetail(planID, Date.valueOf(date));
+                    fp_buff = planDetailService.getFitPlanDetail(planID, Date.valueOf(dateShow));
                     if (fitPlans.getPlanItems() == null)
                         fitPlans.setPlanItems(fp_buff.getPlanItems());
                     else {
@@ -104,7 +102,7 @@ public class PlanController {
                     }
                 }
                 case Constants.STUDY_PLAN_TYPE -> {
-                    sp_buff = planDetailService.getStudyPlanDetail(planID, Date.valueOf(date));
+                    sp_buff = planDetailService.getStudyPlanDetail(planID, Date.valueOf(dateShow));
                     if (studyPlans.getPlanItems() == null)
                         studyPlans.setPlanItems(sp_buff.getPlanItems());
                     else {
@@ -151,9 +149,9 @@ public class PlanController {
             default:
         }
         if (completeStatus == 1)
-            return new ResponseMessage<>(200, "sucess", "checked");
+            return new ResponseMessage<>(200, "success", "checked");
         else
-            return new ResponseMessage<>(200, "sucess", "unchecked");
+            return new ResponseMessage<>(200, "success", "unchecked");
     }
     
     @PostMapping("/new/dailyplan")
