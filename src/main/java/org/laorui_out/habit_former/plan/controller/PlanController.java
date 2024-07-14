@@ -259,5 +259,12 @@ public class PlanController {
             return new ResponseMessage<>(200, "success", "deleted.");
         else return new ResponseMessage<>(400, "success", "not-found");
     }
+    @PostMapping("/delete/plan_detail")
+    public ResponseMessage<String> deletePlanDetail(int planDetailID,String planType) {
+        int res = planDetailService.deletePlanDetail(planDetailID,planType);
+        if (res != 0)
+            return new ResponseMessage<>(200, "success", "deleted.");
+        else return new ResponseMessage<>(400, "success", "not-found");
+    }
 
 }
