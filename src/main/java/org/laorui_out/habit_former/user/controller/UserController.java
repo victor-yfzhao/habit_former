@@ -106,7 +106,7 @@ public class UserController {
 
     //更新用户头像
     @PostMapping("/user/update_icon")
-    public ResponseMessage<String> updateUserIcon(@RequestParam Integer userID, @RequestParam String userIcon) {
+    public ResponseMessage<String> updateUserIcon(@RequestParam int userID, @RequestParam String userIcon) {
         boolean isUpdated = profileService.updateUserIcon(userID, userIcon);
         if (isUpdated) {
             return new ResponseMessage<>(200,"成功","用户头像更换成功");

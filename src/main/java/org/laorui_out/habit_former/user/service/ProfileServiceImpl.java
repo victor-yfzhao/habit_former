@@ -58,16 +58,13 @@ public class ProfileServiceImpl extends ServiceImpl<UserMapper, UserBean> implem
         return userMapper.updateUserIntro(userID, userIntro) > 0;
     }
 
-    @Transactional
+
     public boolean updateUserIcon(int userID, String userIcon) {
         if(userIcon==null || userIcon.isEmpty()){
             return false;
         }else{
             return userMapper.updateUserIcon(userID, userIcon) > 0;
         }
-
     }
-
-
 }
 
