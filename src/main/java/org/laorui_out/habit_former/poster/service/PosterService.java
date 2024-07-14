@@ -114,4 +114,35 @@ public class PosterService {
     }
 
 
+    public Boolean deleteLikes(int userID, int posterID){
+        //对于输入posterID是否存在的判断
+        PosterBean posterTestBean = posterMapper.getPosterById(posterID);
+        UserBean userTestBean = userMapper.getUserProfileThroughID(userID);
+        if(posterTestBean == null || userTestBean == null){
+            return false;
+        }
+        try {
+            return posterMapper.deleteLikes(userID, posterID);
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+    public Boolean deleteCollection(int userID, int posterID){
+        PosterBean posterTestBean = posterMapper.getPosterById(posterID);
+        UserBean userTestBean = userMapper.getUserProfileThroughID(userID);
+        if(posterTestBean == null || userTestBean == null){
+            return false;
+        }
+        try {
+            return posterMapper.deleteCollection(userID, posterID);
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+
 }

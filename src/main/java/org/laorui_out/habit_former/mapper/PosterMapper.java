@@ -72,6 +72,14 @@ public interface PosterMapper {
 
     @Select("select * from Poster where posterID in (select posterID from Collection where userID = #{userID})")
     List<PosterBean> getPosterCollectionByUserID(int userID);
+
+    //根据信息删除点赞信息
+    @Delete("delete from Likes where userID = #{userID} and posterID = #{posterID}")
+    boolean deleteLikes(@Param("userID") int userID, @Param("posterID") int posterID);
+
+    //根据信息删除收藏信息
+    @Delete("delete from Collection where userID = #{userID} and posterID = #{posterID}")
+    boolean deleteCollection(@Param("userID") int userID, @Param("posterID") int posterID);
 //    @Update()
 //
 //

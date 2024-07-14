@@ -155,7 +155,6 @@ public class PosterController {
         }catch (Exception e){
             return new ResponseMessage<>(500,"删除失败",e.getMessage());
         }
-
     }
 
     //为帖子进行点赞
@@ -209,6 +208,36 @@ public class PosterController {
 
         }catch(Exception e){
             return new ResponseMessage<>(500,"抛出错误",e.getMessage());
+        }
+    }
+
+    @DeleteMapping("poster/deleteLikes")
+    public ResponseMessage<String> deleteLikes(int userID, int posterID){
+        try{
+            boolean isLikesDelete = posterService.deleteLikes(userID, posterID);
+            if(isLikesDelete){
+                return new ResponseMessage<>(200,"成功删除","成功删除");
+            }
+            else {
+                return new ResponseMessage<>(500,"删除失败","点赞信息删除失败");
+            }
+        }catch (Exception e){
+            return new ResponseMessage<>(500,"删除失败",e.getMessage());
+        }
+    }
+
+    @DeleteMapping("poster/deleteCollection")
+    public ResponseMessage<String> deleteCollection(int userID, int posterID){
+        try{
+            boolean isCollectionDelete = posterService.deleteCollection(userID, posterID);
+            if(isCollectionDelete){
+                return new ResponseMessage<>(200,"成功删除","成功删除");
+            }
+            else {
+                return new ResponseMessage<>(500,"删除失败","收藏信息删除失败");
+            }
+        }catch (Exception e){
+            return new ResponseMessage<>(500,"删除失败",e.getMessage());
         }
     }
 
