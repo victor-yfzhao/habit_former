@@ -124,9 +124,9 @@ public class PlanController {
         try {
             checkPlanService.refreshUsersAllPlan(userID);
             List<PlanBean> plans = planInfoService.getAllHistoryPlanInfo(userID);
-            List<HistoryPlan> historyPlans=new ArrayList<>();
-            for(PlanBean item : plans){
-                historyPlans.add(new HistoryPlan(item,checkPlanService.countSuccess(item.getPlanID()),checkPlanService.countFailed(item.getPlanID())));
+            List<HistoryPlan> historyPlans = new ArrayList<>();
+            for (PlanBean item : plans) {
+                historyPlans.add(new HistoryPlan(item, checkPlanService.countSuccess(item.getPlanID()), checkPlanService.countFailed(item.getPlanID())));
             }
             // System.out.println(plans.size());
             return new ResponseMessage<>(200, "success", historyPlans);
@@ -142,7 +142,7 @@ public class PlanController {
         switch (planDetailType) {
             case Constants.FIT_PLAN_TYPE:
                 if (completeStatus == 1) {
-                    if(!checkPlanService.checkFitPlan(planDetailID))
+                    if (!checkPlanService.checkFitPlan(planDetailID))
                         return new ResponseMessage<>(400, "failed, cannot check a finished/expired plan", "check");
                     PlanBean tmp = checkPlanService.refreshPlanStatus(checkPlanService.getPlanIDByFP(planDetailID));
                     if (tmp != null && !(tmp.getStatus().equals(Constants.NOT_CHECKED)))
@@ -157,7 +157,7 @@ public class PlanController {
                 break;
             case Constants.STUDY_PLAN_TYPE:
                 if (completeStatus == 1) {
-                    if(!checkPlanService.checkStudyPlan(planDetailID))
+                    if (!checkPlanService.checkStudyPlan(planDetailID))
                         return new ResponseMessage<>(400, "failed, cannot check a finished/expired plan", "check");
                     PlanBean tmp = checkPlanService.refreshPlanStatus(checkPlanService.getPlanIDBySP(planDetailID));
                     if (tmp != null && !(tmp.getStatus().equals(Constants.NOT_CHECKED)))
@@ -172,7 +172,7 @@ public class PlanController {
                 break;
             default:
                 if (completeStatus == 1) {
-                    if(!checkPlanService.checkDailyPlan(planDetailID))
+                    if (!checkPlanService.checkDailyPlan(planDetailID))
                         return new ResponseMessage<>(400, "failed, cannot check a finished/expired plan", "check");
                     PlanBean tmp = checkPlanService.refreshPlanStatus(checkPlanService.getPlanIDByDP(planDetailID));
                     if (tmp != null && !(tmp.getStatus().equals(Constants.NOT_CHECKED)))
@@ -229,23 +229,26 @@ public class PlanController {
     }
 
 
-
-
     // TODO 修改计划内容需要根据detailID是否位空来不同处理
 
     /**
      * 首先，传进来的还是xxxRequest，为如下结构
-     *  xxxRequest
-     *    |_planID
-     *    |_planType
-     *    |_data
-     *       |_xxxBean
-     *  则，优先判断xxxBean的ID是否为空，为空则参照上面的new，不为空则修改
+     * xxxRequest
+     * |_planID
+     * |_planType
+     * |_data
+     * |_xxxBean
+     * 则，优先判断xxxBean的ID是否为空，为空则参照上面的new，不为空则修改
      */
 
     @PostMapping("/edit/dailyplan")
     public ResponseMessage<DailyPlanBean> editDailyPlan(@RequestBody DailyPlanBean dailyPlanBean) {
-        DailyPlanBean res = planDetailService.editDPDetail(dailyPlanBean);
+        DailyPlanBean res;
+        if (dailyPlanBean.getDailyPlanID() == null)
+            res = createPlanService.addDailyPlan(Date.valueOf(dailyPlanBean.getDateShow()), dailyPlanBean.getPlanDetail(), dailyPlanBean.getPlanID());
+        else
+            res = planDetailService.editDPDetail(dailyPlanBean);
+        res.setDateShow(dailyPlanBean.getDateShow());
         if (res != null)
             return new ResponseMessage<>(200, "success", res);
         else return new ResponseMessage<>(400, "failed", null);
@@ -253,7 +256,12 @@ public class PlanController {
 
     @PostMapping("/edit/fitplan")
     public ResponseMessage<FitPlanBean> editFitPlan(@RequestBody FitPlanBean fitPlanBean) {
-        FitPlanBean res = planDetailService.editFPDetail(fitPlanBean);
+        FitPlanBean res;
+        if (fitPlanBean.getFitPlanItemID() == null)
+            res = createPlanService.addFitPlan(Date.valueOf(fitPlanBean.getDateShow()), fitPlanBean.getFitItemName(), fitPlanBean.getFitType(), fitPlanBean.getGroupNum(), fitPlanBean.getNumPerGroup(), fitPlanBean.getTimePerGroup(), fitPlanBean.getPlanID());
+        else
+            res = planDetailService.editFPDetail(fitPlanBean);
+        res.setDateShow(fitPlanBean.getDateShow());
         if (res != null)
             return new ResponseMessage<>(200, "success", res);
         else return new ResponseMessage<>(400, "failed", null);
@@ -261,18 +269,16 @@ public class PlanController {
 
     @PostMapping("/edit/studyplan")
     public ResponseMessage<StudyPlanBean> editStudyPlan(@RequestBody StudyPlanBean studyPlanBean) {
-        StudyPlanBean res = planDetailService.editSPDetail(studyPlanBean);
+        StudyPlanBean res;
+        if (studyPlanBean.getStudyPlanItemID() == null)
+            res = createPlanService.addStudyPlan(Date.valueOf(studyPlanBean.getDateShow()), studyPlanBean.getStudySubject(), studyPlanBean.getStudyContent(), studyPlanBean.getStudyTime(), studyPlanBean.getPlanID());
+        else
+            res = planDetailService.editSPDetail(studyPlanBean);
+        res.setDateShow(studyPlanBean.getDateShow());
         if (res != null)
             return new ResponseMessage<>(200, "success", res);
         else return new ResponseMessage<>(400, "failed", null);
     }
-
-
-
-
-
-
-
 
 
     @PostMapping("/delete")
@@ -280,14 +286,15 @@ public class PlanController {
         int res = planDetailService.deletePlan(planID);
         if (res != 0)
             return new ResponseMessage<>(200, "success", "deleted.");
-        else return new ResponseMessage<>(400, "success", "not-found");
+        else return new ResponseMessage<>(400, "failed", "not-found");
     }
+
     @PostMapping("/delete/plan_detail")
-    public ResponseMessage<String> deletePlanDetail(int planDetailID,String planType) {
-        int res = planDetailService.deletePlanDetail(planDetailID,planType);
+    public ResponseMessage<String> deletePlanDetail(int planDetailID, String planType) {
+        int res = planDetailService.deletePlanDetail(planDetailID, planType);
         if (res != 0)
             return new ResponseMessage<>(200, "success", "deleted.");
-        else return new ResponseMessage<>(400, "success", "not-found");
+        else return new ResponseMessage<>(400, "failed", "not-found");
     }
 
 }
