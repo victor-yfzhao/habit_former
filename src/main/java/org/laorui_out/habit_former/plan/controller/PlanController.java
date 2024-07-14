@@ -228,6 +228,21 @@ public class PlanController {
         return new ResponseMessage<>(200, "success", res);
     }
 
+
+
+
+    // TODO 修改计划内容需要根据detailID是否位空来不同处理
+
+    /**
+     * 首先，传进来的还是xxxRequest，为如下结构
+     *  xxxRequest
+     *    |_planID
+     *    |_planType
+     *    |_data
+     *       |_xxxBean
+     *  则，优先判断xxxBean的ID是否为空，为空则参照上面的new，不为空则修改
+     */
+
     @PostMapping("/edit/dailyplan")
     public ResponseMessage<DailyPlanBean> editDailyPlan(@RequestBody DailyPlanBean dailyPlanBean) {
         DailyPlanBean res = planDetailService.editDPDetail(dailyPlanBean);
@@ -251,6 +266,14 @@ public class PlanController {
             return new ResponseMessage<>(200, "success", res);
         else return new ResponseMessage<>(400, "failed", null);
     }
+
+
+
+
+
+
+
+
 
     @PostMapping("/delete")
     public ResponseMessage<String> deletePlan(int planID) {
