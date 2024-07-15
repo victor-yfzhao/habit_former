@@ -8,13 +8,12 @@ import org.laorui_out.habit_former.bean.*;
 import org.laorui_out.habit_former.user.service.LoginResult;
 import org.laorui_out.habit_former.user.service.RegisterResult;
 import org.laorui_out.habit_former.utils.ResponseMessage;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.sql.Date;
-import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -45,7 +44,7 @@ public class AdminController {
 
     //用户管理
     //--新建用户
-    @GetMapping("/admin/user/create")
+    @PostMapping("/admin/user/create")
     public ResponseMessage<UserBean> createUser(String userName,String password){
         UserBean userBean = new UserBean();
 
@@ -65,7 +64,7 @@ public class AdminController {
 
     //--删除用户
     //TODO:需要先把该用户的所有帖子、计划全部删掉。
-    @GetMapping("/admin/user/delete")
+    @PostMapping("/admin/user/delete")
     public ResponseMessage<Integer> deleteUser(int userID){
 
         int res = userManageService.deleteUser(userID);
@@ -76,9 +75,10 @@ public class AdminController {
     }
 
     //--修改用户
-    @GetMapping("/admin/user/edit")
+    @PostMapping("/admin/user/edit")
     public ResponseMessage<UserBean> editUser(int userID,String userName,String password,String userIcon){
         UserBean userBean=new UserBean();
+        userBean.setUsername(userName);
         userBean.setUserID(userID);
         userBean.setUserIcon(userIcon);
         userBean.setPassword(password);
@@ -117,7 +117,7 @@ public class AdminController {
 
     //--修改帖子
     //---修改内容
-    @GetMapping("/admin/poster/edit/content")
+    @PostMapping("/admin/poster/edit/content")
     public ResponseMessage<PosterBean> editPosterContent(int posterID, String posterHeadline, String posterDetail){
         PosterBean posterBean=posterManageService.getById(posterID);
         posterBean.setPosterDetail(posterDetail);
@@ -132,7 +132,7 @@ public class AdminController {
     // TODO?传一个新的list还是在原有list上修改
 
     //--删除帖子
-    @GetMapping("/admin/poster/delete")
+    @PostMapping("/admin/poster/delete")
     public ResponseMessage<Integer> deletePoster(int posterID){
         int res=posterManageService.deletePoster(posterID);
         if(res!=0)
@@ -141,7 +141,7 @@ public class AdminController {
 
     }
 
-    @GetMapping("/admin/poster/delete_all")
+    @PostMapping("/admin/poster/delete_all")
     public ResponseMessage<Integer> deleteAllPosterByUserID(int userID){
         int res = posterManageService.deletePosterByUserID(userID);//affected rows
         if(res!=0)
@@ -196,7 +196,7 @@ public class AdminController {
     }
 
     //--删除计划
-    @GetMapping("/admin/plan/delete")
+    @PostMapping("/admin/plan/delete")
     public ResponseMessage<Integer> deletePlan(int planID){
         int res = planManageService.deletePlan(planID);
         if(res>0)
@@ -204,12 +204,36 @@ public class AdminController {
         return new ResponseMessage<>(400,"planID:"+planID+" delete-failed",res);
 
     }
-    @GetMapping("/admin/plan/delete_all")
+    @PostMapping("/admin/plan/delete_all")
     public ResponseMessage<Integer> deleteAllPlanByUserID(int userID){
         int res = planManageService.deletePlanByUserID(userID);//affected rows
         if(res>0)
             return new ResponseMessage<>(200,"userID:"+userID+" plans-delete-success",res);
         return new ResponseMessage<>(400,"userID:"+userID+" plans-delete-failed",res);
+    }
+    @PostMapping("/admin/daily_plan/delete")
+    public ResponseMessage<Integer> deleteDailyPlan(int dailyPlanID){
+        int res = planManageService.deleteDailyPlan(dailyPlanID);
+        if(res>0)
+            return new ResponseMessage<>(200,"dailyPlanID:"+dailyPlanID+" delete-success",res);
+        return new ResponseMessage<>(400,"dailyPlanID:"+dailyPlanID+" delete-failed",res);
+
+    }
+    @PostMapping("/admin/fit_plan/delete")
+    public ResponseMessage<Integer> deleteFitPlan(int fitPlanID){
+        int res = planManageService.deleteFitPlan(fitPlanID);
+        if(res>0)
+            return new ResponseMessage<>(200,"fitPlanID:"+fitPlanID+" delete-success",res);
+        return new ResponseMessage<>(400,"fitPlanID:"+fitPlanID+" delete-failed",res);
+
+    }
+    @PostMapping("/admin/study_plan/delete")
+    public ResponseMessage<Integer> deleteStudyPlan(int studyPlanID){
+        int res = planManageService.deleteStudyPlan(studyPlanID);
+        if(res>0)
+            return new ResponseMessage<>(200,"studyPlanID:"+studyPlanID+" delete-success",res);
+        return new ResponseMessage<>(400,"studyPlanID:"+studyPlanID+" delete-failed",res);
+
     }
     //API请求记录(如果要实现得新建表)
 
