@@ -40,9 +40,12 @@ public class AdminController {
     @Value("${admin.password}")
     private String password;
 
+    @Value("${admin.username}")
+    private String username;
+
     @GetMapping("/admin/login")
-    public ResponseMessage<LoginResult> login(String password) {
-        if (password.equals(this.password)) {
+    public ResponseMessage<LoginResult> login(String username, String password) {
+        if (password.equals(this.password) && username.equals(this.username)) {
             return new ResponseMessage<>(200, "admin login success", LoginResult.SUCCESS);
         }
         return new ResponseMessage<>(400, "admin login failed", LoginResult.PASSWORD_ERROR);
