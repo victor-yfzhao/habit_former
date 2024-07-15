@@ -85,10 +85,10 @@ public class AdminController {
     }
 
     //--删除用户
-    //TODO:需要先把该用户的所有帖子、计划全部删掉。
     @PostMapping("/admin/user/delete")
     public ResponseMessage<Integer> deleteUser(int userID){
-
+        planManageService.deletePlanByUserID(userID);
+        posterManageService.deletePosterByUserID(userID);
         int res = userManageService.deleteUser(userID);
         if(res == 1){
             return new ResponseMessage<>(200,"userID:"+userID+" delete success..",res);
