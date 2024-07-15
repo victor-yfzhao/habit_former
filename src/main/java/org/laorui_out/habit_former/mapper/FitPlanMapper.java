@@ -56,6 +56,11 @@ public interface FitPlanMapper extends BaseMapper<FitPlanBean> {
             "from FitPlanItem " +
             "where status = '"+ Constants.CHECKED +"' and date = #{date};")
     int countDailyFinishedPlan(java.sql.Date date);
+    @Select("select * " +
+            "from FitPlanItem " +
+            "where status = '"+ Constants.CHECKED +"' and date = #{date};")
+    List<FitPlanBean> getDailyFinishedPlan(java.sql.Date date);
+
 
     // 添加健身计划使用默认的insert函数
 }

@@ -5,6 +5,7 @@ import org.laorui_out.habit_former.bean.LikesBean;
 import org.laorui_out.habit_former.bean.PosterBean;
 import org.laorui_out.habit_former.bean.PosterPictureBean;
 
+import java.util.Date;
 import java.util.List;
 
 
@@ -82,6 +83,8 @@ public interface PosterMapper extends BaseMapper<PosterBean> {
     //根据信息删除点赞信息
     @Delete("delete from Likes where userID = #{userID} and posterID = #{posterID}")
     boolean deleteLikes(@Param("userID") int userID, @Param("posterID") int posterID);
+    @Select("select count(*) from Poster where posterDate = #{posterDate}")
+    int countDailyAddedPoster(Date date);
 
     //根据信息删除收藏信息
     @Delete("delete from Collection where userID = #{userID} and posterID = #{posterID}")

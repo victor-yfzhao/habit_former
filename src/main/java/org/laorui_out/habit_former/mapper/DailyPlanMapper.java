@@ -44,5 +44,9 @@ public interface DailyPlanMapper extends BaseMapper<DailyPlanBean> {
             "from DailyPlan " +
             "where status='"+ Constants.CHECKED +"' AND date = #{date}")
     int countDailyFinishedPlan(Date date);
+    @Select("select * " +
+            "from DailyPlan " +
+            "where status='"+ Constants.CHECKED +"' AND date = #{date}")
+    List<DailyPlanBean> getDailyFinishedPlan(Date date);
 
 }
