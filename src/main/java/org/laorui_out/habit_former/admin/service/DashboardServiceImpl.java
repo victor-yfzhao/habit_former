@@ -48,21 +48,43 @@ public class DashboardServiceImpl implements DashboardService {
 
     @Override
     public Map<String, Integer> countDailyFinishedUser() {
+
         return null;
     }
 
     @Override
     public Map<String, Integer> countDailyAddedPost() {
-        return null;
+        Date date = new Date(System.currentTimeMillis());
+        Map<String, Integer> res = new HashMap<>();
+        for(int i = 6; i >= 0; i--){
+            Date tmp= new Date(date.getTime() - 24L * 60 * 60 * 1000 * i);
+
+            int count = posterMapper.countDailyAddedPoster(tmp);
+
+            res.put(sdf.format(tmp), count);
+        }
+        return res;
     }
 
     @Override
     public Map<String, Integer> countDailyFinishedPlanItemByType() {
-        return Map.of();
+        Date date = new Date(System.currentTimeMillis());
+        Map<String, Integer> res = new HashMap<>();
+            //Date tmp= new Date(date.getTime());
+
+            int count = dailyPlanMapper.countDailyFinishedPlan(date);
+            res.put("dailyPlan", count);
+            count= fitPlanMapper.countDailyFinishedPlan(date);
+            res.put("fitPlan",count);
+            count=studyPlanMapper.countDailyFinishedPlan(date);
+            res.put("studyPlan",count);
+        return res;
     }
 
     @Override
     public Map<Integer, Integer> countPostLikeRanking() {
+        //int rankSize=10;
+
         return Map.of();
     }
 

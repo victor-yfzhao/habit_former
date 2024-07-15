@@ -4,6 +4,7 @@ import org.apache.ibatis.annotations.*;
 import org.laorui_out.habit_former.bean.PosterBean;
 import org.laorui_out.habit_former.bean.PosterPictureBean;
 
+import java.util.Date;
 import java.util.List;
 
 
@@ -63,6 +64,8 @@ public interface PosterMapper extends BaseMapper<PosterBean> {
     @Select("select posterID from Poster where userID = #{userID}")
     List<Integer> getAllPosterIDByUserID(int userID);
 
+    @Select("select count(*) from Poster where posterDate = #{posterDate}")
+    int countDailyAddedPoster(Date date);
 
 
 //    @Update()
