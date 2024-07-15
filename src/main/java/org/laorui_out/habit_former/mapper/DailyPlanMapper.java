@@ -5,7 +5,7 @@ import org.apache.ibatis.annotations.*;
 import org.laorui_out.habit_former.bean.DailyPlanBean;
 import org.laorui_out.habit_former.plan.constant.Constants;
 
-import java.util.Date;
+import java.sql.Date;
 import java.util.List;
 
 @Mapper
@@ -38,5 +38,15 @@ public interface DailyPlanMapper extends BaseMapper<DailyPlanBean> {
 
     @Delete("Delete from DailyPlan where planID=#{planID}")
     int deleteAllDailyPlanByPlanID(int planID);
+
+    // Dashboard Count
+    @Select("select count(*) " +
+            "from DailyPlan " +
+            "where status='"+ Constants.CHECKED +"' AND date = #{date}")
+    int countDailyFinishedPlan(Date date);
+    @Select("select * " +
+            "from DailyPlan " +
+            "where status='"+ Constants.CHECKED +"' AND date = #{date}")
+    List<DailyPlanBean> getDailyFinishedPlan(Date date);
 
 }
