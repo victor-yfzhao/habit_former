@@ -4,18 +4,18 @@ import java.util.Map;
 
 public class DashboardServiceImpl implements DashboardService {
     @Override
-    public int countDailyFinishedPlanItem() {
-
+    public int[] countDailyFinishedPlanItem() {
+        return null;
     }
 
     @Override
-    public int countDailyFinishedUser() {
-        return 0;
+    public int[] countDailyFinishedUser() {
+        return null;
     }
 
     @Override
-    public int countDailyAddedPost() {
-        return 0;
+    public int[] countDailyAddedPost() {
+        return null;
     }
 
     @Override

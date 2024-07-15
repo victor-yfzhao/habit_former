@@ -4,13 +4,13 @@ import java.util.Map;
 
 public interface DashboardService {
     //--平台内每日计划完成总数目
-    int countDailyFinishedPlanItem();
+    int[] countDailyFinishedPlanItem();
 
     //--平台内每日完成了计划的用户数
-    int countDailyFinishedUser();
+    int[] countDailyFinishedUser();
 
     //--平台内每日帖子增加量
-    int countDailyAddedPost();
+    int[] countDailyAddedPost();
 
     //--每日计划完成的比例(按计划类型分类)
     Map<String, Integer> countDailyFinishedPlanItemByType();

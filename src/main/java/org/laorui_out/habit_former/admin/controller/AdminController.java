@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.sql.Date;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 public class AdminController {
@@ -27,6 +28,9 @@ public class AdminController {
 
     @Resource
     PlanManageService planManageService;
+
+    @Resource
+    DashboardService dashboardService;
 
     @Value("${admin.password}")
     private String password;
@@ -211,10 +215,45 @@ public class AdminController {
 
     //看板
     //--平台内每日计划完成总数目
+    @GetMapping("/admin/dashboard/finished_plan")
+    public ResponseMessage<int[]> getFinishedPlanCount(){
+        int[] res = dashboardService.countDailyFinishedPlanItem();
+        return new ResponseMessage<>(200,"query success",res);
+    }
+
     //--平台内每日完成了计划的用户数
+    @GetMapping("/admin/dashboard/finished_plan_user")
+    public ResponseMessage<int[]> getFinishedPlanUserCount(){
+        int[] res = dashboardService.countDailyFinishedUser();
+        return new ResponseMessage<>(200,"query success",res);
+    }
+
     //--平台内每日帖子增加量
+    @GetMapping("/admin/dashboard/added_post")
+    public ResponseMessage<int[]> getAddedPostCount(){
+        int[] res = dashboardService.countDailyAddedPost();
+        return new ResponseMessage<>(200,"query success",res);
+    }
+
     //--每日计划完成的比例(按计划类型分类)
+    @GetMapping("/admin/dashboard/finished_plan_by_type")
+    public ResponseMessage<Map<String, Integer>> getFinishedPlanCountByType(){
+        Map<String, Integer> res = dashboardService.countDailyFinishedPlanItemByType();
+        return new ResponseMessage<>(200,"query success",res);
+    }
+
     //--帖子点赞量排名
+    @GetMapping("/admin/dashboard/post_like_ranking")
+    public ResponseMessage<Map<Integer, Integer>> getPostLikeRanking(){
+        Map<Integer, Integer> res = dashboardService.countPostLikeRanking();
+        return new ResponseMessage<>(200,"query success",res);
+    }
+
     //--帖子收藏量排名
+    @GetMapping("/admin/dashboard/post_collect_ranking")
+    public ResponseMessage<Map<Integer, Integer>> getPostCollectRanking(){
+        Map<Integer, Integer> res = dashboardService.countPostCollectRanking();
+        return new ResponseMessage<>(200,"query success",res);
+    }
 
 }
