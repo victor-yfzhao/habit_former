@@ -8,10 +8,8 @@ import org.laorui_out.habit_former.bean.PlanBean;
 import org.laorui_out.habit_former.bean.PosterBean;
 import org.laorui_out.habit_former.bean.PosterPictureBean;
 
-import java.util.Date;
-import java.util.LinkedHashMap;
+import java.sql.Date;
 import java.util.List;
-import java.util.Map;
 
 
 @Mapper
@@ -92,7 +90,7 @@ public interface PosterMapper extends BaseMapper<PosterBean> {
     @Delete("delete from Likes where userID = #{userID} and posterID = #{posterID}")
     boolean deleteLikes(@Param("userID") int userID, @Param("posterID") int posterID);
     @Select("select count(*) from Poster where posterDate = #{posterDate}")
-    int countDailyAddedPoster(Date date);
+    int countDailyAddedPoster(Date posterDate);
 
     //根据信息删除收藏信息
     @Delete("delete from Collection where userID = #{userID} and posterID = #{posterID}")
@@ -105,19 +103,9 @@ public interface PosterMapper extends BaseMapper<PosterBean> {
     boolean deleteCollectionByPosterID(@Param("posterID") int posterID);
 
     @Select("select posterID, count(*) as likesCount from Likes GROUP BY posterID ORDER BY likesCount DESC LIMIT #{rankSize}")
-//    @MapKey("posterID")
-//    @Results({
-//            @Result(property = "posterID", column = "posterID"),
-//            @Result(property = "likeCount", column = "likeCount")
-//    })
     List<LikesRank> getLikesRank(int rankSize);
 
     @Select("select posterID, count(*) as collectsCount from Collection GROUP BY posterID ORDER BY collectsCount DESC LIMIT #{rankSize}")
-//    @MapKey("posterID")
-//    @Results({
-//            @Result(property = "posterID", column = "posterID"),
-//            @Result(property = "collectCount", column = "collectCount")
-//    })
     List<CollectsRank> getCollectRank(int rankSize);
 //    @Update()
 //

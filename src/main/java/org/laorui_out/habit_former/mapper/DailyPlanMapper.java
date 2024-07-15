@@ -5,7 +5,7 @@ import org.apache.ibatis.annotations.*;
 import org.laorui_out.habit_former.bean.DailyPlanBean;
 import org.laorui_out.habit_former.plan.constant.Constants;
 
-import java.util.Date;
+import java.sql.Date;
 import java.util.List;
 
 @Mapper

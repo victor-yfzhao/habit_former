@@ -20,8 +20,8 @@ public interface DashboardService {
     Map<String, Integer> countDailyFinishedPlanItemByType();
 
     //--帖子点赞量排名
-    List<LikesRank> countPostLikeRanking();
+    List<LikesRank> countPostLikeRanking(int rankSize);
 
     //--帖子收藏量排名
-    List<CollectsRank> countPostCollectRanking();
+    List<CollectsRank> countPostCollectRanking(int rankSize);
 }

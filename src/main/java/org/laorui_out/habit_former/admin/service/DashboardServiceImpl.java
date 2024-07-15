@@ -47,7 +47,8 @@ public class DashboardServiceImpl implements DashboardService {
             count += fitPlanMapper.countDailyFinishedPlan(tmp);
             count += studyPlanMapper.countDailyFinishedPlan(tmp);
             count += dailyPlanMapper.countDailyFinishedPlan(tmp);
-
+            System.out.println(tmp);
+            System.out.println(count);
             res.put(sdf.format(tmp), count);
         }
         return res;
@@ -89,7 +90,8 @@ public class DashboardServiceImpl implements DashboardService {
             Date tmp = new Date(date.getTime() - 24L * 60 * 60 * 1000 * i);
 
             int count = posterMapper.countDailyAddedPoster(tmp);
-
+            System.out.println(tmp);
+            System.out.println(count);
             res.put(sdf.format(tmp), count);
         }
         return res;
@@ -112,16 +114,16 @@ public class DashboardServiceImpl implements DashboardService {
 
     //TODO:限定排名的日期？
     @Override
-    public List<LikesRank> countPostLikeRanking() {
-        int rankSize=10;
+    public List<LikesRank> countPostLikeRanking(int rankSize) {
+        //int rankSize=10;
         List<LikesRank> likesRank;//=new LinkedHashMap<>();
         likesRank=posterMapper.getLikesRank(rankSize);
         return likesRank;
     }
 
     @Override
-    public List<CollectsRank> countPostCollectRanking() {
-        int rankSize=10;
+    public List<CollectsRank> countPostCollectRanking(int rankSize) {
+        //int rankSize=10;
         List<CollectsRank> collectRank;//=new LinkedHashMap<>();
         collectRank=posterMapper.getCollectRank(rankSize);
         return collectRank;

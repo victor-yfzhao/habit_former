@@ -36,7 +36,7 @@ public class AdminController {
 
     @Resource
     LoginManageService loginManageService;
-/*
+
     @Value("${admin.password}")
     private String password;
 
@@ -58,7 +58,7 @@ public class AdminController {
             return new ResponseMessage<>(400, e.getMessage(), null);
         }
     }
-*/
+
     //用户管理
     //--新建用户
     @PostMapping("/admin/user/create")
@@ -256,6 +256,7 @@ public class AdminController {
 
     //看板
     //--平台内每日计划完成总数目
+    //返回一周的数据
     @GetMapping("/admin/dashboard/finished_plan")
     public ResponseMessage<Map<String, Integer>> getFinishedPlanCount(){
         Map<String, Integer> res = dashboardService.countDailyFinishedPlanItem();
@@ -263,6 +264,7 @@ public class AdminController {
     }
 
     //--平台内每日完成了计划的用户数
+    //返回一周的数据
     @GetMapping("/admin/dashboard/finished_plan_user")
     public ResponseMessage<Map<String, Integer>> getFinishedPlanUserCount(){
         Map<String, Integer> res = dashboardService.countDailyFinishedUser();
@@ -270,6 +272,7 @@ public class AdminController {
     }
 
     //--平台内每日帖子增加量
+    //返回一周的数据
     @GetMapping("/admin/dashboard/added_post")
     public ResponseMessage<Map<String, Integer>> getAddedPostCount(){
         Map<String, Integer> res = dashboardService.countDailyAddedPost();
@@ -277,6 +280,7 @@ public class AdminController {
     }
 
     //--每日计划完成的比例(按计划类型分类)
+    //返回当天的
     @GetMapping("/admin/dashboard/finished_plan_by_type")
     public ResponseMessage<Map<String, Integer>> getFinishedPlanCountByType(){
         Map<String, Integer> res = dashboardService.countDailyFinishedPlanItemByType();
@@ -284,16 +288,18 @@ public class AdminController {
     }
 
     //--帖子点赞量排名
+    //返回当天的
     @GetMapping("/admin/dashboard/post_like_ranking")
-    public ResponseMessage<List<LikesRank>> getPostLikeRanking(){
-        List<LikesRank> res = dashboardService.countPostLikeRanking();
+    public ResponseMessage<List<LikesRank>> getPostLikeRanking(int rankSize){
+        List<LikesRank> res = dashboardService.countPostLikeRanking(rankSize);
         return new ResponseMessage<>(200,"query success",res);
     }
 
     //--帖子收藏量排名
+    //返回当天的
     @GetMapping("/admin/dashboard/post_collect_ranking")
-    public ResponseMessage<List<CollectsRank>> getPostCollectRanking(){
-        List<CollectsRank> res = dashboardService.countPostCollectRanking();
+    public ResponseMessage<List<CollectsRank>> getPostCollectRanking(int rankSize){
+        List<CollectsRank> res = dashboardService.countPostCollectRanking(rankSize);
         return new ResponseMessage<>(200,"query success",res);
     }
 
