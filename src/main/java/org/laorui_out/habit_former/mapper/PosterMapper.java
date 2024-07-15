@@ -83,6 +83,12 @@ public interface PosterMapper {
     //根据信息删除收藏信息
     @Delete("delete from Collection where userID = #{userID} and posterID = #{posterID}")
     boolean deleteCollection(@Param("userID") int userID, @Param("posterID") int posterID);
+
+    @Delete("delete from Likes where posterID = #{posterID}")
+    boolean deleteLikesByPosterID(@Param("posterID") int posterID);
+
+    @Delete("delete from Collection where posterID = #{posterID}")
+    boolean deleteCollectionByPosterID(@Param("posterID") int posterID);
 //    @Update()
 //
 //

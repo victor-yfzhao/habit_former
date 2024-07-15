@@ -148,5 +148,33 @@ public class PosterService {
         }
     }
 
+    public Boolean deleteLikesByPosterID(int posterID){
+        PosterBean posterTestBean = posterMapper.getPosterById(posterID);
+        if(posterTestBean == null){
+            return false;
+        }
+        try {
+            return posterMapper.deleteLikesByPosterID(posterID);
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public Boolean deleteCollectionByPosterID(int posterID){
+        PosterBean posterTestBean = posterMapper.getPosterById(posterID);
+        if(posterTestBean == null){
+            return false;
+        }
+        try {
+            return posterMapper.deleteCollectionByPosterID(posterID);
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
 
 }

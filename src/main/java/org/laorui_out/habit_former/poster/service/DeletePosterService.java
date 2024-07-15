@@ -20,6 +20,8 @@ public class DeletePosterService {
     public Boolean deletePoster(int posterID){
         //对于输入posterID是否存在的判断
         PosterBean posterTestBean = posterPictureService.getPosterWithPictures(posterID);
+        Boolean deleteLikes = posterService.deleteLikesByPosterID(posterID);
+        Boolean deleteCollection = posterService.deleteCollectionByPosterID(posterID);
         if(posterTestBean == null){
             return posterMapper.deletePosterByPosterId(posterID);
         }
@@ -38,5 +40,6 @@ public class DeletePosterService {
             e.printStackTrace();
             return false;
         }
+
     }
 }
