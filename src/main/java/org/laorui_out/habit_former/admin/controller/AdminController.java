@@ -4,6 +4,8 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import jakarta.annotation.Resource;
 import org.laorui_out.habit_former.admin.service.*;
+import org.laorui_out.habit_former.admin.utils.CollectsRank;
+import org.laorui_out.habit_former.admin.utils.LikesRank;
 import org.laorui_out.habit_former.bean.*;
 import org.laorui_out.habit_former.user.service.LoginResult;
 import org.laorui_out.habit_former.user.service.RegisterResult;
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.sql.Date;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -33,7 +36,7 @@ public class AdminController {
 
     @Resource
     LoginManageService loginManageService;
-
+/*
     @Value("${admin.password}")
     private String password;
 
@@ -55,7 +58,7 @@ public class AdminController {
             return new ResponseMessage<>(400, "failed", null);
         }
     }
-
+*/
     //用户管理
     //--新建用户
     @PostMapping("/admin/user/create")
@@ -282,15 +285,15 @@ public class AdminController {
 
     //--帖子点赞量排名
     @GetMapping("/admin/dashboard/post_like_ranking")
-    public ResponseMessage<Map<Integer, Integer>> getPostLikeRanking(){
-        Map<Integer, Integer> res = dashboardService.countPostLikeRanking();
+    public ResponseMessage<List<LikesRank>> getPostLikeRanking(){
+        List<LikesRank> res = dashboardService.countPostLikeRanking();
         return new ResponseMessage<>(200,"query success",res);
     }
 
     //--帖子收藏量排名
     @GetMapping("/admin/dashboard/post_collect_ranking")
-    public ResponseMessage<Map<Integer, Integer>> getPostCollectRanking(){
-        Map<Integer, Integer> res = dashboardService.countPostCollectRanking();
+    public ResponseMessage<List<CollectsRank>> getPostCollectRanking(){
+        List<CollectsRank> res = dashboardService.countPostCollectRanking();
         return new ResponseMessage<>(200,"query success",res);
     }
 

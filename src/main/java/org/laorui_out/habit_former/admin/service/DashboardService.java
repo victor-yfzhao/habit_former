@@ -1,5 +1,9 @@
 package org.laorui_out.habit_former.admin.service;
 
+import org.laorui_out.habit_former.admin.utils.CollectsRank;
+import org.laorui_out.habit_former.admin.utils.LikesRank;
+
+import java.util.List;
 import java.util.Map;
 
 public interface DashboardService {
@@ -16,8 +20,8 @@ public interface DashboardService {
     Map<String, Integer> countDailyFinishedPlanItemByType();
 
     //--帖子点赞量排名
-    Map<Integer, Integer> countPostLikeRanking();
+    List<LikesRank> countPostLikeRanking();
 
     //--帖子收藏量排名
-    Map<Integer, Integer> countPostCollectRanking();
+    List<CollectsRank> countPostCollectRanking();
 }

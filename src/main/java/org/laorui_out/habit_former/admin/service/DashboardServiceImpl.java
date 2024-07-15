@@ -1,6 +1,8 @@
 package org.laorui_out.habit_former.admin.service;
 
 import jakarta.annotation.Resource;
+import org.laorui_out.habit_former.admin.utils.CollectsRank;
+import org.laorui_out.habit_former.admin.utils.LikesRank;
 import org.laorui_out.habit_former.bean.DailyPlanBean;
 import org.laorui_out.habit_former.bean.FitPlanBean;
 import org.laorui_out.habit_former.bean.StudyPlanBean;
@@ -108,15 +110,20 @@ public class DashboardServiceImpl implements DashboardService {
         return res;
     }
 
+    //TODO:限定排名的日期？
     @Override
-    public Map<Integer, Integer> countPostLikeRanking() {
-        //int rankSize=10;
-
-        return Map.of();
+    public List<LikesRank> countPostLikeRanking() {
+        int rankSize=10;
+        List<LikesRank> likesRank;//=new LinkedHashMap<>();
+        likesRank=posterMapper.getLikesRank(rankSize);
+        return likesRank;
     }
 
     @Override
-    public Map<Integer, Integer> countPostCollectRanking() {
-        return Map.of();
+    public List<CollectsRank> countPostCollectRanking() {
+        int rankSize=10;
+        List<CollectsRank> collectRank;//=new LinkedHashMap<>();
+        collectRank=posterMapper.getCollectRank(rankSize);
+        return collectRank;
     }
 }

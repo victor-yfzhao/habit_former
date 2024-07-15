@@ -1,13 +1,17 @@
 package org.laorui_out.habit_former.mapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.*;
+import org.laorui_out.habit_former.admin.utils.CollectsRank;
+import org.laorui_out.habit_former.admin.utils.LikesRank;
 import org.laorui_out.habit_former.bean.LikesBean;
 import org.laorui_out.habit_former.bean.PlanBean;
 import org.laorui_out.habit_former.bean.PosterBean;
 import org.laorui_out.habit_former.bean.PosterPictureBean;
 
 import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 
 @Mapper
@@ -99,6 +103,22 @@ public interface PosterMapper extends BaseMapper<PosterBean> {
 
     @Delete("delete from Collection where posterID = #{posterID}")
     boolean deleteCollectionByPosterID(@Param("posterID") int posterID);
+
+    @Select("select posterID, count(*) as likesCount from Likes GROUP BY posterID ORDER BY likesCount DESC LIMIT #{rankSize}")
+//    @MapKey("posterID")
+//    @Results({
+//            @Result(property = "posterID", column = "posterID"),
+//            @Result(property = "likeCount", column = "likeCount")
+//    })
+    List<LikesRank> getLikesRank(int rankSize);
+
+    @Select("select posterID, count(*) as collectsCount from Collection GROUP BY posterID ORDER BY collectsCount DESC LIMIT #{rankSize}")
+//    @MapKey("posterID")
+//    @Results({
+//            @Result(property = "posterID", column = "posterID"),
+//            @Result(property = "collectCount", column = "collectCount")
+//    })
+    List<CollectsRank> getCollectRank(int rankSize);
 //    @Update()
 //
 //
