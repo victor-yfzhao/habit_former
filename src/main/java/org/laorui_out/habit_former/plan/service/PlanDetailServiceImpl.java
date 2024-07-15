@@ -98,6 +98,25 @@ public class PlanDetailServiceImpl implements PlanDetailService {
     }
     @Override
     public int deletePlan(int planID){
+        PlanBean planBean = planMapper.getPlanByPlanID(planID);
+        switch (planBean.getPlanType()) {
+            case Constants.FIT_PLAN_TYPE -> fitPlanMapper.deleteAllFitPlanByPlanID(planID);
+            case Constants.STUDY_PLAN_TYPE -> studyPlanMapper.deleteAllStudyPlanByPlanID(planID);
+            default -> dailyPlanMapper.deleteAllDailyPlanByPlanID(planID);
+        }
         return planMapper.deletePlanByID(planID);
+    }
+    @Override
+    public int deletePlanDetail(int planDetailID,String planType){
+        int res;
+        switch (planType){
+            case Constants.FIT_PLAN_TYPE ->
+                res=fitPlanMapper.deleteFitPlan(planDetailID);
+            case Constants.STUDY_PLAN_TYPE ->
+                res=studyPlanMapper.deleteStudyPlan(planDetailID);
+            default ->
+                res=dailyPlanMapper.deleteDailyPlanByID(planDetailID);
+        }
+        return res;
     }
 }

@@ -9,10 +9,34 @@ import java.util.List;
 @Mapper
 public interface UserMapper extends BaseMapper<UserBean> {
 
+    //根据给出的用户头像URL来更新用户头像
+    @Update("UPDATE User SET userIcon = #{userIcon} WHERE userID = #{userID}")
+    int updateUserIcon(@Param("userID") Integer userID, @Param("userIcon") String userIcon);
+
+    @Update("UPDATE User SET username = #{username} WHERE userID = #{userID}")
+    int updateUserName(@Param("userID") Integer userID, @Param("username") String username);
+
+    @Update("UPDATE User SET password = #{password} WHERE userID = #{userID}")
+    int updatePassword(@Param("userID") Integer userID, @Param("password") String password);
+
+    @Update("UPDATE User SET gender = #{gender} WHERE userID = #{userID}")
+    int updateUserGender(@Param("userID") Integer userID, @Param("gender") String gender);
+
+    @Update("UPDATE User SET address = #{address} WHERE userID = #{userID}")
+    int updateUserAddress(@Param("userID") Integer userID, @Param("address") String address);
+
+    @Update("UPDATE User SET userIntro = #{userIntro} WHERE userID = #{userID}")
+    int updateUserIntro(@Param("userID") Integer userID, @Param("userIntro") String userIntro);
+
     //根据帖子ID查找用户信息
     @Select("SELECT userID, username, userIcon FROM User WHERE " +
             "userID = (SELECT userID FROM Poster WHERE posterID = #{posterID})")
     UserBean getUserByPosterId(@Param("posterID") int posterID);
+
+    //根据评论ID查找用户信息
+    @Select("SELECT userID, username, userIcon FROM User WHERE " +
+            "userID = (SELECT userID FROM Comment WHERE commentID = #{commentID})")
+    UserBean getUserByCommentId(@Param("commentID") int commentID);
 
     // 根据用户名查找用户（仅供登录使用）
     @Select("select * " +
@@ -43,13 +67,13 @@ public interface UserMapper extends BaseMapper<UserBean> {
     UserBean[] selectAllUsers();
 
     // 根据用户ID返回用户信息
-    @Select("select userID, username, userIcon " +
+    @Select("select userID, username, userIcon, gender, address, userIntro " +
             "from User " +
             "where userID = #{userID}")
     UserBean getUserProfileThroughID(int userID);
 
     // 根据用户名返回用户信息
-    @Select("select userID, username, userIcon " +
+    @Select("select userID, username, userIcon, gender, address, userIntro " +
             "from User " +
             "where username = #{username}")
     UserBean getUserProfileThroughUsername(String username);

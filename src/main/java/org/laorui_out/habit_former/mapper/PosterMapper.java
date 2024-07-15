@@ -1,6 +1,7 @@
 package org.laorui_out.habit_former.mapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.*;
+import org.laorui_out.habit_former.bean.LikesBean;
 import org.laorui_out.habit_former.bean.PosterBean;
 import org.laorui_out.habit_former.bean.PosterPictureBean;
 
@@ -39,6 +40,9 @@ public interface PosterMapper extends BaseMapper<PosterBean> {
     @Select("select planName from Plan where planID = (select planID from Poster where posterID = #{posterID})")
     String getPlanNameByPosterId(int posterID);
 
+    @Select("select planType from Plan where planID = (select planID from Poster where posterID = #{posterID})")
+    String getPlanTypeByPosterId(int posterID);
+
     //根据帖子ID返回点赞数
     @Select("select COUNT(*) from Likes where posterID = #{posterID}")
     int getTotalLikes(int posterID);
@@ -60,11 +64,34 @@ public interface PosterMapper extends BaseMapper<PosterBean> {
     @Select("select posterID from Poster")
     List<Integer> getAllPosterID();
 
+    @Select("select * from Poster where userID = #{userID}")
+    List<PosterBean> getPosterByUserID(int userID);
+
+    @Insert("insert into Likes(userID, posterID) values (#{userID}, #{posterID})")
+    int insertLikes(LikesBean likesBean);
     @Select("select posterID from Poster where userID = #{userID}")
     List<Integer> getAllPosterIDByUserID(int userID);
 
+    @Insert("insert into Collection(userID, posterID) values (#{userID},#{posterID})")
+    int insertCollection(LikesBean likesBean);
 
 
+    @Select("select * from Poster where posterID in (select posterID from Collection where userID = #{userID})")
+    List<PosterBean> getPosterCollectionByUserID(int userID);
+
+    //根据信息删除点赞信息
+    @Delete("delete from Likes where userID = #{userID} and posterID = #{posterID}")
+    boolean deleteLikes(@Param("userID") int userID, @Param("posterID") int posterID);
+
+    //根据信息删除收藏信息
+    @Delete("delete from Collection where userID = #{userID} and posterID = #{posterID}")
+    boolean deleteCollection(@Param("userID") int userID, @Param("posterID") int posterID);
+
+    @Delete("delete from Likes where posterID = #{posterID}")
+    boolean deleteLikesByPosterID(@Param("posterID") int posterID);
+
+    @Delete("delete from Collection where posterID = #{posterID}")
+    boolean deleteCollectionByPosterID(@Param("posterID") int posterID);
 //    @Update()
 //
 //

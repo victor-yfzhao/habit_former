@@ -33,6 +33,7 @@ public class PlanController {
     @GetMapping("/index")
     public ResponseMessage<List<PlanBean>> index(@RequestParam int userID) {
         try {
+            checkPlanService.refreshUsersAllPlan(userID);
             List<PlanBean> plans = planInfoService.getAllPlanInfo(userID);
             // System.out.println(plans.size());
             return new ResponseMessage<>(200, "success", plans);
@@ -53,18 +54,19 @@ public class PlanController {
     }
 
     @GetMapping("/plan_detail")
-    public ResponseMessage<PlanMessageAdapter> planDetail(int planID, String date, String planType) {
+    public ResponseMessage<PlanMessageAdapter> planDetail(int planID, String dateShow, String planType) {
+        PlanMessageAdapter message;
         switch (planType) {
             case Constants.PLAN_TYPE:
-                PlanDetailMessage<DailyPlanBean> plans = planDetailService.getDailyPlanDetail(planID, Date.valueOf(date));
-                PlanMessageAdapter message = new PlanMessageAdapter(planType, plans, null, null);
+                PlanDetailMessage<DailyPlanBean> plans = planDetailService.getDailyPlanDetail(planID, Date.valueOf(dateShow));
+                message = new PlanMessageAdapter(planType, plans, null, null);
                 return new ResponseMessage<>(200, "success", message);
             case Constants.FIT_PLAN_TYPE:
-                PlanDetailMessage<FitPlanBean> fitPlans = planDetailService.getFitPlanDetail(planID, Date.valueOf(date));
+                PlanDetailMessage<FitPlanBean> fitPlans = planDetailService.getFitPlanDetail(planID, Date.valueOf(dateShow));
                 message = new PlanMessageAdapter(planType, null, fitPlans, null);
                 return new ResponseMessage<>(200, "success", message);
             case Constants.STUDY_PLAN_TYPE:
-                PlanDetailMessage<StudyPlanBean> studyPlans = planDetailService.getStudyPlanDetail(planID, Date.valueOf(date));
+                PlanDetailMessage<StudyPlanBean> studyPlans = planDetailService.getStudyPlanDetail(planID, Date.valueOf(dateShow));
                 message = new PlanMessageAdapter(planType, null, null, studyPlans);
                 return new ResponseMessage<>(200, "success", message);
             default:
@@ -73,7 +75,7 @@ public class PlanController {
     }
 
     @GetMapping("/calendar_detail")
-    public ResponseMessage<PlanMessageAdapter> calendarDetail(int userID, String date) {
+    public ResponseMessage<PlanMessageAdapter> calendarDetail(int userID, String dateShow) {
         List<PlanBean> plans = planInfoService.getAllPlanInfo(userID);
         PlanDetailMessage<DailyPlanBean> dailyPlans = new PlanDetailMessage<>(), dp_buff;
         PlanDetailMessage<FitPlanBean> fitPlans = new PlanDetailMessage<>(), fp_buff;
@@ -82,7 +84,7 @@ public class PlanController {
             int planID = plan.getPlanID();
             switch (plan.getPlanType()) {
                 case Constants.PLAN_TYPE -> {
-                    dp_buff = planDetailService.getDailyPlanDetail(planID, Date.valueOf(date));
+                    dp_buff = planDetailService.getDailyPlanDetail(planID, Date.valueOf(dateShow));
                     if (dailyPlans.getPlanItems() == null)
                         dailyPlans.setPlanItems(dp_buff.getPlanItems());
                     else {
@@ -92,7 +94,7 @@ public class PlanController {
                     }
                 }
                 case Constants.FIT_PLAN_TYPE -> {
-                    fp_buff = planDetailService.getFitPlanDetail(planID, Date.valueOf(date));
+                    fp_buff = planDetailService.getFitPlanDetail(planID, Date.valueOf(dateShow));
                     if (fitPlans.getPlanItems() == null)
                         fitPlans.setPlanItems(fp_buff.getPlanItems());
                     else {
@@ -102,7 +104,7 @@ public class PlanController {
                     }
                 }
                 case Constants.STUDY_PLAN_TYPE -> {
-                    sp_buff = planDetailService.getStudyPlanDetail(planID, Date.valueOf(date));
+                    sp_buff = planDetailService.getStudyPlanDetail(planID, Date.valueOf(dateShow));
                     if (studyPlans.getPlanItems() == null)
                         studyPlans.setPlanItems(sp_buff.getPlanItems());
                     else {
@@ -117,99 +119,208 @@ public class PlanController {
         return new ResponseMessage<>(200, "success", message);
     }
 
+    @GetMapping("/history")
+    public ResponseMessage<List<HistoryPlan>> historyPlan(int userID) {
+        try {
+            checkPlanService.refreshUsersAllPlan(userID);
+            List<PlanBean> plans = planInfoService.getAllHistoryPlanInfo(userID);
+            List<HistoryPlan> historyPlans = new ArrayList<>();
+            for (PlanBean item : plans) {
+                historyPlans.add(new HistoryPlan(item, checkPlanService.countSuccess(item.getPlanID()), checkPlanService.countFailed(item.getPlanID())));
+            }
+            // System.out.println(plans.size());
+            return new ResponseMessage<>(200, "success", historyPlans);
+        } catch (Exception e) {
+            return new ResponseMessage<>(400, e.getMessage(), null);
+        }
+    }
+
     //TODO:定期refresh plan的状态
     @PostMapping("/plan_detail/check")
     public ResponseMessage<String> checkPlanDetail(@RequestParam int planDetailID, int completeStatus, String planDetailType) {
-
+        //TODO:要先检查输入的数据ID是否合法，不然会报500(或者加个try-catch)
         switch (planDetailType) {
-            case Constants.PLAN_TYPE:
-                if (completeStatus == 1) {
-                    checkPlanService.checkDailyPlan(planDetailID);
-                } else if (completeStatus == 0) {
-                    checkPlanService.uncheckDailyPlan(planDetailID);
-                } else
-                    return new ResponseMessage<>(400, "undefined-type", null);
-                break;
             case Constants.FIT_PLAN_TYPE:
                 if (completeStatus == 1) {
-                    checkPlanService.checkFitPlan(planDetailID);
+                    if (!checkPlanService.checkFitPlan(planDetailID))
+                        return new ResponseMessage<>(400, "failed, cannot check a finished/expired plan", "check");
+                    PlanBean tmp = checkPlanService.refreshPlanStatus(checkPlanService.getPlanIDByFP(planDetailID));
+                    if (tmp != null && !(tmp.getStatus().equals(Constants.NOT_CHECKED)))
+                        return new ResponseMessage<>(200, "success, whole plan complete!", "checked");
                 } else if (completeStatus == 0) {
+                    PlanBean tmp = checkPlanService.refreshPlanStatus(checkPlanService.getPlanIDByFP(planDetailID));
+                    if (tmp == null || !(tmp.getStatus().equals(Constants.NOT_CHECKED)))
+                        return new ResponseMessage<>(400, "failed, cannot uncheck a finished plan", "uncheck");
                     checkPlanService.uncheckFitPlan(planDetailID);
                 } else
-                    return new ResponseMessage<>(400, "undefined-type", null);
+                    return new ResponseMessage<>(400, "failed", "undefined status");
                 break;
             case Constants.STUDY_PLAN_TYPE:
                 if (completeStatus == 1) {
-                    checkPlanService.checkStudyPlan(planDetailID);
+                    if (!checkPlanService.checkStudyPlan(planDetailID))
+                        return new ResponseMessage<>(400, "failed, cannot check a finished/expired plan", "check");
+                    PlanBean tmp = checkPlanService.refreshPlanStatus(checkPlanService.getPlanIDBySP(planDetailID));
+                    if (tmp != null && !(tmp.getStatus().equals(Constants.NOT_CHECKED)))
+                        return new ResponseMessage<>(200, "success, whole plan complete!", "checked");
                 } else if (completeStatus == 0) {
+                    PlanBean tmp = checkPlanService.refreshPlanStatus(checkPlanService.getPlanIDBySP(planDetailID));
+                    if (tmp == null || !(tmp.getStatus().equals(Constants.NOT_CHECKED)))
+                        return new ResponseMessage<>(400, "failed, cannot uncheck a finished plan", "unchecked");
                     checkPlanService.uncheckStudyPlan(planDetailID);
                 } else
-                    return new ResponseMessage<>(400, "undefined-type", null);
+                    return new ResponseMessage<>(400, "failed", "undefined status");
                 break;
             default:
+                if (completeStatus == 1) {
+                    if (!checkPlanService.checkDailyPlan(planDetailID))
+                        return new ResponseMessage<>(400, "failed, cannot check a finished/expired plan", "check");
+                    PlanBean tmp = checkPlanService.refreshPlanStatus(checkPlanService.getPlanIDByDP(planDetailID));
+                    if (tmp != null && !(tmp.getStatus().equals(Constants.NOT_CHECKED)))
+                        return new ResponseMessage<>(200, "success, whole plan complete!", "checked");
+                } else if (completeStatus == 0) {
+                    PlanBean tmp = checkPlanService.refreshPlanStatus(checkPlanService.getPlanIDByDP(planDetailID));
+                    if (tmp == null || !(tmp.getStatus().equals(Constants.NOT_CHECKED)))
+                        return new ResponseMessage<>(400, "failed, cannot uncheck a finished plan", "unchecked");
+                    checkPlanService.uncheckDailyPlan(planDetailID);
+                } else
+                    return new ResponseMessage<>(400, "failed", "undefined status");
+                break;
         }
         if (completeStatus == 1)
-            return new ResponseMessage<>(200, "sucess", "checked");
+            return new ResponseMessage<>(200, "success", "checked");
         else
-            return new ResponseMessage<>(200, "sucess", "unchecked");
-    }
-    
-    @PostMapping("/new/dailyplan")
-    public ResponseMessage<List<DailyPlanBean>> createDailyPlans(@RequestBody DailyPlanGenerateRequest dailyPlanGenerateRequest){
-        PlanBean planBean = createPlanService.addPlan(dailyPlanGenerateRequest.getPlanInfo(), dailyPlanGenerateRequest.getPlanName(),dailyPlanGenerateRequest.getType(),dailyPlanGenerateRequest.getUserID());
-        List<DailyPlanBean> res=new ArrayList<>();
-        for (DailyPlanBean item: dailyPlanGenerateRequest.getData()) {
-            res.add(createPlanService.addDailyPlan(item.getDate(), item.getPlanDetail(), planBean.getPlanID()));
-        }
-        return new ResponseMessage<>(200,"success",res);
-    }
-    @PostMapping("/new/fitplan")
-    public ResponseMessage<List<FitPlanBean>> createFitPlans(@RequestBody FitPlanGenerateRequest FitPlanGenerateRequest){
-        PlanBean planBean = createPlanService.addPlan(FitPlanGenerateRequest.getPlanInfo(), FitPlanGenerateRequest.getPlanName(),FitPlanGenerateRequest.getType(),FitPlanGenerateRequest.getUserID());
-        List<FitPlanBean> res=new ArrayList<>();
-        for (FitPlanBean item: FitPlanGenerateRequest.getData()) {
-            res.add(createPlanService.addFitPlan(item.getDate(), item.getFitItemName(),item.getFitType(),item.getGroupNum(),item.getNumPerGroup(),item.getTimePerGroup(), planBean.getPlanID()));
-        }
-        return new ResponseMessage<>(200,"success",res);
-    }
-    @PostMapping("/new/studyplan")
-    public ResponseMessage<List<StudyPlanBean>> createStudyPlans(@RequestBody StudyPlanGenerateRequest StudyPlanGenerateRequest){
-        PlanBean planBean = createPlanService.addPlan(StudyPlanGenerateRequest.getPlanInfo(), StudyPlanGenerateRequest.getPlanName(),StudyPlanGenerateRequest.getType(),StudyPlanGenerateRequest.getUserID());
-        List<StudyPlanBean> res=new ArrayList<>();
-        for (StudyPlanBean item: StudyPlanGenerateRequest.getData()) {
-            res.add(createPlanService.addStudyPlan(item.getDate(), item.getStudySubject(),item.getStudyContent(),item.getStudyTime(), planBean.getPlanID()));
-        }
-        return new ResponseMessage<>(200,"success",res);
-    }
-    
-    @PostMapping("/edit/dailyplan")
-    public ResponseMessage<DailyPlanBean> editDailyPlan(@RequestBody DailyPlanBean dailyPlanBean){
-        DailyPlanBean res= planDetailService.editDPDetail(dailyPlanBean);
-        if(res!=null)
-            return new ResponseMessage<>(200,"success",res);
-        else return new ResponseMessage<>(400,"failed",null);
-    }
-    @PostMapping("/edit/fitplan")
-    public ResponseMessage<FitPlanBean> editFitPlan(@RequestBody FitPlanBean fitPlanBean){
-        FitPlanBean res= planDetailService.editFPDetail(fitPlanBean);
-        if(res!=null)
-            return new ResponseMessage<>(200,"success",res);
-        else return new ResponseMessage<>(400,"failed",null);
-    }
-    @PostMapping("/edit/studyplan")
-    public ResponseMessage<StudyPlanBean> editStudyPlan(@RequestBody StudyPlanBean studyPlanBean){
-        StudyPlanBean res= planDetailService.editSPDetail(studyPlanBean);
-        if(res!=null)
-            return new ResponseMessage<>(200,"success",res);
-        else return new ResponseMessage<>(400,"failed",null);
+            return new ResponseMessage<>(200, "success", "unchecked");
     }
 
+    @PostMapping("/new/dailyplan")
+    public ResponseMessage<List<DailyPlanBean>>
+    createDailyPlans(@RequestBody DailyPlanGenerateRequest dailyPlanGenerateRequest) {
+        PlanBean planBean = createPlanService.addPlan (dailyPlanGenerateRequest.getPlanInfo(),
+                                                       dailyPlanGenerateRequest.getPlanName(),
+                                                       dailyPlanGenerateRequest.getType(),
+                                                       dailyPlanGenerateRequest.getUserID());
+        List<DailyPlanBean> res = new ArrayList<>();
+        for (DailyPlanBean item : dailyPlanGenerateRequest.getData()) {
+            DailyPlanBean tmp = createPlanService.addDailyPlan (Date.valueOf(item.getDateShow()),
+                                                                item.getPlanDetail(),
+                                                                planBean.getPlanID());
+            tmp.setDateShow(item.getDateShow());
+            res.add(tmp);
+        }
+        return new ResponseMessage<>(200, "success", res);
+    }
+
+    @PostMapping("/new/fitplan")
+    public ResponseMessage<List<FitPlanBean>>
+    createFitPlans(@RequestBody FitPlanGenerateRequest FitPlanGenerateRequest) {
+        PlanBean planBean = createPlanService.addPlan (FitPlanGenerateRequest.getPlanInfo(),
+                                                       FitPlanGenerateRequest.getPlanName(),
+                                                       FitPlanGenerateRequest.getType(),
+                                                       FitPlanGenerateRequest.getUserID());
+        List<FitPlanBean> res = new ArrayList<>();
+        for (FitPlanBean item : FitPlanGenerateRequest.getData()) {
+            FitPlanBean tmp = createPlanService.addFitPlan(Date.valueOf(item.getDateShow()),
+                                                           item.getFitItemName(),
+                                                           item.getFitType(),
+                                                           item.getGroupNum(),
+                                                           item.getNumPerGroup(),
+                                                           item.getTimePerGroup(),
+                                                           planBean.getPlanID());
+            tmp.setDateShow(item.getDateShow());
+            res.add(tmp);
+        }
+        return new ResponseMessage<>(200, "success", res);
+    }
+
+    @PostMapping("/new/studyplan")
+    public ResponseMessage<List<StudyPlanBean>>
+    createStudyPlans(@RequestBody StudyPlanGenerateRequest StudyPlanGenerateRequest) {
+        PlanBean planBean = createPlanService.addPlan (StudyPlanGenerateRequest.getPlanInfo(),
+                                                       StudyPlanGenerateRequest.getPlanName(),
+                                                       StudyPlanGenerateRequest.getType(),
+                                                       StudyPlanGenerateRequest.getUserID());
+        List<StudyPlanBean> res = new ArrayList<>();
+        for (StudyPlanBean item : StudyPlanGenerateRequest.getData()) {
+            StudyPlanBean tmp = createPlanService.addStudyPlan (Date.valueOf(item.getDateShow()),
+                                                                item.getStudySubject(),
+                                                                item.getStudyContent(),
+                                                                item.getStudyTime(),
+                                                                planBean.getPlanID());
+            tmp.setDateShow(item.getDateShow());
+            res.add(tmp);
+        }
+        return new ResponseMessage<>(200, "success", res);
+    }
+
+    @PostMapping("/edit/dailyplan")
+    public ResponseMessage<DailyPlanBean>
+    editDailyPlan(@RequestBody DailyPlanBean dailyPlanBean) {
+        DailyPlanBean res;
+        if (dailyPlanBean.getDailyPlanID() == null)
+            res = createPlanService.addDailyPlan (Date.valueOf(dailyPlanBean.getDateShow()),
+                                                  dailyPlanBean.getPlanDetail(),
+                                                  dailyPlanBean.getPlanID());
+        else
+            res = planDetailService.editDPDetail(dailyPlanBean);
+        res.setDateShow(dailyPlanBean.getDateShow());
+        if (res != null)
+            return new ResponseMessage<>(200, "success", res);
+        else return new ResponseMessage<>(400, "failed", null);
+    }
+
+    @PostMapping("/edit/fitplan")
+    public ResponseMessage<FitPlanBean>
+    editFitPlan(@RequestBody FitPlanBean fitPlanBean) {
+        FitPlanBean res;
+        if (fitPlanBean.getFitPlanItemID() == null)
+            res = createPlanService.addFitPlan (Date.valueOf(fitPlanBean.getDateShow()),
+                                                fitPlanBean.getFitItemName(),
+                                                fitPlanBean.getFitType(),
+                                                fitPlanBean.getGroupNum(),
+                                                fitPlanBean.getNumPerGroup(),
+                                                fitPlanBean.getTimePerGroup(),
+                                                fitPlanBean.getPlanID());
+        else
+            res = planDetailService.editFPDetail(fitPlanBean);
+        res.setDateShow(fitPlanBean.getDateShow());
+        if (res != null)
+            return new ResponseMessage<>(200, "success", res);
+        else return new ResponseMessage<>(400, "failed", null);
+    }
+
+    @PostMapping("/edit/studyplan")
+    public ResponseMessage<StudyPlanBean>
+    editStudyPlan(@RequestBody StudyPlanBean studyPlanBean) {
+        StudyPlanBean res;
+        if (studyPlanBean.getStudyPlanItemID() == null)
+            res = createPlanService.addStudyPlan(Date.valueOf(studyPlanBean.getDateShow()),
+                                                 studyPlanBean.getStudySubject(),
+                                                 studyPlanBean.getStudyContent(),
+                                                 studyPlanBean.getStudyTime(),
+                                                 studyPlanBean.getPlanID());
+        else
+            res = planDetailService.editSPDetail(studyPlanBean);
+        res.setDateShow(studyPlanBean.getDateShow());
+        if (res != null)
+            return new ResponseMessage<>(200, "success", res);
+        else return new ResponseMessage<>(400, "failed", null);
+    }
+
+
     @PostMapping("/delete")
-    public ResponseMessage<String> deletePlan(int planID){
-        int res= planDetailService.deletePlan(planID);
-        if(res!=0)
-            return new ResponseMessage<>(200,"success","deleted.");
-        else return new ResponseMessage<>(400,"success","not-found");
+    public ResponseMessage<String> deletePlan(int planID) {
+        int res = planDetailService.deletePlan(planID);
+        if (res != 0)
+            return new ResponseMessage<>(200, "success", "deleted.");
+        else return new ResponseMessage<>(400, "failed", "not-found");
+    }
+
+    @PostMapping("/delete/plan_detail")
+    public ResponseMessage<String> deletePlanDetail(int planDetailID, String planType) {
+        int res = planDetailService.deletePlanDetail(planDetailID, planType);
+        if (res != 0)
+            return new ResponseMessage<>(200, "success", "deleted.");
+        else return new ResponseMessage<>(400, "failed", "not-found");
     }
 
 }

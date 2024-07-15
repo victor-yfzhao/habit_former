@@ -28,10 +28,20 @@ public class PosterPictureService {
     //获取所有带有图片的帖子
     public List<PosterBean> getAllPosterWithPictures(){
         List<PosterBean> posterBeanList = posterMapper.getAllPosters();
+        return getPosterBeans(posterBeanList);
+    }
+
+    public List<PosterBean> getPosterWithPicturesByUserID(int userID){
+        List<PosterBean> posterBeanList = posterMapper.getPosterByUserID(userID);
+        return getPosterBeans(posterBeanList);
+    }
+
+    private List<PosterBean> getPosterBeans(List<PosterBean> posterBeanList) {
         List<PosterBean> newPosterBeanList = new ArrayList<>();
         if(posterBeanList == null || posterBeanList.isEmpty()){ //此时没有帖子
             return null;
-        }else{
+        }
+        else{
             for(PosterBean posterBean:posterBeanList){
                 posterBean = getPosterWithPictures(posterBean.getPosterID());
                 if(posterBean!=null){
@@ -40,6 +50,11 @@ public class PosterPictureService {
             }
             return newPosterBeanList;
         }
+    }
+
+    public List<PosterBean> getPosterCollectionWithPicturesByUserID(int userID){
+        List<PosterBean> posterBeanList = posterMapper.getPosterCollectionByUserID(userID);
+        return getPosterBeans(posterBeanList);
     }
 
 }

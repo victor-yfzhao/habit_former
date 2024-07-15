@@ -16,6 +16,9 @@ public interface CheckPlanService {
     boolean refreshAllDailyPlan(int planID);
     boolean refreshAllFitPlan(int planID);
     boolean refreshAllStudyPlan(int planID);
+    int getPlanIDByDP(int dailyPlanID);
+    int getPlanIDByFP(int fitPlanID);
+    int getPlanIDBySP(int studyPlanID);
     int countSuccess(int planID);
     int countFailed(int planID);
     int totalCount(int planID);
