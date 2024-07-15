@@ -19,6 +19,8 @@ import java.sql.Date;
 import java.util.List;
 import java.util.Map;
 
+import static org.laorui_out.habit_former.plan.constant.Constants.sdf;
+
 @RestController
 public class AdminController {
 
@@ -176,6 +178,9 @@ public class AdminController {
         try{
             Page<PlanBean> page = new Page<>(pointer,pageSize);
             IPage<PlanBean> planRecords = planManageService.selectAllPlans(page);
+            for(PlanBean item:planRecords.getRecords()){
+                item.setPlanDateShow(sdf.format(item.getPlanDate()));
+            }
             return new ResponseMessage<>(200,"query success", planRecords);
         }catch(Exception e){
             return new ResponseMessage<>(400,e.getMessage(),null);
