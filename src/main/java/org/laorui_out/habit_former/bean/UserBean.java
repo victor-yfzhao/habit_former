@@ -14,7 +14,7 @@ import java.sql.Date;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@TableName("user")
+@TableName("User")
 public class UserBean {
     @TableId(value = "userID", type = IdType.AUTO)
     private Integer userID;
