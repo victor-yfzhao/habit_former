@@ -6,6 +6,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 import org.laorui_out.habit_former.bean.StudyPlanBean;
+import org.laorui_out.habit_former.plan.constant.Constants;
 
 import java.sql.Date;
 import java.util.List;
@@ -46,6 +47,12 @@ public interface StudyPlanMapper extends BaseMapper<StudyPlanBean> {
             "set status = #{status} " +
             "where studyPlanItemID = #{studyPlanItemID};")
     int updateStudyPlanStatus(StudyPlanBean studyPlanBean);
+
+    // 返回某一日完成的学习计划数量
+    @Select("select count(*) " +
+            "from StudyPlanItem " +
+            "where status = '"+ Constants.CHECKED +"' and date = #{date};")
+    int countDailyFinishedPlan(Date date);
 
     // 添加学习计划使用默认的insert函数
 }

@@ -216,22 +216,22 @@ public class AdminController {
     //看板
     //--平台内每日计划完成总数目
     @GetMapping("/admin/dashboard/finished_plan")
-    public ResponseMessage<int[]> getFinishedPlanCount(){
-        int[] res = dashboardService.countDailyFinishedPlanItem();
+    public ResponseMessage<Map<String, Integer>> getFinishedPlanCount(){
+        Map<String, Integer> res = dashboardService.countDailyFinishedPlanItem();
         return new ResponseMessage<>(200,"query success",res);
     }
 
     //--平台内每日完成了计划的用户数
     @GetMapping("/admin/dashboard/finished_plan_user")
-    public ResponseMessage<int[]> getFinishedPlanUserCount(){
-        int[] res = dashboardService.countDailyFinishedUser();
+    public ResponseMessage<Map<String, Integer>> getFinishedPlanUserCount(){
+        Map<String, Integer> res = dashboardService.countDailyFinishedUser();
         return new ResponseMessage<>(200,"query success",res);
     }
 
     //--平台内每日帖子增加量
     @GetMapping("/admin/dashboard/added_post")
-    public ResponseMessage<int[]> getAddedPostCount(){
-        int[] res = dashboardService.countDailyAddedPost();
+    public ResponseMessage<Map<String, Integer>> getAddedPostCount(){
+        Map<String, Integer> res = dashboardService.countDailyAddedPost();
         return new ResponseMessage<>(200,"query success",res);
     }
 

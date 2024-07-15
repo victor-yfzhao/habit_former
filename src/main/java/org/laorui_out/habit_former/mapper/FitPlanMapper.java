@@ -6,6 +6,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 import org.laorui_out.habit_former.bean.FitPlanBean;
+import org.laorui_out.habit_former.plan.constant.Constants;
 
 import java.util.Date;
 import java.util.List;
@@ -49,6 +50,12 @@ public interface FitPlanMapper extends BaseMapper<FitPlanBean> {
             "set status = #{status} " +
             "where fitPlanItemID = #{fitPlanItemID};")
     int updateFitPlanStatus(FitPlanBean fitPlanBean);
+
+    // 返回某一日完成的健身计划数量
+    @Select("select count(*) " +
+            "from FitPlanItem " +
+            "where status = '"+ Constants.CHECKED +"' and date = #{date};")
+    int countDailyFinishedPlan(java.sql.Date date);
 
     // 添加健身计划使用默认的insert函数
 }

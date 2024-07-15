@@ -39,4 +39,10 @@ public interface DailyPlanMapper extends BaseMapper<DailyPlanBean> {
     @Delete("Delete from DailyPlan where planID=#{planID}")
     int deleteAllDailyPlanByPlanID(int planID);
 
+    // Dashboard Count
+    @Select("select count(*) " +
+            "from DailyPlan " +
+            "where status='"+ Constants.CHECKED +"' AND date = #{date}")
+    int countDailyFinishedPlan(Date date);
+
 }
