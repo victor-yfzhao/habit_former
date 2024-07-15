@@ -2,6 +2,7 @@ package org.laorui_out.habit_former.mapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.*;
 import org.laorui_out.habit_former.bean.LikesBean;
+import org.laorui_out.habit_former.bean.PlanBean;
 import org.laorui_out.habit_former.bean.PosterBean;
 import org.laorui_out.habit_former.bean.PosterPictureBean;
 
@@ -43,6 +44,9 @@ public interface PosterMapper extends BaseMapper<PosterBean> {
 
     @Select("select planType from Plan where planID = (select planID from Poster where posterID = #{posterID})")
     String getPlanTypeByPosterId(int posterID);
+
+    @Select("select * from Plan where planID = (select planID from Poster where posterID = #{posterID})")
+    PlanBean getPlanByPosterId(int posterID);
 
     //根据帖子ID返回点赞数
     @Select("select COUNT(*) from Likes where posterID = #{posterID}")
