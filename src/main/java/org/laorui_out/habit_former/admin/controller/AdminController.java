@@ -39,6 +39,9 @@ public class AdminController {
     @Resource
     LoginManageService loginManageService;
 
+    @Resource
+    CommentManageService commentManageService;
+
     @Value("${admin.password}")
     private String password;
 
@@ -310,5 +313,47 @@ public class AdminController {
         List<CollectsRank> res = dashboardService.countPostCollectRanking(rankSize);
         return new ResponseMessage<>(200,"query success",res);
     }
+
+    //评论管理
+    //根据评论ID删除评论
+    @PostMapping("/admin/comment/delete")
+    public ResponseMessage<Integer> deleteComment(int commentID){
+        int res = commentManageService.deleteComment(commentID);
+        int resChild = commentManageService.deleteCommentByParentCommentID(commentID);
+        if(res + resChild >0)
+            return new ResponseMessage<>(200,"commentID:"+commentID+" delete-success",res);
+        return new ResponseMessage<>(400,"commentID:"+commentID+" delete-failed",res);
+    }
+    //根据用户ID删除评论
+    @PostMapping("/admin/comment/deleteByUserID")
+    public ResponseMessage<Integer> deleteAllCommentByUserID(int userID){
+        int res = commentManageService.deleteCommentByUserID(userID);//affected rows
+        if(res>0)
+            return new ResponseMessage<>(200,"userID:"+userID+" comments-delete-success",res);
+        return new ResponseMessage<>(400,"userID:"+userID+" comments-delete-failed",res);
+    }
+
+    //根据帖子ID删除评论
+    @PostMapping("/admin/comment/deleteByPosterID")
+    public ResponseMessage<Integer> deleteAllCommentByPosterID(int posterID){
+        int res = commentManageService.deleteCommentByPosterID(posterID);//affected rows
+        if(res>0)
+            return new ResponseMessage<>(200,"posterID:"+posterID+" comments-delete-success",res);
+        return new ResponseMessage<>(400,"posterID:"+posterID+" comments-delete-failed",res);
+    }
+
+    @GetMapping("/admin/comment")
+    public ResponseMessage<IPage<CommentBean>> selectAllComments(int pointer, int pageSize){
+        try{
+            Page<CommentBean> page = new Page<>(pointer,pageSize);
+            IPage<CommentBean> commentRecords = commentManageService.selectAllComments(page);
+            return new ResponseMessage<>(200,"query success", commentRecords);
+        }catch(Exception e){
+            return new ResponseMessage<>(400,e.getMessage(),null);
+        }
+    }
+
+
+
 
 }
