@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import org.apache.ibatis.annotations.Select;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -18,7 +19,9 @@ public class PosterBean {
     @TableField("posterHeadline")
     private String posterHeadline;
 
+    @TableField(select = false)
     private List<String> posterPicture;
+
     @TableField("posterDetail")
     private String posterDetail;
     @TableField("userID")
