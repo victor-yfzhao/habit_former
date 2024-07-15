@@ -2,6 +2,7 @@ package org.laorui_out.habit_former.poster.service;
 
 import jakarta.annotation.Resource;
 import org.laorui_out.habit_former.bean.LikesBean;
+import org.laorui_out.habit_former.bean.PlanBean;
 import org.laorui_out.habit_former.bean.PosterBean;
 import org.laorui_out.habit_former.bean.UserBean;
 import org.laorui_out.habit_former.mapper.PosterMapper;
@@ -63,6 +64,11 @@ public class PosterService {
             return "帖子对应的用户不存在，缩略信息返回错误";
         }
 
+        PlanBean planBean = posterMapper.getPlanByPosterId(posterID);
+        if(planBean == null){
+            return "帖子对应的计划不存在，缩略信息返回错误";
+        }
+
         //获取帖子信息
         PosterBean poster = posterPictureService.getPosterWithPictures(posterID);
 
@@ -76,6 +82,8 @@ public class PosterService {
                 public final int userID = userBean.getUserID();
                 public final String username = userBean.getUsername();
                 public final String userIcon = userBean.getUserIcon();
+                public final int planID = planBean.getPlanID();
+                public final String planType = planBean.getPlanType();
                 public final int posterID = poster.getPosterID();
                 public final String posterHeadline = poster.getPosterHeadline();
                 //主要看这里传参的数据类型
