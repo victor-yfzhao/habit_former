@@ -54,5 +54,10 @@ public interface StudyPlanMapper extends BaseMapper<StudyPlanBean> {
             "where status = '"+ Constants.CHECKED +"' and date = #{date};")
     int countDailyFinishedPlan(Date date);
 
+    @Select("select * " +
+            "from StudyPlanItem " +
+            "where status = '"+ Constants.CHECKED +"' and date = #{date};")
+    List<StudyPlanBean> getDailyFinishedPlan(Date date);
+
     // 添加学习计划使用默认的insert函数
 }
