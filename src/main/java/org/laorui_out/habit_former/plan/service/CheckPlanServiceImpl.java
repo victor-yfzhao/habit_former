@@ -1,5 +1,6 @@
 package org.laorui_out.habit_former.plan.service;
 
+import jakarta.annotation.Resource;
 import org.laorui_out.habit_former.bean.DailyPlanBean;
 import org.laorui_out.habit_former.bean.FitPlanBean;
 import org.laorui_out.habit_former.bean.PlanBean;
@@ -19,13 +20,13 @@ import java.util.List;
 
 @Service
 public class CheckPlanServiceImpl implements CheckPlanService {
-    @Autowired
+    @Resource
     PlanMapper planMapper;
-    @Autowired
+    @Resource
     DailyPlanMapper dailyPlanMapper;
-    @Autowired
+    @Resource
     FitPlanMapper fitPlanMapper;
-    @Autowired
+    @Resource
     StudyPlanMapper studyPlanMapper;
 
     public boolean checkDailyPlan(int dailyPlanID) {
@@ -54,7 +55,7 @@ public class CheckPlanServiceImpl implements CheckPlanService {
         FitPlanBean fitPlanBean = fitPlanMapper.getFitPlanByID(fitPlanID);
         if (fitPlanBean.getStatus().equals(Constants.NOT_CHECKED)) {
             fitPlanBean.setStatus(Constants.CHECKED);
-            fitPlanMapper.updateFitPlan(fitPlanBean);
+            fitPlanMapper.updateFitPlanStatus(fitPlanBean);
             return true;
         }
         return false;
@@ -64,7 +65,7 @@ public class CheckPlanServiceImpl implements CheckPlanService {
         FitPlanBean fitPlanBean = fitPlanMapper.getFitPlanByID(fitPlanID);
         if (fitPlanBean.getStatus().equals(Constants.CHECKED)) {
             fitPlanBean.setStatus(Constants.NOT_CHECKED);
-            fitPlanMapper.updateFitPlan(fitPlanBean);
+            fitPlanMapper.updateFitPlanStatus(fitPlanBean);
             return true;
         }
         return false;
@@ -74,7 +75,7 @@ public class CheckPlanServiceImpl implements CheckPlanService {
         StudyPlanBean studyPlanBean = studyPlanMapper.getStudyPlanByID(studyPlanID);
         if (studyPlanBean.getStatus().equals(Constants.NOT_CHECKED)) {
             studyPlanBean.setStatus(Constants.CHECKED);
-            studyPlanMapper.updateStudyPlan(studyPlanBean);
+            studyPlanMapper.updateStudyPlanStatus(studyPlanBean);
             return true;
         }
         return false;
@@ -84,7 +85,7 @@ public class CheckPlanServiceImpl implements CheckPlanService {
         StudyPlanBean studyPlanBean = studyPlanMapper.getStudyPlanByID(studyPlanID);
         if (studyPlanBean.getStatus().equals(Constants.CHECKED)) {
             studyPlanBean.setStatus(Constants.NOT_CHECKED);
-            studyPlanMapper.updateStudyPlan(studyPlanBean);
+            studyPlanMapper.updateStudyPlanStatus(studyPlanBean);
             return true;
         }
         return false;
@@ -95,9 +96,7 @@ public class CheckPlanServiceImpl implements CheckPlanService {
         List<PlanBean> result = new ArrayList<>();
         for (PlanBean planbean : plans) {
             PlanBean tmp = refreshPlanStatus(planbean.getPlanID());
-            if (tmp != null)//检验是否更新
-                result.add(tmp);
-            else result.add(planbean);
+            result.add(tmp);
         }
         return result;
     }
@@ -106,18 +105,15 @@ public class CheckPlanServiceImpl implements CheckPlanService {
         //plan 目前只设定check和uncheck两种状态，不存在fail
         //当所有子计划项都不是uncheck状态的时候，将plan标为check
         PlanBean planBean = planMapper.getPlanByPlanID(planID);
-        if (!planBean.getStatus().equals(Constants.NOT_CHECKED))
-            return null;
+        if (!(planBean.getStatus().equals(Constants.NOT_CHECKED)))
+            return planBean;//状态保持不变
         boolean res;
-        //TODO:方法体，调用三种不同的子计划项的检查方法
-        if (planBean.getPlanType().equals(Constants.PLAN_TYPE)) {
-            res = refreshAllDailyPlan(planID);
-        } else if (planBean.getPlanType().equals(Constants.FIT_PLAN_TYPE)) {
+        if (planBean.getPlanType().equals(Constants.FIT_PLAN_TYPE)) {
             res = refreshAllFitPlan(planID);
         } else if (planBean.getPlanType().equals(Constants.STUDY_PLAN_TYPE)) {
             res = refreshAllStudyPlan(planID);
         } else {
-            return null;//TODO:类型异常
+            res = refreshAllDailyPlan(planID);
         }
         if (res) {
             planBean.setStatus(Constants.CHECKED);
@@ -138,6 +134,7 @@ public class CheckPlanServiceImpl implements CheckPlanService {
                 now = stripTime(now);
                 if (now.after(date)) {
                     item.setStatus(Constants.FAILED);
+                    dailyPlanMapper.updateDailyPlan(item);
                 } else {//有未过期且未打卡的子项目
                     return false;
                 }
@@ -158,6 +155,7 @@ public class CheckPlanServiceImpl implements CheckPlanService {
                 now = stripTime(now);
                 if (now.after(date)) {
                     item.setStatus(Constants.FAILED);
+                    fitPlanMapper.updateFitPlanStatus(item);
                 } else {
                     return false;
                 }
@@ -177,6 +175,7 @@ public class CheckPlanServiceImpl implements CheckPlanService {
                 now = stripTime(now);
                 if (now.after(date)) {
                     item.setStatus(Constants.FAILED);
+                    studyPlanMapper.updateStudyPlanStatus(item);
                 } else {
                     return false;
                 }
@@ -185,29 +184,56 @@ public class CheckPlanServiceImpl implements CheckPlanService {
         return true;
     }
 
+    //adapter转接口
+    public int getPlanIDByDP(int dailyPlanID) {
+        DailyPlanBean tmp = dailyPlanMapper.getDailyPlanByID(dailyPlanID);
+        if (tmp != null)
+            return tmp.getPlanID();
+        return -1;
+    }
+
+    public int getPlanIDByFP(int fitPlanID) {
+        FitPlanBean tmp = fitPlanMapper.getFitPlanByID(fitPlanID);
+        if (tmp != null)
+            return tmp.getPlanID();
+        return -1;
+    }
+
+    public int getPlanIDBySP(int studyPlanID) {
+        StudyPlanBean tmp = studyPlanMapper.getStudyPlanByID(studyPlanID);
+        if (tmp != null)
+            return tmp.getPlanID();
+        return -1;
+    }
+
     public int countSuccess(int planID) {
         PlanBean planBean = planMapper.getPlanByPlanID(planID);
         int cnt = 0;
-        if (planBean.getPlanType().equals(Constants.PLAN_TYPE)) {
-            List<DailyPlanBean> dailyPlanBeanList = dailyPlanMapper.getAllDailyPlanByPlanID(planID);
-            for (DailyPlanBean item : dailyPlanBeanList) {
-                if (item.getStatus().equals(Constants.CHECKED))
-                    cnt++;
+        switch (planBean.getPlanType()) {
+            case Constants.PLAN_TYPE -> {
+                List<DailyPlanBean> dailyPlanBeanList = dailyPlanMapper.getAllDailyPlanByPlanID(planID);
+                for (DailyPlanBean item : dailyPlanBeanList) {
+                    if (item.getStatus().equals(Constants.CHECKED))
+                        cnt++;
+                }
             }
-        } else if (planBean.getPlanType().equals(Constants.FIT_PLAN_TYPE)) {
-            List<FitPlanBean> fitPlanBeanList = fitPlanMapper.getFitPlanByPlanID(planID);
-            for (FitPlanBean item : fitPlanBeanList) {
-                if (item.getStatus().equals(Constants.CHECKED))
-                    cnt++;
+            case Constants.FIT_PLAN_TYPE -> {
+                List<FitPlanBean> fitPlanBeanList = fitPlanMapper.getFitPlanByPlanID(planID);
+                for (FitPlanBean item : fitPlanBeanList) {
+                    if (item.getStatus().equals(Constants.CHECKED))
+                        cnt++;
+                }
             }
-        } else if (planBean.getPlanType().equals(Constants.STUDY_PLAN_TYPE)) {
-            List<StudyPlanBean> studyPlanBeanList = studyPlanMapper.getStudyPlanByPlanID(planID);
-            for (StudyPlanBean item : studyPlanBeanList) {
-                if (item.getStatus().equals(Constants.CHECKED))
-                    cnt++;
+            case Constants.STUDY_PLAN_TYPE -> {
+                List<StudyPlanBean> studyPlanBeanList = studyPlanMapper.getStudyPlanByPlanID(planID);
+                for (StudyPlanBean item : studyPlanBeanList) {
+                    if (item.getStatus().equals(Constants.CHECKED))
+                        cnt++;
+                }
             }
-        } else {
-            return -1;
+            default -> {
+                return -1;
+            }
         }
         return cnt;
     }
@@ -215,43 +241,53 @@ public class CheckPlanServiceImpl implements CheckPlanService {
     public int countFailed(int planID) {
         PlanBean planBean = planMapper.getPlanByPlanID(planID);
         int cnt = 0;
-        if (planBean.getPlanType().equals(Constants.PLAN_TYPE)) {
-            List<DailyPlanBean> dailyPlanBeanList = dailyPlanMapper.getAllDailyPlanByPlanID(planID);
-            for (DailyPlanBean item : dailyPlanBeanList) {
-                if (item.getStatus().equals(Constants.FAILED))
-                    cnt++;
+        switch (planBean.getPlanType()) {
+            case Constants.PLAN_TYPE -> {
+                List<DailyPlanBean> dailyPlanBeanList = dailyPlanMapper.getAllDailyPlanByPlanID(planID);
+                for (DailyPlanBean item : dailyPlanBeanList) {
+                    if (item.getStatus().equals(Constants.FAILED))
+                        cnt++;
+                }
             }
-        } else if (planBean.getPlanType().equals(Constants.FIT_PLAN_TYPE)) {
-            List<FitPlanBean> fitPlanBeanList = fitPlanMapper.getFitPlanByPlanID(planID);
-            for (FitPlanBean item : fitPlanBeanList) {
-                if (item.getStatus().equals(Constants.FAILED))
-                    cnt++;
+            case Constants.FIT_PLAN_TYPE -> {
+                List<FitPlanBean> fitPlanBeanList = fitPlanMapper.getFitPlanByPlanID(planID);
+                for (FitPlanBean item : fitPlanBeanList) {
+                    if (item.getStatus().equals(Constants.FAILED))
+                        cnt++;
+                }
             }
-        } else if (planBean.getPlanType().equals(Constants.STUDY_PLAN_TYPE)) {
-            List<StudyPlanBean> studyPlanBeanList = studyPlanMapper.getStudyPlanByPlanID(planID);
-            for (StudyPlanBean item : studyPlanBeanList) {
-                if (item.getStatus().equals(Constants.FAILED))
-                    cnt++;
+            case Constants.STUDY_PLAN_TYPE -> {
+                List<StudyPlanBean> studyPlanBeanList = studyPlanMapper.getStudyPlanByPlanID(planID);
+                for (StudyPlanBean item : studyPlanBeanList) {
+                    if (item.getStatus().equals(Constants.FAILED))
+                        cnt++;
+                }
             }
-        } else {
-            return -1;
+            default -> {
+                return -1;
+            }
         }
         return cnt;
     }
 
     public int totalCount(int planID) {
         PlanBean planBean = planMapper.getPlanByPlanID(planID);
-        if (planBean.getPlanType().equals(Constants.PLAN_TYPE)) {
-            List<DailyPlanBean> dailyPlanBeanList = dailyPlanMapper.getAllDailyPlanByPlanID(planID);
-            return dailyPlanBeanList.size();
-        } else if (planBean.getPlanType().equals(Constants.FIT_PLAN_TYPE)) {
-            List<FitPlanBean> fitPlanBeanList = fitPlanMapper.getFitPlanByPlanID(planID);
-            return fitPlanBeanList.size();
-        } else if (planBean.getPlanType().equals(Constants.STUDY_PLAN_TYPE)) {
-            List<StudyPlanBean> studyPlanBeanList = studyPlanMapper.getStudyPlanByPlanID(planID);
-            return studyPlanBeanList.size();
-        } else {
-            return -1;
+        switch (planBean.getPlanType()) {
+            case Constants.PLAN_TYPE -> {
+                List<DailyPlanBean> dailyPlanBeanList = dailyPlanMapper.getAllDailyPlanByPlanID(planID);
+                return dailyPlanBeanList.size();
+            }
+            case Constants.FIT_PLAN_TYPE -> {
+                List<FitPlanBean> fitPlanBeanList = fitPlanMapper.getFitPlanByPlanID(planID);
+                return fitPlanBeanList.size();
+            }
+            case Constants.STUDY_PLAN_TYPE -> {
+                List<StudyPlanBean> studyPlanBeanList = studyPlanMapper.getStudyPlanByPlanID(planID);
+                return studyPlanBeanList.size();
+            }
+            default -> {
+                return -1;
+            }
         }
     }
 

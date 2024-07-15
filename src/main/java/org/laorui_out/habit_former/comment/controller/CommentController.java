@@ -11,7 +11,9 @@ import org.springframework.web.bind.annotation.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
+import java.util.Objects; 
+  
+  
 
 @RestController
 public class CommentController {
@@ -27,17 +29,17 @@ public class CommentController {
         try{
             String isCommentCreate = createCommentService.createComment((int)map.get("userID"), (int)map.get("posterID"), (int) map.get("parentCommentID"), (String) map.get("commentDetail"));
             if(Objects.equals(isCommentCreate, "创建成功")){
-                return new ResponseMessage<String>(200,"成功",isCommentCreate);
+                return new ResponseMessage<>(200,"成功",isCommentCreate);
             }
-            return new ResponseMessage<String>(500,"失败",isCommentCreate);
+            return new ResponseMessage<>(500,"失败",isCommentCreate);
         }
         catch (Exception e){
-            return new ResponseMessage<>(500, "失败", e.getMessage());
+            return new ResponseMessage<>(500, "失败", createCommentService.createComment((int)map.get("userID"), (int)map.get("posterID"), (int) map.get("parentCommentID"), (String) map.get("commentDetail")));
         }
     }
 
     @GetMapping("comment/showReply")
-    public ResponseMessage<List> getReply(@RequestParam("commentID") int commentID){
+    public ResponseMessage<List<CommentAndUserBean>> getReply(@RequestParam("commentID") int commentID){
         List<CommentAndUserBean> replyDetailList = new ArrayList<>();
         try{
             CommentBean commentBean = commentService.getCommentByCommentID(commentID);
@@ -51,7 +53,9 @@ public class CommentController {
         }
     }
 
-    private ResponseMessage<List> getListResponseMessage(List<CommentAndUserBean> replyDetailList, List<CommentBean> childCommentList) {
+    private ResponseMessage<List<CommentAndUserBean>>
+    getListResponseMessage(List<CommentAndUserBean> replyDetailList,
+                           List<CommentBean> childCommentList) {
         if(!childCommentList.isEmpty()){
             for(CommentBean childCommentBean:childCommentList){
                 UserBean userBean = commentService.getUserByCommentId(childCommentBean.getCommentID());
@@ -60,6 +64,7 @@ public class CommentController {
                         childCommentBean.getCommentDetail(),
                         childCommentBean.getCommentDate(),
                         childCommentBean.getCommentTime(),
+                        childCommentBean.getParentCommentID(),
                         userBean.getUserID(),
                         userBean.getUsername(),
                         userBean.getUserIcon()
@@ -71,7 +76,7 @@ public class CommentController {
     }
 
     @GetMapping("comment/showComment")
-    public ResponseMessage<List> getComment(@RequestParam("posterID") int posterID){
+    public ResponseMessage<List<CommentAndUserBean>> getComment(@RequestParam("posterID") int posterID){
         if(!posterService.isInPosterIDList(posterID)){
             return new ResponseMessage<>(200,"不存在对应的帖子，评论查找失败",null);
         }

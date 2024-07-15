@@ -1,5 +1,6 @@
 package org.laorui_out.habit_former.plan.service;
 
+import jakarta.annotation.Resource;
 import org.laorui_out.habit_former.bean.DailyPlanBean;
 import org.laorui_out.habit_former.bean.FitPlanBean;
 import org.laorui_out.habit_former.bean.PlanBean;
@@ -17,13 +18,13 @@ import java.sql.Time;
 
 @Service
 public class CreatePlanServiceImpl implements CreatePlanService{
-    @Autowired
+    @Resource
     PlanMapper planMapper;
-    @Autowired
+    @Resource
     DailyPlanMapper dailyPlanMapper;
-    @Autowired
+    @Resource
     FitPlanMapper fitPlanMapper;
-    @Autowired
+    @Resource
     StudyPlanMapper studyPlanMapper;
 
     public PlanBean addPlan(String planInfo, String planName,String planType,int userID){

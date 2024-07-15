@@ -17,6 +17,9 @@ public class FileHandler {
     public String uploadFile(HttpServletRequest request, @RequestParam("file") MultipartFile file) throws IOException{
         try{
             // 这样就可以收到文件了，files.length == 1
+            if(file.getOriginalFilename() == null){
+                throw new IOException("文件名为空");
+            }
             String originalFilename = StringUtils.cleanPath(file.getOriginalFilename());
             String newFileName = System.currentTimeMillis() + "_" + originalFilename;
             String path = request.getServletContext().getRealPath("/uploadFile/");

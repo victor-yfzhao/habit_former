@@ -1,14 +1,27 @@
 package org.laorui_out.habit_former.user.controller;
 
+import ch.qos.logback.core.model.Model;
+import eu.bitwalker.useragentutils.Browser;
+import eu.bitwalker.useragentutils.OperatingSystem;
+import eu.bitwalker.useragentutils.UserAgent;
+import eu.bitwalker.useragentutils.Version;
 import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import org.jetbrains.annotations.NotNull;
+import org.laorui_out.habit_former.bean.PosterBean;
+import org.laorui_out.habit_former.bean.PosterPictureBean;
 import org.laorui_out.habit_former.bean.UserBean;
+import org.laorui_out.habit_former.bean.UserPersonalPageBean;
+import org.laorui_out.habit_former.poster.service.PosterPictureService;
+import org.laorui_out.habit_former.poster.service.PosterService;
 import org.laorui_out.habit_former.user.service.*;
 import org.laorui_out.habit_former.utils.ResponseMessage;
 import org.mybatis.spring.annotation.MapperScan;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @MapperScan("org.laorui_out.habit_former.mapper")
@@ -22,12 +35,16 @@ public class UserController {
 
     @Resource
     ProfileService profileService;
+    @Resource
+    PosterPictureService posterPictureService;
+    @Resource
+    PosterService posterService;
 
     @GetMapping("/login")
-    public ResponseMessage<UserBean> login(String username, String password) {
+    public ResponseMessage<UserBean> login(String username, String password, HttpServletRequest request) {
         LoginResult result;
         try{
-            result = loginService.login(username, password);
+            result = loginService.login(username, password, request);
             if (Objects.requireNonNull(result) == LoginResult.SUCCESS) {
                 return new ResponseMessage<>(200, result.toString(), profileService.getProfile(username));
             }}catch(Exception e){
@@ -45,20 +62,65 @@ public class UserController {
         return new ResponseMessage<>(400, result.toString(), null);
     }
 
+    //展示用户个人信息以及它发过的所有帖子
     @GetMapping("/user")
-    public ResponseMessage<UserBean> getUserPersonalPage(int userID) {
-        // TODO : 此处仍需要获取用户帖子
-
-        UserBean user = profileService.getProfile(userID);
-        if (user != null)
-            return new ResponseMessage<>(200, "success get profile", user);
-        return new ResponseMessage<>(400, "failed to get profile", null);
+    public ResponseMessage<UserPersonalPageBean> getUserPersonalPage(int userID) {
+        try{
+            List<PosterBean> posterBeanList = posterPictureService.getPosterWithPicturesByUserID(userID);
+            return getObjectResponseMessage(userID, posterBeanList);
+        }catch (Exception e){
+            return new ResponseMessage<>(500,e.getMessage(),null);
+        }
     }
 
-//    @PostMapping("/user/update_icon")
-//    public ResponseMessage<UserBean> updateUserIcon(int userID, String icon) {
-//        // TODO : 上传图片的处理
-//    }
+    //展示用户个人信息以及它收藏de的所有帖子
+    @GetMapping("/user/collection")
+    public ResponseMessage<UserPersonalPageBean> getUserPersonalCollectionPage(int userID) {
+        try{
+            List<PosterBean> posterBeanList = posterPictureService.getPosterCollectionWithPicturesByUserID(userID);
+            return getObjectResponseMessage(userID, posterBeanList);
+        }catch (Exception e){
+            return new ResponseMessage<>(500,e.getMessage(),null);
+        }
+    }
+
+    @NotNull
+    private ResponseMessage<UserPersonalPageBean> getObjectResponseMessage(int userID, List<PosterBean> posterBeanList) {
+        UserBean user = profileService.getProfile(userID);
+        if (user != null){
+            List<Object> posterMessages = new ArrayList<>();
+            if(posterBeanList!=null && !posterBeanList.isEmpty()){
+                for(PosterBean posterBean : posterBeanList){
+                    Object posterBeanPartItem = posterService.getPosterParts(posterBean.getPosterID());
+                    posterMessages.add(posterBeanPartItem);
+                }
+            }
+            UserPersonalPageBean userPersonalPageBean = new UserPersonalPageBean(
+                    user.getUserID(),
+                    user.getUsername(),
+                    user.getUserIcon(),
+                    user.getGender(),
+                    user.getAddress(),
+                    user.getUserIntro(),
+                    posterMessages
+            );
+            return new ResponseMessage<>(200,"用户个人展示成功",userPersonalPageBean);
+        }else{
+            return new ResponseMessage<>(400, "不存在对应的用户信息", null);
+        }
+    }
+
+
+    //更新用户头像
+    @PostMapping("/user/update_icon")
+    public ResponseMessage<String> updateUserIcon(@RequestParam int userID, @RequestParam String userIcon) {
+        boolean isUpdated = profileService.updateUserIcon(userID, userIcon);
+        if (isUpdated) {
+            return new ResponseMessage<>(200,"成功","用户头像更换成功");
+        } else {
+            return new ResponseMessage<>(500, "失败", "用户头像更新失败");
+        }
+    }
 
     @PostMapping("/user/update_password")
     public ResponseMessage<Boolean> updateUserPassword(int userID, String password) {
@@ -69,12 +131,36 @@ public class UserController {
     }
 
     @PostMapping("/user/update_username")
-    public ResponseMessage<UserBean> updateUserUsername(int userID, String username) {
-        UserBean user = profileService.updateUsername(userID, username);
-        if(user != null) {
-            return new ResponseMessage<>(200, "success update username", user);
+    public ResponseMessage<Boolean> updateUserUserName(int userID, String username) {
+        if(profileService.updateUserName(userID, username)) {
+            return new ResponseMessage<>(200, "success update username", true);
         }
-        return new ResponseMessage<>(400, "failed to update username", null);
+        return new ResponseMessage<>(400, "failed to update username", false);
     }
-}
 
+    @PostMapping("/user/update_gender")
+    public ResponseMessage<Boolean> updateUserGender(int userID, String gender) {
+        if(profileService.updateGender(userID, gender)) {
+            return new ResponseMessage<>(200, "success update gender", true);
+        }
+        return new ResponseMessage<>(400, "failed to update gender", false);
+    }
+
+    @PostMapping("/user/update_address")
+    public ResponseMessage<Boolean> updateUserAddress(int userID, String address) {
+        if(profileService.updateAddress(userID, address)) {
+            return new ResponseMessage<>(200, "success update address", true);
+        }
+        return new ResponseMessage<>(400, "failed to update address", false);
+    }
+
+    @PostMapping("/user/update_userIntro")
+    public ResponseMessage<Boolean> updateUserIntro(int userID, String userIntro) {
+        if(profileService.updateUserIntro(userID, userIntro)) {
+            return new ResponseMessage<>(200, "success update userIntro", true);
+        }
+        return new ResponseMessage<>(400, "failed to update userIntro", false);
+    }
+
+
+}

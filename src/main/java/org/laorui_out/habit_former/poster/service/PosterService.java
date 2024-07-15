@@ -1,9 +1,8 @@
 package org.laorui_out.habit_former.poster.service;
 
-//import org.laorui_out.habit_former.bean.PosterBean;
-//import org.laorui_out.habit_former.bean.PosterPictureBean;
-//import java.time.LocalDate;
 import jakarta.annotation.Resource;
+import org.laorui_out.habit_former.bean.LikesBean;
+import org.laorui_out.habit_former.bean.PlanBean;
 import org.laorui_out.habit_former.bean.PosterBean;
 import org.laorui_out.habit_former.bean.UserBean;
 import org.laorui_out.habit_former.mapper.PosterMapper;
@@ -26,6 +25,10 @@ public class PosterService {
     //根据posterID获取对应计划的名字
     public String getPlanNameByPosterId(int posterID) {
         return posterMapper.getPlanNameByPosterId(posterID);
+    }
+
+    public String getPlanTypeByPosterId(int posterID){
+        return posterMapper.getPlanTypeByPosterId(posterID);
     }
 
     //根据posterID获取对应的用户的信息
@@ -61,6 +64,11 @@ public class PosterService {
             return "帖子对应的用户不存在，缩略信息返回错误";
         }
 
+        PlanBean planBean = posterMapper.getPlanByPosterId(posterID);
+        if(planBean == null){
+            return "帖子对应的计划不存在，缩略信息返回错误";
+        }
+
         //获取帖子信息
         PosterBean poster = posterPictureService.getPosterWithPictures(posterID);
 
@@ -74,6 +82,8 @@ public class PosterService {
                 public final int userID = userBean.getUserID();
                 public final String username = userBean.getUsername();
                 public final String userIcon = userBean.getUserIcon();
+                public final int planID = planBean.getPlanID();
+                public final String planType = planBean.getPlanType();
                 public final int posterID = poster.getPosterID();
                 public final String posterHeadline = poster.getPosterHeadline();
                 //主要看这里传参的数据类型
@@ -89,6 +99,89 @@ public class PosterService {
     public Boolean isInPosterIDList(int posterID){
         List<Integer> posterIDList = posterMapper.getAllPosterID();
         return posterIDList.contains(posterID);
+    }
+
+    public List<PosterBean> getPosterByUserID(int userID){
+        return posterMapper.getPosterByUserID(userID);
+    }
+
+    public String addLikes(LikesBean likesBean){
+        int isLike = posterMapper.insertLikes(likesBean);
+        if(isLike <= 0){
+            return "插入失败";
+        }
+        else{
+            return "插入成功";
+        }
+    }
+
+    public String addCollection(LikesBean likesBean){
+        int isLike = posterMapper.insertCollection(likesBean);
+        if(isLike <= 0){
+            return "插入失败";
+        }
+        else{
+            return "插入成功";
+        }
+    }
+
+
+    public Boolean deleteLikes(int userID, int posterID){
+        //对于输入posterID是否存在的判断
+        PosterBean posterTestBean = posterMapper.getPosterById(posterID);
+        UserBean userTestBean = userMapper.getUserProfileThroughID(userID);
+        if(posterTestBean == null || userTestBean == null){
+            return false;
+        }
+        try {
+            return posterMapper.deleteLikes(userID, posterID);
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+    public Boolean deleteCollection(int userID, int posterID){
+        PosterBean posterTestBean = posterMapper.getPosterById(posterID);
+        UserBean userTestBean = userMapper.getUserProfileThroughID(userID);
+        if(posterTestBean == null || userTestBean == null){
+            return false;
+        }
+        try {
+            return posterMapper.deleteCollection(userID, posterID);
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public Boolean deleteLikesByPosterID(int posterID){
+        PosterBean posterTestBean = posterMapper.getPosterById(posterID);
+        if(posterTestBean == null){
+            return false;
+        }
+        try {
+            return posterMapper.deleteLikesByPosterID(posterID);
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public Boolean deleteCollectionByPosterID(int posterID){
+        PosterBean posterTestBean = posterMapper.getPosterById(posterID);
+        if(posterTestBean == null){
+            return false;
+        }
+        try {
+            return posterMapper.deleteCollectionByPosterID(posterID);
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
 
