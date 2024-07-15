@@ -30,7 +30,11 @@ public class PosterBean {
     private int planID; //外键
     @TableField("posterDate")
     private LocalDate posterDate;   //帖子发布时间
+
+    @TableField(select = false)
     private int numOfLikes;     //帖子的当前点赞数
+
+    @TableField(select = false)
     private int numOfCollections;   //帖子的当前收藏数
 
 

@@ -8,7 +8,10 @@ import lombok.Data;
 @TableName("Posterpicture")
 public class PosterPictureBean {
 
+    @TableField("posterID")
     private int posterID;
+
+    @TableField("posterPicture")
     private String posterPicture;
 
     @Override
