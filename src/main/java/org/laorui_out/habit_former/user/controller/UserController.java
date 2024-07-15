@@ -1,6 +1,13 @@
 package org.laorui_out.habit_former.user.controller;
 
+import ch.qos.logback.core.model.Model;
+import eu.bitwalker.useragentutils.Browser;
+import eu.bitwalker.useragentutils.OperatingSystem;
+import eu.bitwalker.useragentutils.UserAgent;
+import eu.bitwalker.useragentutils.Version;
 import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.jetbrains.annotations.NotNull;
 import org.laorui_out.habit_former.bean.PosterBean;
 import org.laorui_out.habit_former.bean.PosterPictureBean;
@@ -34,10 +41,10 @@ public class UserController {
     PosterService posterService;
 
     @GetMapping("/login")
-    public ResponseMessage<UserBean> login(String username, String password) {
+    public ResponseMessage<UserBean> login(String username, String password, HttpServletRequest request) {
         LoginResult result;
         try{
-            result = loginService.login(username, password);
+            result = loginService.login(username, password, request);
             if (Objects.requireNonNull(result) == LoginResult.SUCCESS) {
                 return new ResponseMessage<>(200, result.toString(), profileService.getProfile(username));
             }}catch(Exception e){

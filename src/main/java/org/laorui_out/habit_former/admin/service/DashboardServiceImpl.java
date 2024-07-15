@@ -6,12 +6,14 @@ import org.laorui_out.habit_former.bean.FitPlanBean;
 import org.laorui_out.habit_former.bean.StudyPlanBean;
 import org.laorui_out.habit_former.bean.UserBean;
 import org.laorui_out.habit_former.mapper.*;
+import org.springframework.stereotype.Service;
 
 import java.util.*;
 import java.sql.Date;
 
 import static org.laorui_out.habit_former.plan.constant.Constants.sdf;
 
+@Service
 public class DashboardServiceImpl implements DashboardService {
 
     @Resource

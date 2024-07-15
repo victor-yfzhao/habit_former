@@ -31,6 +31,9 @@ public class AdminController {
     @Resource
     DashboardService dashboardService;
 
+    @Resource
+    LoginManageService loginManageService;
+
     @Value("${admin.password}")
     private String password;
 
@@ -40,6 +43,17 @@ public class AdminController {
             return new ResponseMessage<>(200, "admin login success", LoginResult.SUCCESS);
         }
         return new ResponseMessage<>(400, "admin login failed", LoginResult.PASSWORD_ERROR);
+    }
+
+    @GetMapping("/admin/login_log")
+    public ResponseMessage<IPage<LoginBean>> loginLog(int pointer, int pageSize) {
+        try{
+            Page<LoginBean> page = new Page<>(pointer, pageSize);
+            IPage<LoginBean> loginRecords = loginManageService.selectAllLog(page);
+            return new ResponseMessage<>(200, "success", loginRecords);
+        }catch (Exception e){
+            return new ResponseMessage<>(400, "failed", null);
+        }
     }
 
     //用户管理
