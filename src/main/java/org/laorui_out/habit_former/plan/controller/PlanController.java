@@ -193,11 +193,17 @@ public class PlanController {
     }
 
     @PostMapping("/new/dailyplan")
-    public ResponseMessage<List<DailyPlanBean>> createDailyPlans(@RequestBody DailyPlanGenerateRequest dailyPlanGenerateRequest) {
-        PlanBean planBean = createPlanService.addPlan(dailyPlanGenerateRequest.getPlanInfo(), dailyPlanGenerateRequest.getPlanName(), dailyPlanGenerateRequest.getType(), dailyPlanGenerateRequest.getUserID());
+    public ResponseMessage<List<DailyPlanBean>>
+    createDailyPlans(@RequestBody DailyPlanGenerateRequest dailyPlanGenerateRequest) {
+        PlanBean planBean = createPlanService.addPlan (dailyPlanGenerateRequest.getPlanInfo(),
+                                                       dailyPlanGenerateRequest.getPlanName(),
+                                                       dailyPlanGenerateRequest.getType(),
+                                                       dailyPlanGenerateRequest.getUserID());
         List<DailyPlanBean> res = new ArrayList<>();
         for (DailyPlanBean item : dailyPlanGenerateRequest.getData()) {
-            DailyPlanBean tmp = createPlanService.addDailyPlan(Date.valueOf(item.getDateShow()), item.getPlanDetail(), planBean.getPlanID());
+            DailyPlanBean tmp = createPlanService.addDailyPlan (Date.valueOf(item.getDateShow()),
+                                                                item.getPlanDetail(),
+                                                                planBean.getPlanID());
             tmp.setDateShow(item.getDateShow());
             res.add(tmp);
         }
@@ -205,11 +211,21 @@ public class PlanController {
     }
 
     @PostMapping("/new/fitplan")
-    public ResponseMessage<List<FitPlanBean>> createFitPlans(@RequestBody FitPlanGenerateRequest FitPlanGenerateRequest) {
-        PlanBean planBean = createPlanService.addPlan(FitPlanGenerateRequest.getPlanInfo(), FitPlanGenerateRequest.getPlanName(), FitPlanGenerateRequest.getType(), FitPlanGenerateRequest.getUserID());
+    public ResponseMessage<List<FitPlanBean>>
+    createFitPlans(@RequestBody FitPlanGenerateRequest FitPlanGenerateRequest) {
+        PlanBean planBean = createPlanService.addPlan (FitPlanGenerateRequest.getPlanInfo(),
+                                                       FitPlanGenerateRequest.getPlanName(),
+                                                       FitPlanGenerateRequest.getType(),
+                                                       FitPlanGenerateRequest.getUserID());
         List<FitPlanBean> res = new ArrayList<>();
         for (FitPlanBean item : FitPlanGenerateRequest.getData()) {
-            FitPlanBean tmp = createPlanService.addFitPlan(Date.valueOf(item.getDateShow()), item.getFitItemName(), item.getFitType(), item.getGroupNum(), item.getNumPerGroup(), item.getTimePerGroup(), planBean.getPlanID());
+            FitPlanBean tmp = createPlanService.addFitPlan(Date.valueOf(item.getDateShow()),
+                                                           item.getFitItemName(),
+                                                           item.getFitType(),
+                                                           item.getGroupNum(),
+                                                           item.getNumPerGroup(),
+                                                           item.getTimePerGroup(),
+                                                           planBean.getPlanID());
             tmp.setDateShow(item.getDateShow());
             res.add(tmp);
         }
@@ -217,35 +233,33 @@ public class PlanController {
     }
 
     @PostMapping("/new/studyplan")
-    public ResponseMessage<List<StudyPlanBean>> createStudyPlans(@RequestBody StudyPlanGenerateRequest StudyPlanGenerateRequest) {
-        PlanBean planBean = createPlanService.addPlan(StudyPlanGenerateRequest.getPlanInfo(), StudyPlanGenerateRequest.getPlanName(), StudyPlanGenerateRequest.getType(), StudyPlanGenerateRequest.getUserID());
+    public ResponseMessage<List<StudyPlanBean>>
+    createStudyPlans(@RequestBody StudyPlanGenerateRequest StudyPlanGenerateRequest) {
+        PlanBean planBean = createPlanService.addPlan (StudyPlanGenerateRequest.getPlanInfo(),
+                                                       StudyPlanGenerateRequest.getPlanName(),
+                                                       StudyPlanGenerateRequest.getType(),
+                                                       StudyPlanGenerateRequest.getUserID());
         List<StudyPlanBean> res = new ArrayList<>();
         for (StudyPlanBean item : StudyPlanGenerateRequest.getData()) {
-            StudyPlanBean tmp = createPlanService.addStudyPlan(Date.valueOf(item.getDateShow()), item.getStudySubject(), item.getStudyContent(), item.getStudyTime(), planBean.getPlanID());
+            StudyPlanBean tmp = createPlanService.addStudyPlan (Date.valueOf(item.getDateShow()),
+                                                                item.getStudySubject(),
+                                                                item.getStudyContent(),
+                                                                item.getStudyTime(),
+                                                                planBean.getPlanID());
             tmp.setDateShow(item.getDateShow());
             res.add(tmp);
         }
         return new ResponseMessage<>(200, "success", res);
     }
 
-
-    // TODO 修改计划内容需要根据detailID是否位空来不同处理
-
-    /**
-     * 首先，传进来的还是xxxRequest，为如下结构
-     * xxxRequest
-     * |_planID
-     * |_planType
-     * |_data
-     * |_xxxBean
-     * 则，优先判断xxxBean的ID是否为空，为空则参照上面的new，不为空则修改
-     */
-
     @PostMapping("/edit/dailyplan")
-    public ResponseMessage<DailyPlanBean> editDailyPlan(@RequestBody DailyPlanBean dailyPlanBean) {
+    public ResponseMessage<DailyPlanBean>
+    editDailyPlan(@RequestBody DailyPlanBean dailyPlanBean) {
         DailyPlanBean res;
         if (dailyPlanBean.getDailyPlanID() == null)
-            res = createPlanService.addDailyPlan(Date.valueOf(dailyPlanBean.getDateShow()), dailyPlanBean.getPlanDetail(), dailyPlanBean.getPlanID());
+            res = createPlanService.addDailyPlan (Date.valueOf(dailyPlanBean.getDateShow()),
+                                                  dailyPlanBean.getPlanDetail(),
+                                                  dailyPlanBean.getPlanID());
         else
             res = planDetailService.editDPDetail(dailyPlanBean);
         res.setDateShow(dailyPlanBean.getDateShow());
@@ -255,10 +269,17 @@ public class PlanController {
     }
 
     @PostMapping("/edit/fitplan")
-    public ResponseMessage<FitPlanBean> editFitPlan(@RequestBody FitPlanBean fitPlanBean) {
+    public ResponseMessage<FitPlanBean>
+    editFitPlan(@RequestBody FitPlanBean fitPlanBean) {
         FitPlanBean res;
         if (fitPlanBean.getFitPlanItemID() == null)
-            res = createPlanService.addFitPlan(Date.valueOf(fitPlanBean.getDateShow()), fitPlanBean.getFitItemName(), fitPlanBean.getFitType(), fitPlanBean.getGroupNum(), fitPlanBean.getNumPerGroup(), fitPlanBean.getTimePerGroup(), fitPlanBean.getPlanID());
+            res = createPlanService.addFitPlan (Date.valueOf(fitPlanBean.getDateShow()),
+                                                fitPlanBean.getFitItemName(),
+                                                fitPlanBean.getFitType(),
+                                                fitPlanBean.getGroupNum(),
+                                                fitPlanBean.getNumPerGroup(),
+                                                fitPlanBean.getTimePerGroup(),
+                                                fitPlanBean.getPlanID());
         else
             res = planDetailService.editFPDetail(fitPlanBean);
         res.setDateShow(fitPlanBean.getDateShow());
@@ -268,10 +289,15 @@ public class PlanController {
     }
 
     @PostMapping("/edit/studyplan")
-    public ResponseMessage<StudyPlanBean> editStudyPlan(@RequestBody StudyPlanBean studyPlanBean) {
+    public ResponseMessage<StudyPlanBean>
+    editStudyPlan(@RequestBody StudyPlanBean studyPlanBean) {
         StudyPlanBean res;
         if (studyPlanBean.getStudyPlanItemID() == null)
-            res = createPlanService.addStudyPlan(Date.valueOf(studyPlanBean.getDateShow()), studyPlanBean.getStudySubject(), studyPlanBean.getStudyContent(), studyPlanBean.getStudyTime(), studyPlanBean.getPlanID());
+            res = createPlanService.addStudyPlan(Date.valueOf(studyPlanBean.getDateShow()),
+                                                 studyPlanBean.getStudySubject(),
+                                                 studyPlanBean.getStudyContent(),
+                                                 studyPlanBean.getStudyTime(),
+                                                 studyPlanBean.getPlanID());
         else
             res = planDetailService.editSPDetail(studyPlanBean);
         res.setDateShow(studyPlanBean.getDateShow());
