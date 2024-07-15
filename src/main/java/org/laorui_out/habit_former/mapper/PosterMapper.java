@@ -39,6 +39,9 @@ public interface PosterMapper {
     @Select("select planName from Plan where planID = (select planID from Poster where posterID = #{posterID})")
     String getPlanNameByPosterId(int posterID);
 
+    @Select("select planType from Plan where planID = (select planID from Poster where posterID = #{posterID})")
+    String getPlanTypeByPosterId(int posterID);
+
     //根据帖子ID返回点赞数
     @Select("select COUNT(*) from Likes where posterID = #{posterID}")
     int getTotalLikes(int posterID);

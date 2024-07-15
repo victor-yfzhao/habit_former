@@ -10,7 +10,7 @@
     </parent>
     <groupId>org.laorui_out</groupId>
     <artifactId>habit_former</artifactId>
-    <version>1.0.32</version>
+    <version>1.0.33</version>
     <name>HabitFormer</name>
     <description>HabitFormer</description>
     <url/>

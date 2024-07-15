@@ -52,8 +52,15 @@ public class PosterController {
 
             String planName = posterService.getPlanNameByPosterId(posterID);
             if(planName == null){
-                return new ResponseMessage<>(500,"错误","帖子对应的计划不存在，信息显示错误");
+                return new ResponseMessage<>(500,"错误","帖子对应的计划名称不存在，信息显示错误");
             }
+
+            String planType = posterService.getPlanTypeByPosterId(posterID);
+            if(planType == null){
+                return new ResponseMessage<>(500,"错误","帖子对应的计划类型不存在，信息显示错误");
+            }
+
+
 
             int numOfLikes = posterService.getTotalLikes(posterID);
 
@@ -71,6 +78,7 @@ public class PosterController {
                     poster.getPosterDate(),
                     poster.getPlanID(),
                     planName,
+                    planType,
                     numOfLikes,
                     numOfCollection);
             return new ResponseMessage<>(200,"成功显示",posterAndUserBean);

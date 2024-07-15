@@ -26,6 +26,10 @@ public class PosterService {
         return posterMapper.getPlanNameByPosterId(posterID);
     }
 
+    public String getPlanTypeByPosterId(int posterID){
+        return posterMapper.getPlanTypeByPosterId(posterID);
+    }
+
     //根据posterID获取对应的用户的信息
     public UserBean getUserByPosterId(int posterID) {
         return userMapper.getUserByPosterId(posterID);
