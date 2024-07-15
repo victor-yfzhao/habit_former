@@ -55,7 +55,7 @@ public class AdminController {
             IPage<LoginBean> loginRecords = loginManageService.selectAllLog(page);
             return new ResponseMessage<>(200, "success", loginRecords);
         }catch (Exception e){
-            return new ResponseMessage<>(400, "failed", null);
+            return new ResponseMessage<>(400, e.getMessage(), null);
         }
     }
 */
@@ -115,7 +115,7 @@ public class AdminController {
             IPage<UserBean> userRecords = userManageService.selectAllUsers(page);
             return new ResponseMessage<>(200,"query success", userRecords);
         }catch(Exception e){
-            return new ResponseMessage<>(400,"query failed",null);
+            return new ResponseMessage<>(400,e.getMessage(),null);
         }
     }
 
@@ -128,7 +128,7 @@ public class AdminController {
             IPage<PosterBean> posterRecords = posterManageService.selectAllPosters(page);
             return new ResponseMessage<>(200,"query success", posterRecords);
         }catch(Exception e){
-            return new ResponseMessage<>(400,"query failed",null);
+            return new ResponseMessage<>(400,e.getMessage(),null);
         }
     }
 
@@ -175,7 +175,7 @@ public class AdminController {
             IPage<PlanBean> planRecords = planManageService.selectAllPlans(page);
             return new ResponseMessage<>(200,"query success", planRecords);
         }catch(Exception e){
-            return new ResponseMessage<>(400,"query failed",null);
+            return new ResponseMessage<>(400,e.getMessage(),null);
         }
     }
 
