@@ -20,6 +20,7 @@ public class PosterAndUserBean {
         private LocalDate posterDate;
         private int planID;
         private String planName;
+        private String planType;
         private int numOfLikes;
         private int numOfCollections;
 

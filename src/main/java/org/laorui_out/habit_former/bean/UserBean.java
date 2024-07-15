@@ -14,7 +14,7 @@ import java.sql.Date;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@TableName("user")
+@TableName("User")
 public class UserBean {
     @TableId(value = "userID", type = IdType.AUTO)
     private Integer userID;
@@ -23,15 +23,22 @@ public class UserBean {
     private String username;
 
     @TableField("password")
-    @JsonIgnore
     private String password;
 
     @TableField("userIcon")
-    private String userIcon;
+    private String userIcon = "http://121.40.132.245:8080/habit_former/uploadFile/1720781853083_defaultPicture.jpg";
 
     @TableField("userCreateDate")
-    @JsonIgnore
     private Date userCreateDate;
+
+    @TableField("gender")
+    private String gender;
+
+    @TableField("address")
+    private String address;
+
+    @TableField("userIntro")
+    private String userIntro;
 
     @Override
     public String toString() {
@@ -40,6 +47,10 @@ public class UserBean {
                 ", username='" + username + '\'' +
                 ", password='" + password + '\'' +
                 ", userIcon='" + userIcon + '\'' +
+                ", userCreateDate=" + userCreateDate +
+                ", gender='" + gender + '\'' +
+                ", address='" + address + '\'' +
+                ", userIntroduction='" + userIntro + '\'' +
                 '}';
     }
 }

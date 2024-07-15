@@ -8,9 +8,13 @@ public interface ProfileService extends IService<UserBean> {
     UserBean getProfile(int userID);
     UserBean getProfile(String username);
 
-    UserBean updateIcon(int userID, String icon);
+    boolean updateUserIcon(int userID, String userIcon);
 
     boolean updatePassword(int userID, String password);
 
-    UserBean updateUsername(int userID, String newUsername);
+    boolean updateUserName(int userID, String newUsername);
+
+    boolean updateGender(int userID, String gender);
+    boolean updateAddress(int userID, String address);
+    boolean updateUserIntro(int userID, String userIntro);
 }
