@@ -3,20 +3,25 @@ package org.laorui_out.habit_former.bean;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import org.apache.ibatis.annotations.Select;
 
 import java.time.LocalDate;
 import java.util.List;
 
 @Data
+@TableName("Poster")
 public class PosterBean {
     @TableId(value = "posterID", type = IdType.AUTO)
     private int posterID;
     @TableField("posterHeadline")
     private String posterHeadline;
 
+    @TableField(select = false)
     private List<String> posterPicture;
+
     @TableField("posterDetail")
     private String posterDetail;
     @TableField("userID")
@@ -25,7 +30,11 @@ public class PosterBean {
     private int planID; //外键
     @TableField("posterDate")
     private LocalDate posterDate;   //帖子发布时间
+
+    @TableField(select = false)
     private int numOfLikes;     //帖子的当前点赞数
+
+    @TableField(select = false)
     private int numOfCollections;   //帖子的当前收藏数
 
 

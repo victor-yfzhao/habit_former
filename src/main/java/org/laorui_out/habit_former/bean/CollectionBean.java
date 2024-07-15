@@ -9,8 +9,8 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@TableName("Likes")
-public class LikesBean {
+@TableName("Collection")
+public class CollectionBean {
     @TableField("userID")
     private int userID;
 

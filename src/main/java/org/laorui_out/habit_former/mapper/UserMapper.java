@@ -80,5 +80,6 @@ public interface UserMapper extends BaseMapper<UserBean> {
 
     @Insert("insert into User (userID, username, password, userIcon, userCreateDate) " +
             "values (#{userID}, #{username}, #{password}, #{userIcon}, #{userCreateDate})")
+    @Options(useGeneratedKeys = true, keyProperty = "userID")
     void createUser(UserBean userBean);
 }
