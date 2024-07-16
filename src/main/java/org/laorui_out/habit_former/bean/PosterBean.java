@@ -19,7 +19,7 @@ public class PosterBean {
     @TableField("posterHeadline")
     private String posterHeadline;
 
-    @TableField(select = false)
+    @TableField(exist = false)
     private List<String> posterPicture;
 
     @TableField("posterDetail")
