@@ -33,7 +33,7 @@ public class CommentBean {
     @TableField("parentCommentID")
     private Integer parentCommentID; // 使用Integer允许空值
 
-    @TableField(select = false)
+    @TableField(exist = false)
     private List<CommentBean> replies;
 
     @Override

@@ -37,7 +37,7 @@ public class PlanBean {
     @JsonIgnore
     private Date planDate;
 
-    @TableField(select = false)
+    @TableField(exist = false)
     private String planDateShow;
 
     @TableField("planTime")
