@@ -59,16 +59,10 @@ public class PlanManageServiceImpl extends ServiceImpl<PlanMapper, PlanBean> imp
         PlanBean planBean=planMapper.getPlanByPlanID(planID);
         if(planBean==null)
             return -1;
-        switch (planBean.getPlanType()){
-            case Constants.FIT_PLAN_TYPE:
-                fitPlanMapper.deleteAllFitPlanByPlanID(planID);
-                break;
-            case Constants.STUDY_PLAN_TYPE:
-                studyPlanMapper.deleteAllStudyPlanByPlanID(planID);
-                break;
-            default:
-                dailyPlanMapper.deleteAllDailyPlanByPlanID(planID);
-                break;
+        switch (planBean.getPlanType()) {
+            case Constants.FIT_PLAN_TYPE -> fitPlanMapper.deleteAllFitPlanByPlanID(planID);
+            case Constants.STUDY_PLAN_TYPE -> studyPlanMapper.deleteAllStudyPlanByPlanID(planID);
+            default -> dailyPlanMapper.deleteAllDailyPlanByPlanID(planID);
         }
         return planMapper.deletePlanByID(planID);
     }
@@ -91,6 +85,7 @@ public class PlanManageServiceImpl extends ServiceImpl<PlanMapper, PlanBean> imp
         planBean.setUserID(userID);
         planBean.setPlanDate(planDate);
         planBean.setPlanType(planType);
+        planBean.setStatus(Constants.NOT_CHECKED);
         planMapper.addPlan(planBean);
         return planBean;
     }
@@ -99,8 +94,7 @@ public class PlanManageServiceImpl extends ServiceImpl<PlanMapper, PlanBean> imp
     public int updatePlan(PlanBean planBean){
         PlanBean item=planMapper.getPlanByPlanID(planBean.getPlanID());
         planBean.setStatus(item.getStatus());
-        int res=planMapper.updatePlan(planBean);
-        return res;
+        return planMapper.updatePlan(planBean);
     }
     
     //dailyPlan

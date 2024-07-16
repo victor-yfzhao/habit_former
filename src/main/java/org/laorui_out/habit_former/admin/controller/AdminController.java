@@ -218,6 +218,9 @@ public class AdminController {
         try{
             Page<DailyPlanBean> page = new Page<>(pointer,pageSize);
             IPage<DailyPlanBean> planRecords = planManageService.selectAllDailyPlans(page);
+            for(DailyPlanBean item:planRecords.getRecords()){
+                item.setDateShow(sdf.format(item.getDate()));
+            }
             return new ResponseMessage<>(200,"query success", planRecords);
         }catch(Exception e){
             return new ResponseMessage<>(400,"query failed",null);
@@ -229,6 +232,9 @@ public class AdminController {
         try{
             Page<FitPlanBean> page = new Page<>(pointer,pageSize);
             IPage<FitPlanBean> planRecords = planManageService.selectAllFitPlans(page);
+            for(FitPlanBean item:planRecords.getRecords()){
+                item.setDateShow(sdf.format(item.getDate()));
+            }
             return new ResponseMessage<>(200,"query success", planRecords);
         }catch(Exception e){
             return new ResponseMessage<>(400,"query failed",null);
@@ -240,6 +246,9 @@ public class AdminController {
         try{
             Page<StudyPlanBean> page = new Page<>(pointer,pageSize);
             IPage<StudyPlanBean> planRecords = planManageService.selectAllStudyPlans(page);
+            for(StudyPlanBean item:planRecords.getRecords()){
+                item.setDateShow(sdf.format(item.getDate()));
+            }
             return new ResponseMessage<>(200,"query success", planRecords);
         }catch(Exception e){
             return new ResponseMessage<>(400,"query failed",null);
