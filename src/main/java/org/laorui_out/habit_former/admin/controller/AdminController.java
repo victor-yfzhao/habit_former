@@ -287,7 +287,7 @@ public class AdminController {
     }
     //--修改计划
     @PostMapping("/admin/plan/edit")
-    public ResponseMessage<PlanBean> editPlan(PlanBean item){
+    public ResponseMessage<PlanBean> editPlan(@RequestBody PlanBean item){
         PlanBean res;
         if(item.getPlanID()==null){
             res=planManageService.addPlan(item.getPlanName(),item.getPlanInfo(),item.getUserID(),item.getPlanType());
@@ -299,7 +299,7 @@ public class AdminController {
         else return new ResponseMessage<>(400,"failed",null);
     }
     @PostMapping("/admin/dailyplan/edit")
-    public ResponseMessage<DailyPlanBean> editDailyPlan(DailyPlanBean item){
+    public ResponseMessage<DailyPlanBean> editDailyPlan(@RequestBody DailyPlanBean item){
         DailyPlanBean res;
         if(item.getDailyPlanID()==null){
             res=planManageService.addDailyPlan(Date.valueOf(item.getDateShow()),item.getPlanDetail(),item.getPlanID());
@@ -311,7 +311,7 @@ public class AdminController {
         else return new ResponseMessage<>(400,"failed",null);
     }
     @PostMapping("/admin/fitplan/edit")
-    public ResponseMessage<FitPlanBean> editFitPlan(FitPlanBean item){
+    public ResponseMessage<FitPlanBean> editFitPlan(@RequestBody FitPlanBean item){
         FitPlanBean res;
         if(item.getFitPlanItemID()==null){
             res=planManageService.addFitPlan(
@@ -330,7 +330,7 @@ public class AdminController {
         else return new ResponseMessage<>(400,"failed",null);
     }
     @PostMapping("/admin/studyplan/edit")
-    public ResponseMessage<StudyPlanBean> editPlan(StudyPlanBean item){
+    public ResponseMessage<StudyPlanBean> editPlan(@RequestBody StudyPlanBean item){
         StudyPlanBean res;
         if(item.getStudyPlanItemID()==null){
             res=planManageService.addStudyPlan(Date.valueOf(item.getDateShow()),item.getStudySubject(),item.getStudyContent(),item.getStudyTime(),item.getPlanID());
