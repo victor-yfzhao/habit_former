@@ -178,8 +178,9 @@ public class AdminController {
     //--删除帖子
     @PostMapping("/admin/poster/delete")
     public ResponseMessage<Integer> deletePoster(int posterID){
+
         commentManageService.deleteCommentByPosterID(posterID);
-        int res = posterManageService.deletePoster(posterID);
+        int res = posterManageService.deletePoster(posterID)? 1 : 0;
         if(res != 0)
             return new ResponseMessage<>(200,"posterID:"+posterID+" delete-success",res);
         return new ResponseMessage<>(400,"posterID:"+posterID+" delete-failed",res);

@@ -5,14 +5,21 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import jakarta.annotation.Resource;
 import org.laorui_out.habit_former.bean.PosterBean;
-import org.laorui_out.habit_former.bean.UserBean;
-import org.laorui_out.habit_former.mapper.CommentMapper;
 import org.laorui_out.habit_former.mapper.PosterMapper;
+import org.laorui_out.habit_former.poster.service.PosterPictureService;
+import org.laorui_out.habit_former.poster.service.PosterService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 @Service
 public class PosterManageServiceImpl extends ServiceImpl<PosterMapper, PosterBean> implements PosterManageService {
+
+    @Resource
+    PosterMapper posterMapper;
+    @Resource
+    PosterService posterService;
+    @Resource
+    PosterPictureService posterPictureService;
 
     @Override
     public IPage<PosterBean> selectAllPosters(Page<PosterBean> page) {
@@ -31,10 +38,25 @@ public class PosterManageServiceImpl extends ServiceImpl<PosterMapper, PosterBea
         return baseMapper.insertPoster(posterBean);
     }
 
-    //删除指定id的帖子
+    //删除指定id的帖子, cite laorui
     @Override
-    public int deletePoster(int posterID) {
-        return baseMapper.deleteById(posterID);
+    public boolean deletePoster(int posterID) {
+        //对于输入posterID是否存在的判断
+        PosterBean posterTestBean = posterPictureService.getPosterWithPictures(posterID);
+        Boolean deleteLikes = posterService.deleteLikesByPosterID(posterID);
+        Boolean deleteCollection = posterService.deleteCollectionByPosterID(posterID);
+        if(posterTestBean == null){
+            return posterMapper.deletePosterByPosterId(posterID);
+        }
+        if(posterTestBean.getPosterPicture()==null || posterTestBean.getPosterPicture().isEmpty()){
+            return posterMapper.deletePosterByPosterId(posterID);
+        }else{
+            // 删除 posterpicture 表中的记录
+            boolean pictureDeleted = posterMapper.deletePosterPictureByPosterId(posterID);
+            // 删除 poster 表中的记录
+            boolean posterDeleted = posterMapper.deletePosterByPosterId(posterID);
+            return posterDeleted && pictureDeleted;
+        }
     }
 
     //删除指定用户的所有帖子
