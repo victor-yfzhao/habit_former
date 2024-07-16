@@ -10,9 +10,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class ProfileServiceImpl extends ServiceImpl<UserMapper, UserBean> implements ProfileService {
 
-    @Resource
-    UserMapper userMapper;
-
     public UserBean getProfile(int userID) {
         return baseMapper.getUserProfileThroughID(userID);
     }
@@ -21,20 +18,11 @@ public class ProfileServiceImpl extends ServiceImpl<UserMapper, UserBean> implem
         return baseMapper.getUserProfileThroughUsername(username);
     }
 
-//    public UserBean updateIcon(int userID, String icon) {
-//        UserBean user = baseMapper.selectById(userID);
-//        user.setUserIcon(icon);
-//        baseMapper.updateUser(user);
-//
-//        // 确保userIcon字段已被更新
-//        return baseMapper.getUserProfileThroughID(userID);
-//    }
-
     public boolean updatePassword(int userID, String password) {
         if(password==null || password.isEmpty()){
             return false;
         }else{
-            return userMapper.updatePassword(userID, password) > 0;
+            return baseMapper.updatePassword(userID, password) > 0;
         }
     }
 
@@ -42,28 +30,27 @@ public class ProfileServiceImpl extends ServiceImpl<UserMapper, UserBean> implem
         if(username==null || username.isEmpty()){
             return false;
         }else{
-            return userMapper.updateUserName(userID, username) > 0;
+            return baseMapper.updateUserName(userID, username) > 0;
         }
     }
 
     public boolean updateGender(int userID, String gender){
-        return userMapper.updateUserGender(userID, gender) > 0;
+        return baseMapper.updateUserGender(userID, gender) > 0;
     }
 
     public boolean updateAddress(int userID, String address){
-        return userMapper.updateUserAddress(userID, address) > 0;
+        return baseMapper.updateUserAddress(userID, address) > 0;
     }
 
     public boolean updateUserIntro(int userID, String userIntro){
-        return userMapper.updateUserIntro(userID, userIntro) > 0;
+        return baseMapper.updateUserIntro(userID, userIntro) > 0;
     }
-
 
     public boolean updateUserIcon(int userID, String userIcon) {
         if(userIcon==null || userIcon.isEmpty()){
             return false;
         }else{
-            return userMapper.updateUserIcon(userID, userIcon) > 0;
+            return baseMapper.updateUserIcon(userID, userIcon) > 0;
         }
     }
 }

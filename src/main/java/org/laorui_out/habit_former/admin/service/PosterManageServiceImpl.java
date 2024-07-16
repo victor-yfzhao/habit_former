@@ -3,14 +3,17 @@ package org.laorui_out.habit_former.admin.service;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import jakarta.annotation.Resource;
 import org.laorui_out.habit_former.bean.PosterBean;
 import org.laorui_out.habit_former.bean.UserBean;
+import org.laorui_out.habit_former.mapper.CommentMapper;
 import org.laorui_out.habit_former.mapper.PosterMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 @Service
 public class PosterManageServiceImpl extends ServiceImpl<PosterMapper, PosterBean> implements PosterManageService {
+
     @Override
     public IPage<PosterBean> selectAllPosters(Page<PosterBean> page) {
         return baseMapper.selectPage(page, null);

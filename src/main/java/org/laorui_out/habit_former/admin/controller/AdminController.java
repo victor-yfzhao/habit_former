@@ -13,6 +13,7 @@ import org.laorui_out.habit_former.utils.ResponseMessage;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.sql.Date;
@@ -48,6 +49,9 @@ public class AdminController {
     @Value("${admin.username}")
     private String username;
 
+    /**
+     * 管理员登录
+     */
     @GetMapping("/admin/login")
     public ResponseMessage<LoginResult> login(String username, String password) {
         if (password.equals(this.password) && username.equals(this.username)) {
@@ -56,6 +60,10 @@ public class AdminController {
         return new ResponseMessage<>(400, "admin login failed", LoginResult.PASSWORD_ERROR);
     }
 
+
+    /**
+     * 登录日志模块
+     */
     @GetMapping("/admin/login_log")
     public ResponseMessage<IPage<LoginBean>> loginLog(int pointer, int pageSize) {
         try{
@@ -67,7 +75,10 @@ public class AdminController {
         }
     }
 
-    //用户管理
+
+    /**
+     * 用户管理
+     */
     //--新建用户
     @PostMapping("/admin/user/create")
     public ResponseMessage<UserBean> createUser(String userName,String password){
@@ -92,6 +103,7 @@ public class AdminController {
     public ResponseMessage<Integer> deleteUser(int userID){
         planManageService.deletePlanByUserID(userID);
         posterManageService.deletePosterByUserID(userID);
+        commentManageService.deleteCommentByUserID(userID);
         int res = userManageService.deleteUser(userID);
         if(res == 1){
             return new ResponseMessage<>(200,"userID:"+userID+" delete success..",res);
@@ -101,18 +113,12 @@ public class AdminController {
 
     //--修改用户
     @PostMapping("/admin/user/edit")
-    public ResponseMessage<UserBean> editUser(int userID,String userName,String password,String userIcon){
-        UserBean userBean=new UserBean();
-        userBean.setUsername(userName);
-        userBean.setUserID(userID);
-        userBean.setUserIcon(userIcon);
-        userBean.setPassword(password);
-        userBean.setUserCreateDate(new Date(System.currentTimeMillis()));
+    public ResponseMessage<UserBean> editUser(@RequestBody UserBean userBean){
         int res = userManageService.updateUser(userBean);
         if(res == 1){
-            return new ResponseMessage<>(200,"userID:"+userID+" edit success..",userBean);
+            return new ResponseMessage<>(200,"userID:"+userBean.getUserID()+" edit success..",userBean);
         }
-        return new ResponseMessage<>(400,"userID:"+userID+" edit failed..",null);
+        return new ResponseMessage<>(400,"userID:"+userBean.getUserID()+" edit failed..",null);
     }
 
     //--查询用户
@@ -127,7 +133,10 @@ public class AdminController {
         }
     }
 
-    //帖子管理
+
+    /**
+     * 帖子管理
+     */
     //--查询帖子
     @GetMapping("/admin/poster")
     public ResponseMessage<IPage<PosterBean>> selectAllPosters(int pointer, int pageSize){
@@ -143,14 +152,11 @@ public class AdminController {
     //--修改帖子
     //---修改内容
     @PostMapping("/admin/poster/edit/content")
-    public ResponseMessage<PosterBean> editPosterContent(int posterID, String posterHeadline, String posterDetail){
-        PosterBean posterBean=posterManageService.getById(posterID);
-        posterBean.setPosterDetail(posterDetail);
-        posterBean.setPosterHeadline(posterHeadline);
+    public ResponseMessage<PosterBean> editPosterContent(@RequestBody PosterBean posterBean){
         int res = posterManageService.editPoster(posterBean);
         if(res!=0)
-            return new ResponseMessage<>(200,"posterID:"+posterID+" content-edit-success",posterBean);
-        return new ResponseMessage<>(400,"posterID:"+posterID+" content-edit-failed",null);
+            return new ResponseMessage<>(200,"posterID:"+posterBean.getPosterID()+" content-edit-success",posterBean);
+        return new ResponseMessage<>(400,"posterID:"+posterBean.getPosterID()+" content-edit-failed",null);
     }
 
     //---修改图片
@@ -159,22 +165,18 @@ public class AdminController {
     //--删除帖子
     @PostMapping("/admin/poster/delete")
     public ResponseMessage<Integer> deletePoster(int posterID){
-        int res=posterManageService.deletePoster(posterID);
-        if(res!=0)
+        commentManageService.deleteCommentByPosterID(posterID);
+        int res = posterManageService.deletePoster(posterID);
+        if(res != 0)
             return new ResponseMessage<>(200,"posterID:"+posterID+" delete-success",res);
         return new ResponseMessage<>(400,"posterID:"+posterID+" delete-failed",res);
 
     }
 
-    @PostMapping("/admin/poster/delete_all")
-    public ResponseMessage<Integer> deleteAllPosterByUserID(int userID){
-        int res = posterManageService.deletePosterByUserID(userID);//affected rows
-        if(res!=0)
-            return new ResponseMessage<>(200,"userID:"+userID+" posters-delete-success",res);
-        return new ResponseMessage<>(400,"userID:"+userID+" posters-delete-failed",res);
-    }
 
-    //计划管理
+    /**
+     * 计划管理
+     */
     //--查询计划
     @GetMapping("/admin/plan")
     public ResponseMessage<IPage<PlanBean>> selectAllPlans(int pointer, int pageSize){
@@ -265,7 +267,42 @@ public class AdminController {
     }
     //API请求记录(如果要实现得新建表)
 
-    //看板
+    /**
+     * 评论管理
+     */
+    //根据评论ID删除评论
+    @PostMapping("/admin/comment/delete")
+    public ResponseMessage<Integer> deleteComment(int commentID){
+        int res = commentManageService.deleteComment(commentID);
+        int resChild = commentManageService.deleteCommentByParentCommentID(commentID);
+        if(res + resChild >0)
+            return new ResponseMessage<>(200,"commentID:"+commentID+" delete-success", res);
+        return new ResponseMessage<>(400,"commentID:"+commentID+" delete-failed", res);
+    }
+
+    @GetMapping("/admin/comment")
+    public ResponseMessage<IPage<CommentBean>> selectAllComments(int pointer, int pageSize){
+        try{
+            Page<CommentBean> page = new Page<>(pointer,pageSize);
+            IPage<CommentBean> commentRecords = commentManageService.selectAllComments(page);
+            return new ResponseMessage<>(200,"query success", commentRecords);
+        }catch(Exception e){
+            return new ResponseMessage<>(400,e.getMessage(),null);
+        }
+    }
+
+    @PostMapping("/admin/comment/edit")
+    public ResponseMessage<CommentBean> modifyComment(@RequestBody CommentBean commentBean){
+        int res = commentManageService.modifyComment(commentBean);
+        commentBean = commentManageService.getById(commentBean.getCommentID());
+        if(res == 1)
+            return new ResponseMessage<>(200,"commentID:"+commentBean.getCommentID()+" modify-success", commentBean);
+        return new ResponseMessage<>(400,"commentID:"+commentBean.getCommentID()+" modify-failed", commentBean);
+    }
+
+    /**
+     * 看板
+     */
     //--平台内每日计划完成总数目
     //返回一周的数据
     @GetMapping("/admin/dashboard/finished_plan")
@@ -313,47 +350,4 @@ public class AdminController {
         List<CollectsRank> res = dashboardService.countPostCollectRanking(rankSize);
         return new ResponseMessage<>(200,"query success",res);
     }
-
-    //评论管理
-    //根据评论ID删除评论
-    @PostMapping("/admin/comment/delete")
-    public ResponseMessage<Integer> deleteComment(int commentID){
-        int res = commentManageService.deleteComment(commentID);
-        int resChild = commentManageService.deleteCommentByParentCommentID(commentID);
-        if(res + resChild >0)
-            return new ResponseMessage<>(200,"commentID:"+commentID+" delete-success",res);
-        return new ResponseMessage<>(400,"commentID:"+commentID+" delete-failed",res);
-    }
-    //根据用户ID删除评论
-    @PostMapping("/admin/comment/deleteByUserID")
-    public ResponseMessage<Integer> deleteAllCommentByUserID(int userID){
-        int res = commentManageService.deleteCommentByUserID(userID);//affected rows
-        if(res>0)
-            return new ResponseMessage<>(200,"userID:"+userID+" comments-delete-success",res);
-        return new ResponseMessage<>(400,"userID:"+userID+" comments-delete-failed",res);
-    }
-
-    //根据帖子ID删除评论
-    @PostMapping("/admin/comment/deleteByPosterID")
-    public ResponseMessage<Integer> deleteAllCommentByPosterID(int posterID){
-        int res = commentManageService.deleteCommentByPosterID(posterID);//affected rows
-        if(res>0)
-            return new ResponseMessage<>(200,"posterID:"+posterID+" comments-delete-success",res);
-        return new ResponseMessage<>(400,"posterID:"+posterID+" comments-delete-failed",res);
-    }
-
-    @GetMapping("/admin/comment")
-    public ResponseMessage<IPage<CommentBean>> selectAllComments(int pointer, int pageSize){
-        try{
-            Page<CommentBean> page = new Page<>(pointer,pageSize);
-            IPage<CommentBean> commentRecords = commentManageService.selectAllComments(page);
-            return new ResponseMessage<>(200,"query success", commentRecords);
-        }catch(Exception e){
-            return new ResponseMessage<>(400,e.getMessage(),null);
-        }
-    }
-
-
-
-
 }

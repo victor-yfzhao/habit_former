@@ -12,4 +12,5 @@ public interface CommentManageService extends IService<CommentBean> {
     int deleteCommentByPosterID(int posterID);
     int deleteCommentByParentCommentID(int posterID);
     IPage<CommentBean> selectAllComments(Page<CommentBean> page);
+    int modifyComment(CommentBean commentBean);
 }

@@ -15,8 +15,6 @@ import java.util.List;
 @Service
 public class CommentManageServiceImpl extends ServiceImpl<CommentMapper, CommentBean> implements CommentManageService{
 
-    @Resource
-    private CommentMapper commentMapper;
     @Override
     public int deleteComment(int commentID){return baseMapper.deleteById(commentID);}
 
@@ -44,6 +42,7 @@ public class CommentManageServiceImpl extends ServiceImpl<CommentMapper, Comment
         return cnt;
     }
 
+    @Override
     public int deleteCommentByParentCommentID(int parentID){
         List<Integer> comments = baseMapper.getAllCommentIDByParentCommentID(parentID);
         int cnt = 0;//影响的总行数(rows)
@@ -53,7 +52,13 @@ public class CommentManageServiceImpl extends ServiceImpl<CommentMapper, Comment
         return cnt;
     }
 
+    @Override
     public IPage<CommentBean> selectAllComments(Page<CommentBean> page) {
-        return commentMapper.selectPage(page, null);
+        return baseMapper.selectPage(page, null);
+    }
+
+    @Override
+    public int modifyComment(CommentBean commentBean) {
+        return baseMapper.updateById(commentBean);
     }
 }
