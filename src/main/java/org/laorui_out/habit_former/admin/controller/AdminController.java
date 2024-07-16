@@ -7,6 +7,8 @@ import org.laorui_out.habit_former.admin.service.*;
 import org.laorui_out.habit_former.admin.utils.CollectsRank;
 import org.laorui_out.habit_former.admin.utils.LikesRank;
 import org.laorui_out.habit_former.bean.*;
+import org.laorui_out.habit_former.poster.service.PosterPictureService;
+import org.laorui_out.habit_former.poster.service.PosterService;
 import org.laorui_out.habit_former.user.service.LoginResult;
 import org.laorui_out.habit_former.user.service.RegisterResult;
 import org.laorui_out.habit_former.utils.ResponseMessage;
@@ -42,6 +44,12 @@ public class AdminController {
 
     @Resource
     CommentManageService commentManageService;
+
+    @Resource
+    PosterPictureService posterPictureService;
+
+    @Resource
+    PosterService posterService;
 
     @Value("${admin.password}")
     private String password;
@@ -143,6 +151,12 @@ public class AdminController {
         try{
             Page<PosterBean> page = new Page<>(pointer,pageSize);
             IPage<PosterBean> posterRecords = posterManageService.selectAllPosters(page);
+            for(PosterBean posterBean : posterRecords.getRecords()){
+                posterBean.setPosterPicture(posterPictureService.getPosterWithPictures(posterBean.getPosterID())
+                                                                .getPosterPicture());
+                posterBean.setNumOfLikes(posterService.getTotalLikes(posterBean.getPosterID()));
+                posterBean.setNumOfCollections(posterService.getTotalCollection(posterBean.getPosterID()));
+            }
             return new ResponseMessage<>(200,"query success", posterRecords);
         }catch(Exception e){
             return new ResponseMessage<>(400,e.getMessage(),null);
