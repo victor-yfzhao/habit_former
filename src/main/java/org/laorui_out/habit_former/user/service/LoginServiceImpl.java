@@ -53,6 +53,7 @@ public class LoginServiceImpl extends ServiceImpl<UserMapper, UserBean> implemen
         if(ip.equals("0:0:0:0:0:0:0:1")){
             ip="127.0.0.1";
         }
+        System.out.println(ip);
         loginBean.setIP_Address(ip);
 
         String agentStr = request.getHeader("user-agent");
