@@ -152,8 +152,7 @@ public class AdminController {
             Page<PosterBean> page = new Page<>(pointer,pageSize);
             IPage<PosterBean> posterRecords = posterManageService.selectAllPosters(page);
             for(PosterBean posterBean : posterRecords.getRecords()){
-                posterBean.setPosterPicture(posterPictureService.getPosterWithPictures(posterBean.getPosterID())
-                                                                .getPosterPicture());
+                posterBean.setPosterPicture(posterPictureService.getPosterPicturesByPosterId(posterBean.getPosterID()));
                 posterBean.setNumOfLikes(posterService.getTotalLikes(posterBean.getPosterID()));
                 posterBean.setNumOfCollections(posterService.getTotalCollection(posterBean.getPosterID()));
             }

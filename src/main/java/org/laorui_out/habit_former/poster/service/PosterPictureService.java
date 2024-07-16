@@ -25,6 +25,10 @@ public class PosterPictureService {
         return posterBean;
     }
 
+    public List<String> getPosterPicturesByPosterId(int posterID){
+        return posterMapper.getPosterPicturesByPosterId(posterID);
+    }
+
     //获取所有带有图片的帖子
     public List<PosterBean> getAllPosterWithPictures(){
         List<PosterBean> posterBeanList = posterMapper.getAllPosters();
