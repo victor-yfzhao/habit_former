@@ -7,6 +7,8 @@ import org.laorui_out.habit_former.admin.service.*;
 import org.laorui_out.habit_former.admin.utils.CollectsRank;
 import org.laorui_out.habit_former.admin.utils.LikesRank;
 import org.laorui_out.habit_former.bean.*;
+import org.laorui_out.habit_former.poster.service.PosterPictureService;
+import org.laorui_out.habit_former.poster.service.PosterService;
 import org.laorui_out.habit_former.user.service.LoginResult;
 import org.laorui_out.habit_former.user.service.RegisterResult;
 import org.laorui_out.habit_former.utils.ResponseMessage;
@@ -42,6 +44,12 @@ public class AdminController {
 
     @Resource
     CommentManageService commentManageService;
+
+    @Resource
+    PosterPictureService posterPictureService;
+
+    @Resource
+    PosterService posterService;
 
     @Value("${admin.password}")
     private String password;
@@ -143,6 +151,12 @@ public class AdminController {
         try{
             Page<PosterBean> page = new Page<>(pointer,pageSize);
             IPage<PosterBean> posterRecords = posterManageService.selectAllPosters(page);
+            for(PosterBean posterBean : posterRecords.getRecords()){
+                posterBean.setPosterPicture(posterPictureService.getPosterWithPictures(posterBean.getPosterID())
+                                                                .getPosterPicture());
+                posterBean.setNumOfLikes(posterService.getTotalLikes(posterBean.getPosterID()));
+                posterBean.setNumOfCollections(posterService.getTotalCollection(posterBean.getPosterID()));
+            }
             return new ResponseMessage<>(200,"query success", posterRecords);
         }catch(Exception e){
             return new ResponseMessage<>(400,e.getMessage(),null);
@@ -173,6 +187,13 @@ public class AdminController {
 
     }
 
+    @PostMapping("/admin/poster/delete_all")
+    public ResponseMessage<Integer> deleteAllPosterByUserID(int userID){
+        int res = posterManageService.deletePosterByUserID(userID);//affected rows
+        if(res!=0)
+            return new ResponseMessage<>(200,"userID:"+userID+" posters-delete-success",res);
+        return new ResponseMessage<>(400,"userID:"+userID+" posters-delete-failed",res);
+    }
 
     /**
      * 计划管理
@@ -265,6 +286,63 @@ public class AdminController {
         return new ResponseMessage<>(400,"studyPlanID:"+studyPlanID+" delete-failed",res);
 
     }
+    //--修改计划
+    @PostMapping("/admin/plan/edit")
+    public ResponseMessage<PlanBean> editPlan(PlanBean item){
+        PlanBean res;
+        if(item.getPlanID()==null){
+            res=planManageService.addPlan(item.getPlanName(),item.getPlanInfo(),item.getUserID(),item.getPlanType());
+            res.setPlanDateShow(sdf.format(res.getPlanDate()));
+            return new ResponseMessage<>(200,"success",res);
+        }
+        if(planManageService.updatePlan(item)!=0)
+            return new ResponseMessage<>(200,"success",item);
+        else return new ResponseMessage<>(400,"failed",null);
+    }
+    @PostMapping("/admin/dailyplan/edit")
+    public ResponseMessage<DailyPlanBean> editDailyPlan(DailyPlanBean item){
+        DailyPlanBean res;
+        if(item.getDailyPlanID()==null){
+            res=planManageService.addDailyPlan(Date.valueOf(item.getDateShow()),item.getPlanDetail(),item.getPlanID());
+            res.setDateShow(sdf.format(res.getDate()));
+            return new ResponseMessage<>(200,"success",res);
+        }
+        if(planManageService.updateDailyPlan(item)!=0)
+            return new ResponseMessage<>(200,"success",item);
+        else return new ResponseMessage<>(400,"failed",null);
+    }
+    @PostMapping("/admin/fitplan/edit")
+    public ResponseMessage<FitPlanBean> editFitPlan(FitPlanBean item){
+        FitPlanBean res;
+        if(item.getFitPlanItemID()==null){
+            res=planManageService.addFitPlan(
+                    Date.valueOf(item.getDateShow()),
+                    item.getFitItemName(),
+                    item.getFitType(),
+                    item.getGroupNum(),
+                    item.getNumPerGroup(),
+                    item.getTimePerGroup(),
+                    item.getPlanID());
+            res.setDateShow(sdf.format(res.getDate()));
+            return new ResponseMessage<>(200,"success",res);
+        }
+        if(planManageService.updateFitPlan(item)!=0)
+            return new ResponseMessage<>(200,"success",item);
+        else return new ResponseMessage<>(400,"failed",null);
+    }
+    @PostMapping("/admin/studyplan/edit")
+    public ResponseMessage<StudyPlanBean> editPlan(StudyPlanBean item){
+        StudyPlanBean res;
+        if(item.getStudyPlanItemID()==null){
+            res=planManageService.addStudyPlan(Date.valueOf(item.getDateShow()),item.getStudySubject(),item.getStudyContent(),item.getStudyTime(),item.getPlanID());
+            res.setDateShow(sdf.format(res.getDate()));
+            return new ResponseMessage<>(200,"success",res);
+        }
+        if(planManageService.updateStudyPlan(item)!=0)
+            return new ResponseMessage<>(200,"success",item);
+        else return new ResponseMessage<>(400,"failed",null);
+    }
+
     //API请求记录(如果要实现得新建表)
 
     /**
@@ -350,4 +428,5 @@ public class AdminController {
         List<CollectsRank> res = dashboardService.countPostCollectRanking(rankSize);
         return new ResponseMessage<>(200,"query success",res);
     }
+
 }
