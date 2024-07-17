@@ -116,6 +116,12 @@ public interface PosterMapper extends BaseMapper<PosterBean> {
 
     @Select("select posterID, count(*) as collectsCount from Collection GROUP BY posterID ORDER BY collectsCount DESC LIMIT #{rankSize}")
     List<CollectsRank> getCollectRank(int rankSize);
+
+
+    //选择产生对应类型的帖子的缩略信息
+    @Select("SELECT Poster.* FROM Poster JOIN Plan ON Poster.planID = Plan.planID WHERE Plan.planType = #{planType}")
+    List<PosterBean> getPostersWithTypes(String planType);
+
 //    @Update()
 //
 //
