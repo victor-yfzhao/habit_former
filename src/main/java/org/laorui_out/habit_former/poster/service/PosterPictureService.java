@@ -35,6 +35,14 @@ public class PosterPictureService {
         return getPosterBeans(posterBeanList);
     }
 
+    public List<PosterBean> getPosterWithPicturesByTypes(String planType){
+        List<PosterBean> posterBeanList = posterMapper.getPostersWithTypes(planType);
+        return getPosterBeans(posterBeanList);
+    }
+
+
+
+
     public List<PosterBean> getPosterWithPicturesByUserID(int userID){
         List<PosterBean> posterBeanList = posterMapper.getPosterByUserID(userID);
         return getPosterBeans(posterBeanList);
