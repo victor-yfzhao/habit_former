@@ -124,23 +124,6 @@ public class PosterController {
         }
     }
 
-    //返回对应计划类型的帖子的信息
-    @GetMapping("poster/typeParts")
-    public ResponseMessage<List<Object>> getPosterPartsByTypes(String planType){
-        try{
-            List<PosterBean> posterBeanList = posterPictureService.getPosterWithPicturesByTypes(planType);
-            if(posterBeanList == null){
-                return new ResponseMessage<>(200,"帖子缩略信息返回", null);
-            }else{
-                return getResponseMessages(posterBeanList);
-            }
-        }catch (Exception e){
-            return new ResponseMessage<>(500,e.getMessage(),null);
-        }
-    }
-
-
-
     //根据帖子的列表获取他们的ResponseMessage的列表
     private ResponseMessage<List<Object>> getResponseMessages(List<PosterBean> posterBeanList) {
         List<Object> posterMessages = new ArrayList<>();
