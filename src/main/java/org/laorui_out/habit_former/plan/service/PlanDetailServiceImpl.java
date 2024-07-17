@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import java.sql.Date;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @Service
@@ -73,6 +74,22 @@ public class PlanDetailServiceImpl implements PlanDetailService {
 
         return message;
     }
+
+    @Override
+    public List<FitPlanBean> getAllFitPlanDetail(int planID) {
+        return fitPlanMapper.getFitPlanByPlanID(planID);
+    }
+
+    @Override
+    public List<StudyPlanBean> getAllStudyPlanDetail(int planID) {
+        return studyPlanMapper.getStudyPlanByPlanID(planID);
+    }
+
+    @Override
+    public List<DailyPlanBean> getAllDailyPlanDetail(int planID) {
+        return dailyPlanMapper.getAllDailyPlanByPlanID(planID);
+    }
+
     @Override
     public DailyPlanBean editDPDetail(DailyPlanBean dailyPlanBean){
         String s = dailyPlanMapper.getDailyPlanByID(dailyPlanBean.getDailyPlanID()).getStatus();
