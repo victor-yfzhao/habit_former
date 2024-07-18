@@ -1,7 +1,8 @@
 package org.laorui_out.habit_former.plan.mapper;
+
 import static org.junit.jupiter.api.Assertions.*;
 
-import java.util.Date;
+import java.sql.Date;
 import java.util.List;
 
 import org.laorui_out.habit_former.bean.DailyPlanBean;
@@ -27,7 +28,7 @@ public class DailyPlanMapperTest {
     public void testGetAllDailyPlanByPlanID() {
         DailyPlanBean dailyPlanBean=new DailyPlanBean();
         int planID=1;
-        Date date=new Date();
+        Date date=new Date(System.currentTimeMillis());
         dailyPlanBean.setPlanID(planID);
         dailyPlanBean.setDate(date);
         dailyPlanMapper.addDailyPlan(dailyPlanBean);
@@ -40,7 +41,7 @@ public class DailyPlanMapperTest {
     public void testGetDailyPlanByID() {
         DailyPlanBean dailyPlanBean=new DailyPlanBean();
         int planID=1;
-        Date date=new Date();
+        Date date=new Date(System.currentTimeMillis());
         dailyPlanBean.setPlanID(planID);
         dailyPlanBean.setDate(date);
         dailyPlanMapper.addDailyPlan(dailyPlanBean);
@@ -51,7 +52,7 @@ public class DailyPlanMapperTest {
 
     @Test
     public void testGetDailyPlanByDate() {
-        Date date = new Date();
+        Date date = new Date(System.currentTimeMillis());
         int planID = 1;
         List<DailyPlanBean> plans = dailyPlanMapper.getDailyPlanByDate(date, planID);
         assertNotNull(plans);
@@ -60,7 +61,7 @@ public class DailyPlanMapperTest {
     @Test
     public void testAddDailyPlan() {
         DailyPlanBean plan = new DailyPlanBean();
-        plan.setDate(new Date());
+        plan.setDate(new Date(System.currentTimeMillis()));
         plan.setPlanDetail("Test plan");
         plan.setPlanID(1);
 
@@ -72,7 +73,7 @@ public class DailyPlanMapperTest {
     @Test
     public void testUpdateDailyPlan() {DailyPlanBean dailyPlanBean=new DailyPlanBean();
         int planID=1;
-        Date date=new Date();
+        Date date=new Date(System.currentTimeMillis());
         dailyPlanBean.setPlanID(planID);
         dailyPlanBean.setDate(date);
         dailyPlanMapper.addDailyPlan(dailyPlanBean);
@@ -87,7 +88,7 @@ public class DailyPlanMapperTest {
     public void testDeleteDailyPlanByID() {
         DailyPlanBean dailyPlanBean=new DailyPlanBean();
         int planID=1;
-        Date date=new Date();
+        Date date=new Date(System.currentTimeMillis());
         dailyPlanBean.setPlanID(planID);
         dailyPlanBean.setDate(date);
         dailyPlanMapper.addDailyPlan(dailyPlanBean);
@@ -100,7 +101,7 @@ public class DailyPlanMapperTest {
     public void testDeleteAllDailyPlanByPlanID() {
         DailyPlanBean dailyPlanBean1=new DailyPlanBean();DailyPlanBean dailyPlanBean2=new DailyPlanBean();
         int planID=1;
-        Date date=new Date();
+        Date date=new Date(System.currentTimeMillis());
         dailyPlanBean1.setPlanID(planID);
         dailyPlanBean1.setDate(date);
         dailyPlanBean2.setPlanID(planID);

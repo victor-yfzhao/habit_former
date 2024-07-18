@@ -24,7 +24,7 @@ public class StudyPlanBean {
     @JsonIgnore
     private Date date;
 
-    @TableField(select = false)
+    @TableField(exist = false)
     private String dateShow;
 
     @TableField("studySubject")

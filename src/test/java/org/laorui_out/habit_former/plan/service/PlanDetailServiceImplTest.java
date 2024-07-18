@@ -1,4 +1,5 @@
 package org.laorui_out.habit_former.plan.service;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -18,6 +19,7 @@ import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.*;
+import java.sql.Date;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -48,7 +50,7 @@ public class PlanDetailServiceImplTest {
     @Test
     void testGetFitPlanDetail() {
         int planID = 1;
-        Date date = new Date();
+        Date date = new Date(System.currentTimeMillis());
         PlanBean plan = new PlanBean();
         plan.setPlanID(planID);
         plan.setPlanType(Constants.FIT_PLAN_TYPE);
@@ -71,7 +73,7 @@ public class PlanDetailServiceImplTest {
     @Test
     void testGetStudyPlanDetail() {
         int planID = 2;
-        Date date = new Date();
+        Date date = new Date(System.currentTimeMillis());
         PlanBean plan = new PlanBean();
         plan.setPlanID(planID);
         plan.setPlanType(Constants.STUDY_PLAN_TYPE);
@@ -94,7 +96,7 @@ public class PlanDetailServiceImplTest {
     @Test
     void testGetDailyPlanDetail() {
         int planID = 3;
-        Date date = new Date();
+        Date date = new Date(System.currentTimeMillis());
         java.sql.Date sql_date=new java.sql.Date(date.getTime());
         PlanBean plan = new PlanBean();
         plan.setPlanID(planID);
@@ -119,7 +121,7 @@ public class PlanDetailServiceImplTest {
     @Test
     void testGetFitPlanDetailWithWrongType() {
         int planID = 4;
-        Date date = new Date();
+        Date date = new Date(System.currentTimeMillis());
         PlanBean plan = new PlanBean();
         plan.setPlanID(planID);
         plan.setPlanType("WRONG_TYPE");

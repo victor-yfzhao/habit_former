@@ -323,4 +323,55 @@ public class PlanController {
         else return new ResponseMessage<>(400, "failed", "not-found");
     }
 
+    @GetMapping("/new/plan/shared_plan")
+    public ResponseMessage<PlanBean> createSharedPlan(int planID, int userID) {
+        PlanBean sharedPlan = planInfoService.getById(planID);
+        PlanBean newPlan = createPlanService.addPlan(sharedPlan.getPlanInfo(),
+                                                     sharedPlan.getPlanName(),
+                                                     sharedPlan.getPlanType(),
+                                                     userID);
+
+        java.util.Date startDate;
+        long deltaDate;
+
+        switch(newPlan.getPlanType()){
+            case Constants.PLAN_TYPE:
+                List<DailyPlanBean> sharedDailyPlan = planDetailService.getAllDailyPlanDetail(planID);
+                startDate = sharedDailyPlan.get(0).getDate();
+                for(DailyPlanBean item: sharedDailyPlan){
+                    startDate = startDate.before(item.getDate()) ? startDate : item.getDate();
+                }
+                deltaDate = new java.util.Date().getTime() - startDate.getTime();
+                for(DailyPlanBean item: sharedDailyPlan){
+                    item.setDate(new java.sql.Date(item.getDate().getTime() + deltaDate));
+                    createPlanService.addDailyPlan(item.getDate(), item.getPlanDetail(), newPlan.getPlanID());
+                }
+                break;
+            case Constants.FIT_PLAN_TYPE:
+                List<FitPlanBean> sharedFitPlan = planDetailService.getAllFitPlanDetail(planID);
+                startDate = sharedFitPlan.get(0).getDate();
+                for(FitPlanBean item: sharedFitPlan){
+                    startDate = startDate.before(item.getDate()) ? startDate : item.getDate();
+                }
+                deltaDate = new java.util.Date().getTime() - startDate.getTime();
+                for(FitPlanBean item: sharedFitPlan){
+                    item.setDate(new java.sql.Date(item.getDate().getTime() + deltaDate));
+                    createPlanService.addFitPlan(item.getDate(), item.getFitItemName(), item.getFitType(), item.getGroupNum(), item.getNumPerGroup(), item.getTimePerGroup(), newPlan.getPlanID());
+                }
+                break;
+            case Constants.STUDY_PLAN_TYPE:
+                List<StudyPlanBean> sharedStudyPlan = planDetailService.getAllStudyPlanDetail(planID);
+                startDate = sharedStudyPlan.get(0).getDate();
+                for(StudyPlanBean item: sharedStudyPlan){
+                    startDate = startDate.before(item.getDate()) ? startDate : item.getDate();
+                }
+                deltaDate = new java.util.Date().getTime() - startDate.getTime();
+                for(StudyPlanBean item: sharedStudyPlan){
+                    item.setDate(new java.sql.Date(item.getDate().getTime() + deltaDate));
+                    createPlanService.addStudyPlan(item.getDate(), item.getStudySubject(), item.getStudyContent(), item.getStudyTime(), newPlan.getPlanID());
+                }
+                break;
+        }
+        return new ResponseMessage<>(200, "success", newPlan);
+    }
 }
