@@ -19,7 +19,7 @@ public class PosterBean {
     @TableField("posterHeadline")
     private String posterHeadline;
 
-    @TableField(select = false)
+    @TableField(exist = false)
     private List<String> posterPicture;
 
     @TableField("posterDetail")
@@ -31,10 +31,10 @@ public class PosterBean {
     @TableField("posterDate")
     private LocalDate posterDate;   //帖子发布时间
 
-    @TableField(select = false)
+    @TableField(exist = false)
     private int numOfLikes;     //帖子的当前点赞数
 
-    @TableField(select = false)
+    @TableField(exist = false)
     private int numOfCollections;   //帖子的当前收藏数
 
 

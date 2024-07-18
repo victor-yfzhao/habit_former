@@ -24,7 +24,7 @@ public class FitPlanBean {
     @JsonIgnore
     private Date date;
 
-    @TableField(select = false)
+    @TableField(exist = false)
     private String dateShow;
 
     @TableField("fitItemName")

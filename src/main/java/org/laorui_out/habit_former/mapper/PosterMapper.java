@@ -25,7 +25,16 @@ public interface PosterMapper extends BaseMapper<PosterBean> {
     boolean deletePosterPictureByPosterId(@Param("posterID") int posterID);
 
     //直接返回所有poster
-    @Select("select * from Poster")
+//    @Select("select * from Poster order by ")
+    @Select("SELECT p.*, " +
+            "COALESCE(l.likes, 0) AS numOfLikes, " +
+            "COALESCE(c.collections, 0) AS numOfCollections " +
+            "FROM Poster p " +
+            "LEFT JOIN (SELECT posterID, COUNT(*) AS likes FROM Likes GROUP BY posterID) l " +
+            "ON p.posterID = l.posterID " +
+            "LEFT JOIN (SELECT posterID, COUNT(*) AS collections FROM Collection GROUP BY posterID) c " +
+            "ON p.posterID = c.posterID " +
+            "ORDER BY COALESCE(l.likes, 0) + COALESCE(c.collections, 0) DESC")
     List<PosterBean> getAllPosters();
 
     //根据搜索词返回所有标题或者正文带关键词的poster,${}用于参数绑定
@@ -107,6 +116,12 @@ public interface PosterMapper extends BaseMapper<PosterBean> {
 
     @Select("select posterID, count(*) as collectsCount from Collection GROUP BY posterID ORDER BY collectsCount DESC LIMIT #{rankSize}")
     List<CollectsRank> getCollectRank(int rankSize);
+
+
+    //选择产生对应类型的帖子的缩略信息
+    @Select("SELECT Poster.* FROM Poster JOIN Plan ON Poster.planID = Plan.planID WHERE Plan.planType = #{planType}")
+    List<PosterBean> getPostersWithTypes(String planType);
+
 //    @Update()
 //
 //

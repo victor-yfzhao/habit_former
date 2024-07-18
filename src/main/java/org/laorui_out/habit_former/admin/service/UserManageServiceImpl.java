@@ -38,7 +38,7 @@ public class UserManageServiceImpl extends ServiceImpl<UserMapper, UserBean> imp
     @Override
     public int updateUser(UserBean userBean) {
         try{
-            return baseMapper.updateUser(userBean);
+            return baseMapper.updateById(userBean);
         }catch (Exception e){
             return 0;
         }

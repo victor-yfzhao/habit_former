@@ -7,17 +7,22 @@ import org.laorui_out.habit_former.admin.service.*;
 import org.laorui_out.habit_former.admin.utils.CollectsRank;
 import org.laorui_out.habit_former.admin.utils.LikesRank;
 import org.laorui_out.habit_former.bean.*;
+import org.laorui_out.habit_former.poster.service.PosterPictureService;
+import org.laorui_out.habit_former.poster.service.PosterService;
 import org.laorui_out.habit_former.user.service.LoginResult;
 import org.laorui_out.habit_former.user.service.RegisterResult;
 import org.laorui_out.habit_former.utils.ResponseMessage;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.sql.Date;
 import java.util.List;
 import java.util.Map;
+
+import static org.laorui_out.habit_former.plan.constant.Constants.sdf;
 
 @RestController
 public class AdminController {
@@ -37,12 +42,24 @@ public class AdminController {
     @Resource
     LoginManageService loginManageService;
 
+    @Resource
+    CommentManageService commentManageService;
+
+    @Resource
+    PosterPictureService posterPictureService;
+
+    @Resource
+    PosterService posterService;
+
     @Value("${admin.password}")
     private String password;
 
     @Value("${admin.username}")
     private String username;
 
+    /**
+     * 管理员登录
+     */
     @GetMapping("/admin/login")
     public ResponseMessage<LoginResult> login(String username, String password) {
         if (password.equals(this.password) && username.equals(this.username)) {
@@ -51,6 +68,10 @@ public class AdminController {
         return new ResponseMessage<>(400, "admin login failed", LoginResult.PASSWORD_ERROR);
     }
 
+
+    /**
+     * 登录日志模块
+     */
     @GetMapping("/admin/login_log")
     public ResponseMessage<IPage<LoginBean>> loginLog(int pointer, int pageSize) {
         try{
@@ -62,7 +83,10 @@ public class AdminController {
         }
     }
 
-    //用户管理
+
+    /**
+     * 用户管理
+     */
     //--新建用户
     @PostMapping("/admin/user/create")
     public ResponseMessage<UserBean> createUser(String userName,String password){
@@ -83,10 +107,11 @@ public class AdminController {
     }
 
     //--删除用户
-    //TODO:需要先把该用户的所有帖子、计划全部删掉。
     @PostMapping("/admin/user/delete")
     public ResponseMessage<Integer> deleteUser(int userID){
-
+        planManageService.deletePlanByUserID(userID);
+        posterManageService.deletePosterByUserID(userID);
+        commentManageService.deleteCommentByUserID(userID);
         int res = userManageService.deleteUser(userID);
         if(res == 1){
             return new ResponseMessage<>(200,"userID:"+userID+" delete success..",res);
@@ -96,18 +121,12 @@ public class AdminController {
 
     //--修改用户
     @PostMapping("/admin/user/edit")
-    public ResponseMessage<UserBean> editUser(int userID,String userName,String password,String userIcon){
-        UserBean userBean=new UserBean();
-        userBean.setUsername(userName);
-        userBean.setUserID(userID);
-        userBean.setUserIcon(userIcon);
-        userBean.setPassword(password);
-        userBean.setUserCreateDate(new Date(System.currentTimeMillis()));
+    public ResponseMessage<UserBean> editUser(@RequestBody UserBean userBean){
         int res = userManageService.updateUser(userBean);
         if(res == 1){
-            return new ResponseMessage<>(200,"userID:"+userID+" edit success..",userBean);
+            return new ResponseMessage<>(200,"userID:"+userBean.getUserID()+" edit success..",userBean);
         }
-        return new ResponseMessage<>(400,"userID:"+userID+" edit failed..",null);
+        return new ResponseMessage<>(400,"userID:"+userBean.getUserID()+" edit failed..",null);
     }
 
     //--查询用户
@@ -122,13 +141,21 @@ public class AdminController {
         }
     }
 
-    //帖子管理
+
+    /**
+     * 帖子管理
+     */
     //--查询帖子
     @GetMapping("/admin/poster")
     public ResponseMessage<IPage<PosterBean>> selectAllPosters(int pointer, int pageSize){
         try{
             Page<PosterBean> page = new Page<>(pointer,pageSize);
             IPage<PosterBean> posterRecords = posterManageService.selectAllPosters(page);
+            for(PosterBean posterBean : posterRecords.getRecords()){
+                posterBean.setPosterPicture(posterPictureService.getPosterPicturesByPosterId(posterBean.getPosterID()));
+                posterBean.setNumOfLikes(posterService.getTotalLikes(posterBean.getPosterID()));
+                posterBean.setNumOfCollections(posterService.getTotalCollection(posterBean.getPosterID()));
+            }
             return new ResponseMessage<>(200,"query success", posterRecords);
         }catch(Exception e){
             return new ResponseMessage<>(400,e.getMessage(),null);
@@ -138,14 +165,11 @@ public class AdminController {
     //--修改帖子
     //---修改内容
     @PostMapping("/admin/poster/edit/content")
-    public ResponseMessage<PosterBean> editPosterContent(int posterID, String posterHeadline, String posterDetail){
-        PosterBean posterBean=posterManageService.getById(posterID);
-        posterBean.setPosterDetail(posterDetail);
-        posterBean.setPosterHeadline(posterHeadline);
+    public ResponseMessage<PosterBean> editPosterContent(@RequestBody PosterBean posterBean){
         int res = posterManageService.editPoster(posterBean);
         if(res!=0)
-            return new ResponseMessage<>(200,"posterID:"+posterID+" content-edit-success",posterBean);
-        return new ResponseMessage<>(400,"posterID:"+posterID+" content-edit-failed",null);
+            return new ResponseMessage<>(200,"posterID:"+posterBean.getPosterID()+" content-edit-success",posterBean);
+        return new ResponseMessage<>(400,"posterID:"+posterBean.getPosterID()+" content-edit-failed",null);
     }
 
     //---修改图片
@@ -154,8 +178,10 @@ public class AdminController {
     //--删除帖子
     @PostMapping("/admin/poster/delete")
     public ResponseMessage<Integer> deletePoster(int posterID){
-        int res=posterManageService.deletePoster(posterID);
-        if(res!=0)
+
+        commentManageService.deleteCommentByPosterID(posterID);
+        int res = posterManageService.deletePoster(posterID)? 1 : 0;
+        if(res != 0)
             return new ResponseMessage<>(200,"posterID:"+posterID+" delete-success",res);
         return new ResponseMessage<>(400,"posterID:"+posterID+" delete-failed",res);
 
@@ -169,13 +195,18 @@ public class AdminController {
         return new ResponseMessage<>(400,"userID:"+userID+" posters-delete-failed",res);
     }
 
-    //计划管理
+    /**
+     * 计划管理
+     */
     //--查询计划
     @GetMapping("/admin/plan")
     public ResponseMessage<IPage<PlanBean>> selectAllPlans(int pointer, int pageSize){
         try{
             Page<PlanBean> page = new Page<>(pointer,pageSize);
             IPage<PlanBean> planRecords = planManageService.selectAllPlans(page);
+            for(PlanBean item:planRecords.getRecords()){
+                item.setPlanDateShow(sdf.format(item.getPlanDate()));
+            }
             return new ResponseMessage<>(200,"query success", planRecords);
         }catch(Exception e){
             return new ResponseMessage<>(400,e.getMessage(),null);
@@ -187,6 +218,9 @@ public class AdminController {
         try{
             Page<DailyPlanBean> page = new Page<>(pointer,pageSize);
             IPage<DailyPlanBean> planRecords = planManageService.selectAllDailyPlans(page);
+            for(DailyPlanBean item:planRecords.getRecords()){
+                item.setDateShow(sdf.format(item.getDate()));
+            }
             return new ResponseMessage<>(200,"query success", planRecords);
         }catch(Exception e){
             return new ResponseMessage<>(400,"query failed",null);
@@ -198,6 +232,9 @@ public class AdminController {
         try{
             Page<FitPlanBean> page = new Page<>(pointer,pageSize);
             IPage<FitPlanBean> planRecords = planManageService.selectAllFitPlans(page);
+            for(FitPlanBean item:planRecords.getRecords()){
+                item.setDateShow(sdf.format(item.getDate()));
+            }
             return new ResponseMessage<>(200,"query success", planRecords);
         }catch(Exception e){
             return new ResponseMessage<>(400,"query failed",null);
@@ -209,6 +246,9 @@ public class AdminController {
         try{
             Page<StudyPlanBean> page = new Page<>(pointer,pageSize);
             IPage<StudyPlanBean> planRecords = planManageService.selectAllStudyPlans(page);
+            for(StudyPlanBean item:planRecords.getRecords()){
+                item.setDateShow(sdf.format(item.getDate()));
+            }
             return new ResponseMessage<>(200,"query success", planRecords);
         }catch(Exception e){
             return new ResponseMessage<>(400,"query failed",null);
@@ -255,9 +295,101 @@ public class AdminController {
         return new ResponseMessage<>(400,"studyPlanID:"+studyPlanID+" delete-failed",res);
 
     }
+    //--修改计划
+    @PostMapping("/admin/plan/edit")
+    public ResponseMessage<PlanBean> editPlan(@RequestBody PlanBean item){
+        PlanBean res;
+        if(item.getPlanID()==null){
+            res=planManageService.addPlan(item.getPlanName(),item.getPlanInfo(),item.getUserID(),item.getPlanType());
+            res.setPlanDateShow(sdf.format(res.getPlanDate()));
+            return new ResponseMessage<>(200,"success",res);
+        }
+        if(planManageService.updatePlan(item)!=0)
+            return new ResponseMessage<>(200,"success",item);
+        else return new ResponseMessage<>(400,"failed",null);
+    }
+    @PostMapping("/admin/dailyplan/edit")
+    public ResponseMessage<DailyPlanBean> editDailyPlan(@RequestBody DailyPlanBean item){
+        DailyPlanBean res;
+        if(item.getDailyPlanID()==null){
+            res=planManageService.addDailyPlan(Date.valueOf(item.getDateShow()),item.getPlanDetail(),item.getPlanID());
+            res.setDateShow(sdf.format(res.getDate()));
+            return new ResponseMessage<>(200,"success",res);
+        }
+        if(planManageService.updateDailyPlan(item)!=0)
+            return new ResponseMessage<>(200,"success",item);
+        else return new ResponseMessage<>(400,"failed",null);
+    }
+    @PostMapping("/admin/fitplan/edit")
+    public ResponseMessage<FitPlanBean> editFitPlan(@RequestBody FitPlanBean item){
+        FitPlanBean res;
+        if(item.getFitPlanItemID()==null){
+            res=planManageService.addFitPlan(
+                    Date.valueOf(item.getDateShow()),
+                    item.getFitItemName(),
+                    item.getFitType(),
+                    item.getGroupNum(),
+                    item.getNumPerGroup(),
+                    item.getTimePerGroup(),
+                    item.getPlanID());
+            res.setDateShow(sdf.format(res.getDate()));
+            return new ResponseMessage<>(200,"success",res);
+        }
+        if(planManageService.updateFitPlan(item)!=0)
+            return new ResponseMessage<>(200,"success",item);
+        else return new ResponseMessage<>(400,"failed",null);
+    }
+    @PostMapping("/admin/studyplan/edit")
+    public ResponseMessage<StudyPlanBean> editPlan(@RequestBody StudyPlanBean item){
+        StudyPlanBean res;
+        if(item.getStudyPlanItemID()==null){
+            res=planManageService.addStudyPlan(Date.valueOf(item.getDateShow()),item.getStudySubject(),item.getStudyContent(),item.getStudyTime(),item.getPlanID());
+            res.setDateShow(sdf.format(res.getDate()));
+            return new ResponseMessage<>(200,"success",res);
+        }
+        if(planManageService.updateStudyPlan(item)!=0)
+            return new ResponseMessage<>(200,"success",item);
+        else return new ResponseMessage<>(400,"failed",null);
+    }
+
     //API请求记录(如果要实现得新建表)
 
-    //看板
+    /**
+     * 评论管理
+     */
+    //根据评论ID删除评论
+    @PostMapping("/admin/comment/delete")
+    public ResponseMessage<Integer> deleteComment(int commentID){
+        int res = commentManageService.deleteComment(commentID);
+        int resChild = commentManageService.deleteCommentByParentCommentID(commentID);
+        if(res + resChild >0)
+            return new ResponseMessage<>(200,"commentID:"+commentID+" delete-success", res);
+        return new ResponseMessage<>(400,"commentID:"+commentID+" delete-failed", res);
+    }
+
+    @GetMapping("/admin/comment")
+    public ResponseMessage<IPage<CommentBean>> selectAllComments(int pointer, int pageSize){
+        try{
+            Page<CommentBean> page = new Page<>(pointer,pageSize);
+            IPage<CommentBean> commentRecords = commentManageService.selectAllComments(page);
+            return new ResponseMessage<>(200,"query success", commentRecords);
+        }catch(Exception e){
+            return new ResponseMessage<>(400,e.getMessage(),null);
+        }
+    }
+
+    @PostMapping("/admin/comment/edit")
+    public ResponseMessage<CommentBean> modifyComment(@RequestBody CommentBean commentBean){
+        int res = commentManageService.modifyComment(commentBean);
+        commentBean = commentManageService.getById(commentBean.getCommentID());
+        if(res == 1)
+            return new ResponseMessage<>(200,"commentID:"+commentBean.getCommentID()+" modify-success", commentBean);
+        return new ResponseMessage<>(400,"commentID:"+commentBean.getCommentID()+" modify-failed", commentBean);
+    }
+
+    /**
+     * 看板
+     */
     //--平台内每日计划完成总数目
     //返回一周的数据
     @GetMapping("/admin/dashboard/finished_plan")

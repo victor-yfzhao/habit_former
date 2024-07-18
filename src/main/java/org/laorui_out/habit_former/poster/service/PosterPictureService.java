@@ -25,11 +25,23 @@ public class PosterPictureService {
         return posterBean;
     }
 
+    public List<String> getPosterPicturesByPosterId(int posterID){
+        return posterMapper.getPosterPicturesByPosterId(posterID);
+    }
+
     //获取所有带有图片的帖子
     public List<PosterBean> getAllPosterWithPictures(){
         List<PosterBean> posterBeanList = posterMapper.getAllPosters();
         return getPosterBeans(posterBeanList);
     }
+
+    public List<PosterBean> getPosterWithPicturesByTypes(String planType){
+        List<PosterBean> posterBeanList = posterMapper.getPostersWithTypes(planType);
+        return getPosterBeans(posterBeanList);
+    }
+
+
+
 
     public List<PosterBean> getPosterWithPicturesByUserID(int userID){
         List<PosterBean> posterBeanList = posterMapper.getPosterByUserID(userID);
