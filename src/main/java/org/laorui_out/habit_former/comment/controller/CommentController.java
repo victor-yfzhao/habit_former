@@ -34,7 +34,7 @@ public class CommentController {
             return new ResponseMessage<>(500,"失败",isCommentCreate);
         }
         catch (Exception e){
-            return new ResponseMessage<>(500, "失败", createCommentService.createComment((int)map.get("userID"), (int)map.get("posterID"), (int) map.get("parentCommentID"), (String) map.get("commentDetail")));
+            return new ResponseMessage<>(500, "失败", "创建失败");
         }
     }
 
