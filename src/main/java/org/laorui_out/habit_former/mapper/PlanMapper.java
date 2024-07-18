@@ -11,7 +11,7 @@ import java.util.List;
 @Mapper
 public interface PlanMapper extends BaseMapper<PlanBean> {
     //查询v2.0
-    @Select("select * from Plan where userID=#{userID}")
+    @Select("select * from Plan where userID=#{userID} order by planID DESC")
     List<PlanBean> getAllPlanByUserID(int userID);
 
     @Select("select * from Plan where planID=#{planID}")
